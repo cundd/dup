@@ -12,7 +12,7 @@ function prepareMySQLInstallation () {
 
 function testMYSQLRootPassword () {
     {
-        mysql -u root -p$MYSQL_ROOT_PASSWORD -e "SHOW DATABASES" &> /dev/null;
+        mysql -u root -p$DB_ROOT_PASSWORD -e "SHOW DATABASES" &> /dev/null;
     } || {
         echo "notset";
         return 0;
@@ -22,7 +22,7 @@ function testMYSQLRootPassword () {
 }
 
 function provisionRoot () {
-    mysqladmin -u root password $MYSQL_ROOT_PASSWORD 2>/dev/null || mysqladmin -u root password -p$MYSQL_ROOT_PASSWORD $MYSQL_ROOT_PASSWORD
+    mysqladmin -u root password $DB_ROOT_PASSWORD 2>/dev/null || mysqladmin -u root password -p$DB_ROOT_PASSWORD $DB_ROOT_PASSWORD
 }
 
 function provisionDatabase () {
@@ -32,7 +32,7 @@ function provisionDatabase () {
     local Q4="FLUSH PRIVILEGES;"
     local SQL="${Q1}${Q2}${Q3}${Q4}"
 
-    mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "$SQL";
+    mysql -uroot -p$DB_ROOT_PASSWORD -e "$SQL";
 }
 
 function provision () {
@@ -41,7 +41,7 @@ function provision () {
     systemctl start mysqld.service;
 
     provisionRoot;
-    provisionDatabase $MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD;
+    provisionDatabase $DB_NAME $DB_USERNAME $DB_PASSWORD;
     #mysql_secure_installation
 }
 

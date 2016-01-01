@@ -4,6 +4,8 @@ set -o nounset
 
 TYPO3_INSTALL="${TYPO3_INSTALL:-false}";
 TYPO3_CLIENT_INSTALL="${TYPO3_CLIENT_INSTALL:-false}";
+TYPO3_CLIENT_BRANCH="${TYPO3_CLIENT_BRANCH:-master}";
+
 TYPO3_DOWNLOAD_FORCE="${TYPO3_DOWNLOAD_FORCE:-false}";
 
 function detectDocumentRoot() {
@@ -15,7 +17,6 @@ function detectTYPO3Version() {
 }
 
 function installTYPO3() {
-    cd `detectDocumentRoot`;
     local typo3_src_archive="typo3_src.tgz";
 
     if [[ ! -e `detectTYPO3Version` ]] || [[ "$TYPO3_DOWNLOAD_FORCE" == "true" ]]; then
@@ -37,15 +38,18 @@ function installTYPO3() {
 }
 
 function bootstrapTYPO3() {
-    #git clone http://git.iresults.li/git/iresults/client.git
-    if [[ "$TYPO3_CLIENT_INSTALL" == "true" ]]; then
+    if [[ "$TYPO3_CLIENT_INSTALL" == "true" ]];then
         echo "Install client";
+        if [[ ! -e "typo3conf/ext/client" ]]; then
+            git clone --branch="$TYPO3_CLIENT_BRANCH" https://git.iresults.li/git/iresults/client.git typo3conf/ext/client;
+        fi
+
+        RUN_INTERACTIVE="no" bash typo3conf/ext/client/Resources/Private/Scripts/install.sh
     fi
-
-
 }
 
 function run() {
+    cd `detectDocumentRoot`;
     if [[ "$TYPO3_INSTALL" == "true" ]]; then
         installTYPO3;
         bootstrapTYPO3;

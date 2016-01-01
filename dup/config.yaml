@@ -1,13 +1,17 @@
 scripts:
     ENV:
-        MYSQL_ROOT_PASSWORD: "3FwDkQ6gGeVVYDkES3H95auCVekAnG"
-        MYSQL_USER: "client"
-        MYSQL_DATABASE: "client"
-        MYSQL_PASSWORD: "R77bm8pYNkNfSGBf2z2McNxHazR45Z"
+        DB_ROOT_PASSWORD: "3FwDkQ6gGeVVYDkES3H95auCVekAnG"
+        DB_HOST: "localhost"
+        DB_USERNAME: "client"
+        DB_NAME: "client"
+        DB_PASSWORD: "R77bm8pYNkNfSGBf2z2McNxHazR45Z"
+
 
         TYPO3_INSTALL: true
         TYPO3_SITE_ENV: DEV
+
         TYPO3_CLIENT_INSTALL: true
+        TYPO3_CLIENT_BRANCH: feature/typo3-7-lts
         TYPO3_DOWNLOAD_FORCE: false
 
         DUP_BASE: "dup"

@@ -38,10 +38,10 @@ function configureApache() {
 
 function addEnvironmentSettings() {
     echo "env[SITE_ENV] = '$TYPO3_SITE_ENV'" >> $PHP_FPM_CONF_FILE_PATH;
-    echo "env[DB_USERNAME] = '$MYSQL_USER'" >> $PHP_FPM_CONF_FILE_PATH;
-    echo "env[DB_NAME] = '$MYSQL_DATABASE'" >> $PHP_FPM_CONF_FILE_PATH;
-    echo "env[DB_PASSWORD] = '$MYSQL_PASSWORD'" >> $PHP_FPM_CONF_FILE_PATH;
-    echo "env[DB_HOST] = 'localhost'" >> $PHP_FPM_CONF_FILE_PATH;
+    echo "env[DB_USERNAME] = '$DB_USERNAME'" >> $PHP_FPM_CONF_FILE_PATH;
+    echo "env[DB_NAME] = '$DB_NAME'" >> $PHP_FPM_CONF_FILE_PATH;
+    echo "env[DB_PASSWORD] = '$DB_PASSWORD'" >> $PHP_FPM_CONF_FILE_PATH;
+    echo "env[DB_HOST] = '$DB_HOST'" >> $PHP_FPM_CONF_FILE_PATH;
 
 }
 
