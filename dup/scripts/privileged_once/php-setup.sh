@@ -3,9 +3,12 @@ set -o nounset
 set -o errexit
 
 PHP_FPM_CONF_FILE_NAME=${PHP_FPM_CONF_FILE_NAME:-"php-fpm.conf"};
-PHP_FPM_CONF_FILE_PATH=${PHP_FPM_CONF_FILE_PATH:-"/etc/php/fpm.d/$PHP_FPM_CONF_FILE_NAME"};
+PHP_FPM_CONF_FILE_PATH=${PHP_FPM_CONF_FILE_PATH:-"/etc/php/php-fpm.d/$PHP_FPM_CONF_FILE_NAME"};
 
 PHP_INI_FILE_NAME=${PHP_INI_FILE_NAME:-"z-dup.ini"};
+PHP_FEATURE_OPCACHE="${PHP_FEATURE_OPCACHE:-true}";
+PHP_CUSTOM_INI=${PHP_CUSTOM_INI:-""};
+DUP_BASE="${DUP_BASE:-dup}";
 
 function detectAdditionalPHPIniPath() {
     php --ini|grep "Scan for additional .ini files in"|awk -F: '{ gsub(/ /, "", $2); print $2 }'
@@ -28,12 +31,12 @@ function addStringToFileIfNotFound () {
 }
 
 function configureApache() {
-    local FILE_TO_COPY="httpd-php-fpm.conf"
+    local fileToCopy="httpd-php-fpm.conf"
 
-    cp "/vagrant/$DUP_BASE/files/php/$FILE_TO_COPY" /etc/httpd/conf/extra;
-    chmod o+r "/etc/httpd/conf/extra/$FILE_TO_COPY";
+    cp "/vagrant/$DUP_BASE/files/php/$fileToCopy" /etc/httpd/conf/extra;
+    chmod o+r "/etc/httpd/conf/extra/$fileToCopy";
 
-    addStringToFileIfNotFound "Include conf/extra/$FILE_TO_COPY" /etc/httpd/conf/httpd.conf;
+    addStringToFileIfNotFound "Include conf/extra/$fileToCopy" /etc/httpd/conf/httpd.conf;
 }
 
 function addEnvironmentSettings() {
@@ -42,24 +45,30 @@ function addEnvironmentSettings() {
     echo "env[DB_NAME] = '$DB_NAME'" >> $PHP_FPM_CONF_FILE_PATH;
     echo "env[DB_PASSWORD] = '$DB_PASSWORD'" >> $PHP_FPM_CONF_FILE_PATH;
     echo "env[DB_HOST] = '$DB_HOST'" >> $PHP_FPM_CONF_FILE_PATH;
-
 }
 
 function configureFPM() {
-    echo $PHP_FPM_CONF_FILE_PATH;
     cp "/vagrant/$DUP_BASE/files/php/$PHP_FPM_CONF_FILE_NAME" "$PHP_FPM_CONF_FILE_PATH";
     chmod o+r "$PHP_FPM_CONF_FILE_PATH";
 
-    addStringToFileIfNotFound '^include=\/etc\/php\/fpm\.d\/\*\.conf' /etc/php/php-fpm.conf 'include=/etc/php/fpm.d/*.conf';
+    addStringToFileIfNotFound '^include=\/etc\/php\/php-fpm\.d\/\*\.conf' /etc/php/php-fpm.conf 'include=/etc/php/php-fpm.d/*.conf';
 
     addEnvironmentSettings;
 }
 
 function configurePHPIni() {
-    cp "/vagrant/$DUP_BASE/files/php/$PHP_INI_FILE_NAME" `detectAdditionalPHPIniPath`;
-    chmod o+r $(detectAdditionalPHPIniPath)"/$PHP_INI_FILE_NAME";
-}
+    local additionalPHPIniPath=`detectAdditionalPHPIniPath`;
+    cp "/vagrant/$DUP_BASE/files/php/$PHP_INI_FILE_NAME" $additionalPHPIniPath;
+    chmod o+r "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
 
+    if [[ "$PHP_FEATURE_OPCACHE" == "true" ]]; then
+        echo "zend_extension=opcache.so" >> "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
+    fi
+
+    for iniRow in $PHP_CUSTOM_INI; do
+        echo $iniRow >> "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
+    done
+}
 
 function run() {
     configureApache;

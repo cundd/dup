@@ -6,7 +6,6 @@ scripts:
         DB_NAME: "client"
         DB_PASSWORD: "R77bm8pYNkNfSGBf2z2McNxHazR45Z"
 
-
         TYPO3_INSTALL: true
         TYPO3_SITE_ENV: DEV
 
@@ -26,6 +25,15 @@ packages:
     - php-gd
     - php-mcrypt
     - php-intl
+
+php:
+    features:
+        opcache: true
+    ini:
+        always_populate_raw_post_data: -1
+        max_execution_time: 240
+        max_input_vars: 1500
+        date.timezone: Europe/Vaduz
 
 services:
     - php-fpm.service
