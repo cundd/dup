@@ -21,6 +21,7 @@ packages:
     - mariadb
 
     - graphicsmagick
+    - openssl
     - php-fpm
     - php-gd
     - php-mcrypt
@@ -34,6 +35,9 @@ php:
         max_execution_time: 240
         max_input_vars: 1500
         date.timezone: Europe/Vaduz
+        display_errors: on
+        display_startup_errors: on
+        error_reporting: 32767
 
 services:
     - php-fpm.service
