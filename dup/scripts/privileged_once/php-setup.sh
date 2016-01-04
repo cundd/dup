@@ -25,7 +25,7 @@ function addStringToFileIfNotFound () {
         local string=$pattern;
     else
         local string=$3;
-    fi;
+    fi
 
     grep -q "$pattern" "$file" || echo "$string" >> "$file";
 }
