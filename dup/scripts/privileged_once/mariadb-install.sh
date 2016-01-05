@@ -5,9 +5,17 @@ set -o errexit
 
 MYSQL_DATADIR="${MYSQL_DATADIR:-/var/lib/mysql}";
 
+DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
+source "$DUP_LIB_PATH";
+
 function prepareMySQLInstallation () {
-    chown mysql:mysql $MYSQL_DATADIR -R;
-    mysql_install_db --user=mysql --basedir=/usr --datadir=$MYSQL_DATADIR;
+    if [[ -x "/etc/init.d/mariadb" ]]; then # Alpine
+        /etc/init.d/mariadb setup;
+    elif hash mysql_install_db 2>/dev/null; then # Arch Linux
+        chown mysql:mysql $MYSQL_DATADIR -R;
+        mysql_install_db --user=mysql --datadir=$MYSQL_DATADIR;
+    fi
+
 }
 
 function testMYSQLRootPassword () {
@@ -36,9 +44,9 @@ function provisionDatabase () {
 }
 
 function provision () {
-    systemctl stop mysqld.service;
+    stop-service mysqld;
     prepareMySQLInstallation;
-    systemctl start mysqld.service;
+    start-service mysqld;
 
     provisionRoot;
     provisionDatabase $DB_NAME $DB_USERNAME $DB_PASSWORD;

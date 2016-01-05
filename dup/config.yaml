@@ -16,9 +16,13 @@ scripts:
         DUP_BASE: "dup"
 
 packages:
+    - git
+    
     - apache
+    - apache-proxy
 
-    - mariadb
+    # Install MySQL server (actually MariaDb)
+    - mysql
 
     - graphicsmagick
     - openssl
@@ -26,6 +30,10 @@ packages:
     - php-gd
     - php-mcrypt
     - php-intl
+    - php-mysqli
+    - php-pdo_mysql
+    - php-soap
+    - php-opcache
 
 php:
     features:
@@ -40,6 +48,7 @@ php:
         error_reporting: 32767
 
 services:
-    - php-fpm.service
-    - httpd.service
-    - mysqld.service
+    # Omit the ".service" suffix
+    - php-fpm
+    - httpd
+    - mysqld

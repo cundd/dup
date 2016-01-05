@@ -8,8 +8,24 @@ TYPO3_CLIENT_BRANCH="${TYPO3_CLIENT_BRANCH:-master}";
 
 TYPO3_DOWNLOAD_FORCE="${TYPO3_DOWNLOAD_FORCE:-false}";
 
+DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
+source "$DUP_LIB_PATH";
+
 function detectDocumentRoot() {
-    echo $(grep -hir '^DocumentRoot' /etc/httpd/|head -n1|awk '/^DocumentRoot/{gsub("\"", ""); print $2}')
+    local apacheBasePath="/etc";
+
+    if [[ -e "/etc/apache2/" ]]; then
+        apacheBasePath="/etc/apache2";
+    elif [[ -e "/etc/httpd/conf/" ]]; then
+        apacheBasePath="/etc/httpd/conf";
+    fi
+
+    local apacheConfFile=$(grep -lir '^DocumentRoot' $apacheBasePath|head -n1);
+
+    add-string-to-file-if-not-found 'DocumentRoot "/srv/http"' $apacheConfFile;
+
+    #echo $(grep -hir '^DocumentRoot' $apacheBasePath|head -n1|awk '/^DocumentRoot/{gsub("\"", ""); print $2}')
+    echo "/srv/http";
 }
 
 function detectTYPO3Version() {

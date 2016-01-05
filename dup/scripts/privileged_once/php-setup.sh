@@ -3,40 +3,45 @@ set -o nounset
 set -o errexit
 
 PHP_FPM_CONF_FILE_NAME=${PHP_FPM_CONF_FILE_NAME:-"z-php-fpm.conf"};
-PHP_FPM_CONF_FILE_PATH=${PHP_FPM_CONF_FILE_PATH:-"/etc/php/php-fpm.d/$PHP_FPM_CONF_FILE_NAME"};
+PHP_FPM_CONF_FILE_DIRECTORY=${PHP_FPM_CONF_FILE_DIRECTORY:-"/etc/php/php-fpm.d"};
+PHP_FPM_CONF_FILE_PATH=${PHP_FPM_CONF_FILE_PATH:-"$PHP_FPM_CONF_FILE_DIRECTORY/$PHP_FPM_CONF_FILE_NAME"};
 
 PHP_INI_FILE_NAME=${PHP_INI_FILE_NAME:-"z-dup.ini"};
 PHP_FEATURE_OPCACHE="${PHP_FEATURE_OPCACHE:-true}";
 PHP_CUSTOM_INI=${PHP_CUSTOM_INI:-""};
 DUP_BASE="${DUP_BASE:-dup}";
 
+DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
+source "$DUP_LIB_PATH";
+
 function detectAdditionalPHPIniPath() {
     php --ini|grep "Scan for additional .ini files in"|awk -F: '{ gsub(/ /, "", $2); print $2 }'
 }
 
-function addStringToFileIfNotFound () {
-    if [[ -z ${1+x} ]]; then echo "Missing argument 1 (pattern)"; return 1; fi;
-    if [[ -z ${2+x} ]]; then echo "Missing argument 2 (file)"; return 1; fi;
+function configureApache() {
+    local fileToCopy="httpd-php-fpm.conf";
+    local apacheBasePath="";
+    local apacheExtraConfigurationPath="";
+    local checkIncludeString="no";
 
-    local pattern=$1;
-    local file=$2;
-
-    if [[ -z ${3+x} ]]; then
-        local string=$pattern;
+    if [[ -e "/etc/apache2/" ]]; then
+        apacheBasePath="/etc/apache2";
+        apacheExtraConfigurationPath="$apacheBasePath/conf.d";
+    elif [[ -e "/etc/httpd/conf/" ]]; then
+        apacheBasePath="/etc/httpd/conf";
+        apacheExtraConfigurationPath="$apacheBasePath/extra";
+        checkIncludeString="yes";
     else
-        local string=$3;
+        >&2 echo "Apache configuration directory not found";
+        return 1;
     fi
 
-    grep -q "$pattern" "$file" || echo "$string" >> "$file";
-}
+    cp "/vagrant/$DUP_BASE/files/php/$fileToCopy" "$apacheExtraConfigurationPath";
+    chmod o+r "$apacheExtraConfigurationPath/$fileToCopy";
 
-function configureApache() {
-    local fileToCopy="httpd-php-fpm.conf"
-
-    cp "/vagrant/$DUP_BASE/files/php/$fileToCopy" /etc/httpd/conf/extra;
-    chmod o+r "/etc/httpd/conf/extra/$fileToCopy";
-
-    addStringToFileIfNotFound "Include conf/extra/$fileToCopy" /etc/httpd/conf/httpd.conf;
+    if [[ $checkIncludeString == "yes" ]]; then
+        add-string-to-file-if-not-found "Include conf/extra/$fileToCopy" "$apacheBasePath/httpd.conf";
+    fi
 }
 
 function setTYPO3ContextEnv() {
@@ -69,10 +74,16 @@ function addEnvironmentSettings() {
 }
 
 function configureFPM() {
+    if [[ ! -e "$PHP_FPM_CONF_FILE_DIRECTORY" ]]; then
+        mkdir -p "$PHP_FPM_CONF_FILE_DIRECTORY";
+    elif [[ ! -d "$PHP_FPM_CONF_FILE_DIRECTORY" ]]; then
+        >&2 echo "Path $PHP_FPM_CONF_FILE_DIRECTORY exists but is no directory";
+        return 1;
+    fi
     cp "/vagrant/$DUP_BASE/files/php/$PHP_FPM_CONF_FILE_NAME" "$PHP_FPM_CONF_FILE_PATH";
     chmod o+r "$PHP_FPM_CONF_FILE_PATH";
 
-    addStringToFileIfNotFound '^include=\/etc\/php\/php-fpm\.d\/\*\.conf' /etc/php/php-fpm.conf 'include=/etc/php/php-fpm.d/*.conf';
+    add-string-to-file-if-not-found '^include=\/etc\/php\/php-fpm\.d\/\*\.conf' /etc/php/php-fpm.conf 'include=/etc/php/php-fpm.d/*.conf';
 
     addEnvironmentSettings;
 }
@@ -95,8 +106,9 @@ function run() {
     configureApache;
     configurePHPIni;
     configureFPM;
-    systemctl restart httpd.service
-    systemctl restart php-fpm.service
+
+    restart-service httpd;
+    restart-service php-fpm;
 }
 
 run $@
