@@ -14,22 +14,28 @@ DUP_BASE="${DUP_BASE:-dup}";
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
 source "$DUP_LIB_PATH";
 
-function detectAdditionalPHPIniPath() {
+function detect-additional-php-ini-path() {
     php --ini|grep "Scan for additional .ini files in"|awk -F: '{ gsub(/ /, "", $2); print $2 }'
 }
 
+function detect-loaded-php-ini-files() {
+    php --ini|grep -A100 'Additional .ini files parsed:' | \
+        sed 's/Additional .ini files parsed:\s*//' | \
+        sed 's/,//';
+}
+
 function prepare-fpm-socket-folder() {
-    echo "prepare-fpm-socket-folder"
     local fpmSocketFolder="/run/php-fpm";
-    
+
     if [[ ! -e $fpmSocketFolder ]]; then
         echo "create $fpmSocketFolder"
         mkdir -p "$fpmSocketFolder";
     fi
 }
 
-function configureFPM() {
+function configure-fpm() {
     prepare-fpm-socket-folder;
+    local dupFilesPath="/vagrant/$DUP_BASE/files/php";
 
     if [[ ! -e "$PHP_FPM_CONF_FILE_DIRECTORY" ]]; then
         mkdir -p "$PHP_FPM_CONF_FILE_DIRECTORY";
@@ -37,21 +43,41 @@ function configureFPM() {
         >&2 echo "Path $PHP_FPM_CONF_FILE_DIRECTORY exists but is no directory";
         return 1;
     fi
-    cp "/vagrant/$DUP_BASE/files/php/$PHP_FPM_CONF_FILE_NAME" "$PHP_FPM_CONF_FILE_PATH";
+
+    ## Copy fpm file
+    copy-linux-distribution-specific-file "php" "$PHP_INI_FILE_NAME" "$PHP_FPM_CONF_FILE_PATH";
     chmod o+r "$PHP_FPM_CONF_FILE_PATH";
 
     add-string-to-file-if-not-found '^include=\/etc\/php\/php-fpm\.d\/\*\.conf' /etc/php/php-fpm.conf 'include=/etc/php/php-fpm.d/*.conf';
 
-    addEnvironmentSettings;
+    add-environment-settings;
 }
 
-function configurePHPIni() {
-    local additionalPHPIniPath=`detectAdditionalPHPIniPath`;
-    cp "/vagrant/$DUP_BASE/files/php/$PHP_INI_FILE_NAME" $additionalPHPIniPath;
+function configure-opcode-cache() {
+    local found="no";
+    for file in $(detect-loaded-php-ini-files); do
+        local result=$(grep '^zend_extension=opcache\.so' "$file" >/dev/null);
+        if [[ $? -eq 0 ]]; then
+            found="yes";
+            break;
+        fi
+    done
+
+    if [[ $found == "no" ]]; then
+        echo "zend_extension=opcache.so" >> "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
+    fi
+}
+
+function configure-php-ini() {
+    local additionalPHPIniPath=`detect-additional-php-ini-path`;
+    local dupFilesPath="/vagrant/$DUP_BASE/files/php";
+
+    ## Copy PHP.ini file
+    copy-linux-distribution-specific-file "php" "$PHP_INI_FILE_NAME" "$additionalPHPIniPath";
     chmod o+r "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
 
     if [[ "$PHP_FEATURE_OPCACHE" == "true" ]]; then
-        echo "zend_extension=opcache.so" >> "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
+        configure-opcode-cache;
     fi
 
     for iniRow in $PHP_CUSTOM_INI; do
@@ -59,7 +85,7 @@ function configurePHPIni() {
     done
 }
 
-function setTYPO3ContextEnv() {
+function set-typo3-context-env() {
     case "$TYPO3_SITE_ENV" in
         DEV)
             echo "env[TYPO3_CONTEXT] = 'Development'" >> $PHP_FPM_CONF_FILE_PATH;
@@ -79,8 +105,8 @@ function setTYPO3ContextEnv() {
     esac
 }
 
-function addEnvironmentSettings() {
-    setTYPO3ContextEnv;
+function add-environment-settings() {
+    set-typo3-context-env;
     echo "env[SITE_ENV] = '$TYPO3_SITE_ENV'"        >> $PHP_FPM_CONF_FILE_PATH;
     echo "env[DB_USERNAME] = '$DB_USERNAME'"        >> $PHP_FPM_CONF_FILE_PATH;
     echo "env[DB_NAME] = '$DB_NAME'"                >> $PHP_FPM_CONF_FILE_PATH;
@@ -89,8 +115,8 @@ function addEnvironmentSettings() {
 }
 
 function run() {
-    configurePHPIni;
-    configureFPM;
+    configure-php-ini;
+    configure-fpm;
 
     restart-service httpd;
     restart-service php-fpm;

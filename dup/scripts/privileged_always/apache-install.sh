@@ -18,8 +18,10 @@ function prepare-apache-proxy() {
 
 function prepare-document-root() {
     #detect-and-set-document-root;
-    local documentRoot=$(detect-document-root);
+    local documentRoot=$(get-vhost-document-root);
 
+    # Try
+    set +e
     if [[ "$(getent group apache)" != "" ]]; then
         chown apache:apache $documentRoot;
         chmod g+w $documentRoot;
@@ -29,6 +31,7 @@ function prepare-document-root() {
     else
         >&2 echo "Could not detect apache/http group name";
     fi
+    set -e
 }
 
 function prepare-vagrant-user() {
@@ -69,8 +72,8 @@ function configure-vhost() {
         return 1;
     fi
 
-    # Copy vhost path
-    cp "/vagrant/$DUP_BASE/files/apache/$fileToCopy" "$apacheExtraConfigurationPath";
+    ## Copy vhost file
+    copy-linux-distribution-specific-file "apache" "$fileToCopy" "$apacheExtraConfigurationPath";
     chmod o+r "$apacheExtraConfigurationPath/$fileToCopy";
 
     # Check if the vhost file will be loaded

@@ -49,7 +49,7 @@ function bootstrapTYPO3() {
 }
 
 function run() {
-    cd `detect-document-root`;
+    cd `get-vhost-document-root`;
     if [[ "$TYPO3_INSTALL" == "true" ]]; then
         installTYPO3;
         bootstrapTYPO3;

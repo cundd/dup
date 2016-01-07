@@ -5,4 +5,6 @@ set -o errexit
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
 source "$DUP_LIB_PATH";
 
-start-service $@
+if [[ $(service-status $1) == "down" ]]; then
+    start-service $@
+fi

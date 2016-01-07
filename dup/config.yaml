@@ -39,6 +39,15 @@ packages:
     - php-pdo_mysql
     - php-soap
     - php-opcache
+    - php-json
+    - php-curl
+    - php-xml
+    - php-zip
+    - php-zlib
+    - php-openssl
+    - php-xmlreader
+    - php-ctype
+    - php-calendar
 
 php:
     features:
