@@ -1,3 +1,6 @@
+vagrant:
+    vm:
+        ip: "192.168.200.10"
 scripts:
     ENV:
         DB_ROOT_PASSWORD: "3FwDkQ6gGeVVYDkES3H95auCVekAnG"
@@ -14,15 +17,17 @@ scripts:
         TYPO3_DOWNLOAD_FORCE: false
 
         DUP_BASE: "dup"
+        SETUP_BASH: true
 
 packages:
     - git
-    
+
     - apache
     - apache-proxy
 
     # Install MySQL server (actually MariaDb)
     - mysql
+    - mysql-client
 
     - graphicsmagick
     - openssl
