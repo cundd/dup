@@ -30,7 +30,9 @@ packages:
     - mysql-client
 
     - graphicsmagick
+    - ghostscript
     - openssl
+
     - php-fpm
     - php-gd
     - php-mcrypt

@@ -21,7 +21,6 @@ function install_typo3() {
     if [[ ! -e `detect_typo3_version` ]] || [[ "$TYPO3_DOWNLOAD_FORCE" == "true" ]]; then
         echo "Download TYPO3 into "`pwd`;
         curl -s -L -o $typo3_src_archive get.typo3.org/current;
-        ls -hl;
         tar xzf $typo3_src_archive && rm $typo3_src_archive;
 
         if [[ -h "typo3" ]]; then rm "typo3"; fi
