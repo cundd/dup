@@ -49,7 +49,7 @@ function bootstrap_typo3() {
 }
 
 function main() {
-    cd `get_vhost_document_root`;
+    cd `duplib::get_vhost_document_root`;
     if [[ "$TYPO3_INSTALL" == "true" ]]; then
         install_typo3;
         bootstrap_typo3;

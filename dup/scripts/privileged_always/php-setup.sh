@@ -45,10 +45,10 @@ function configure-fpm() {
     fi
 
     ## Copy fpm file
-    copy_linux_distribution_specific_file "php" "$PHP_INI_FILE_NAME" "$PHP_FPM_CONF_FILE_PATH";
+    duplib::copy_linux_distribution_specific_file "php" "$PHP_INI_FILE_NAME" "$PHP_FPM_CONF_FILE_PATH";
     chmod o+r "$PHP_FPM_CONF_FILE_PATH";
 
-    add_string_to_file_if_not_found '^include=\/etc\/php\/php-fpm\.d\/\*\.conf' /etc/php/php-fpm.conf 'include=/etc/php/php-fpm.d/*.conf';
+    duplib::add_string_to_file_if_not_found '^include=\/etc\/php\/php-fpm\.d\/\*\.conf' /etc/php/php-fpm.conf 'include=/etc/php/php-fpm.d/*.conf';
 
     add_environment_settings;
 }
@@ -73,7 +73,7 @@ function configure_php_ini() {
     local dupFilesPath="/vagrant/$DUP_BASE/files/php";
 
     ## Copy PHP.ini file
-    copy_linux_distribution_specific_file "php" "$PHP_INI_FILE_NAME" "$additionalPHPIniPath";
+    duplib::copy_linux_distribution_specific_file "php" "$PHP_INI_FILE_NAME" "$additionalPHPIniPath";
     chmod o+r "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
 
     if [[ "$PHP_FEATURE_OPCACHE" == "true" ]]; then
@@ -118,8 +118,8 @@ function main() {
     configure_php_ini;
     configure-fpm;
 
-    service_restart httpd;
-    service_restart php-fpm;
+    duplib::service_restart httpd;
+    duplib::service_restart php-fpm;
 }
 
 main $@

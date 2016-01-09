@@ -8,11 +8,11 @@ function error() {
 # --------------------------------------------------------
 # HTTP/Apache methods
 # --------------------------------------------------------
-function _document_root() {
+function duplib::_document_root() {
     echo "/var/www/vhosts/dup.cundd.net/httpdocs";
 }
 
-function detect_and_set_document_root() {
+function duplib::detect_and_set_document_root() {
     local apacheBasePath="/etc";
 
     if [[ -e "/etc/apache2/" ]]; then
@@ -23,11 +23,11 @@ function detect_and_set_document_root() {
 
     local apacheConfFile=$(grep -lir '^DocumentRoot' $apacheBasePath|head -n1);
 
-    add_string_to_file_if_not_found "DocumentRoot \"$(_document_root)\"" $apacheConfFile;
-    detect_document_root;
+    duplib::add_string_to_file_if_not_found "DocumentRoot \"$(_document_root)\"" $apacheConfFile;
+    duplib::detect_document_root;
 }
 
-function detect_document_root() {
+function duplib::detect_document_root() {
     # local apacheBasePath="/etc";
     #
     # if [[ -e "/etc/apache2/" ]]; then
@@ -36,14 +36,14 @@ function detect_document_root() {
     #     apacheBasePath="/etc/httpd/conf";
     # fi
     #echo $(grep -hir '^DocumentRoot' $apacheBasePath|head -n1|awk '/^DocumentRoot/{gsub("\"", ""); print $2}')
-    _document_root;
+    duplib::_document_root;
 }
 
-function get_vhost_document_root() {
+function duplib::get_vhost_document_root() {
     echo "/var/www/vhosts/dup.cundd.net/httpdocs";
 }
 
-function detect_apache_configuration_file() {
+function duplib::detect_apache_configuration_file() {
     if [[ -e "/etc/apache2/httpd.conf" ]]; then
         echo "/etc/apache2/httpd.conf";
     elif [[ -e "/etc/httpd/conf/httpd.conf" ]]; then
@@ -56,7 +56,7 @@ function detect_apache_configuration_file() {
 # --------------------------------------------------------
 # OS/Linux methods
 # --------------------------------------------------------
-function detect_linux_distribution() {
+function duplib::detect_linux_distribution() {
     if   [ -f "/etc/SUSE-release" ];          then echo "Novell SUSE";
     elif [ -f "/etc/redhat-release," ];       then echo "Red Hat";
     elif [ -f "/etc/fedora-release" ];        then echo "Fedora";
@@ -95,11 +95,11 @@ function get_linux_distribution_release_file() {
     fi
 }
 
-function get_dup_linux_distribution_specific_folder() {
+function duplib::get_dup_linux_distribution_specific_folder() {
     basename `get_linux_distribution_release_file` | sed 's/release//' | sed 's/[-_]//'| tr '[:upper:]' '[:lower:]';
 }
 
-function copy_linux_distribution_specific_file() {
+function duplib::copy_linux_distribution_specific_file() {
     if [ -z ${1+x} ]; then
         error "Missing argument directory";
         return 1;
@@ -122,12 +122,12 @@ function copy_linux_distribution_specific_file() {
     local dupFilesPath="/vagrant/$DUP_BASE/files/$subDirectory";
 
     ## Check if there is a special file for the linux distribution
-    if [[ -e "$dupFilesPath/$(get_dup_linux_distribution_specific_folder)/$fileName" ]]; then
-        cp "$dupFilesPath/$(get_dup_linux_distribution_specific_folder)/$fileName" "$destination";
+    if [[ -e "$dupFilesPath/$(duplib::get_dup_linux_distribution_specific_folder)/$fileName" ]]; then
+        cp "$dupFilesPath/$(duplib::get_dup_linux_distribution_specific_folder)/$fileName" "$destination";
     elif [[ -e "$dupFilesPath/general/$fileName" ]]; then # Copy the default file
         cp "$dupFilesPath/general/$fileName" "$destination";
     else
-        error "No distribution specific or general file $fileName found $(get_dup_linux_distribution_specific_folder)";
+        error "No distribution specific or general file $fileName found $(duplib::get_dup_linux_distribution_specific_folder)";
         return 1;
     fi
 }
@@ -135,7 +135,7 @@ function copy_linux_distribution_specific_file() {
 # --------------------------------------------------------
 # File methods
 # --------------------------------------------------------
-function add_string_to_file_if_not_found() {
+function duplib::add_string_to_file_if_not_found() {
     if [[ -z ${1+x} ]]; then echo "Missing argument 1 (pattern)"; return 1; fi;
     if [[ -z ${2+x} ]]; then echo "Missing argument 2 (file)"; return 1; fi;
 
@@ -154,131 +154,131 @@ function add_string_to_file_if_not_found() {
 # --------------------------------------------------------
 # Service methods
 # --------------------------------------------------------
-function _get_service_alternative() {
+function duplib::_get_service_alternative() {
     if [[ "$1" == "mysqld" ]]; then
         echo "mariadb";
     fi
     echo "";
 }
 
-function _get_service_real() {
-    if [[ "$(_get_service_alternative $1)" != "" ]]; then
-        echo $(_get_service_alternative $1);
+function duplib::_get_service_real() {
+    if [[ "$(duplib::_get_service_alternative $1)" != "" ]]; then
+        echo $(duplib::_get_service_alternative $1);
     else
         echo "$1";
     fi
 }
 
 # Starting
-function _service_start_systemd() {
+function duplib::_service_start_systemd() {
     systemctl daemon-reload;
     systemctl start "$1.service";
 }
 
-function _service_start_rc-service() {
+function duplib::_service_start_rc-service() {
     rc-service "$1" start;
 }
 
-function _service_start_initd() {
+function duplib::_service_start_initd() {
     "/etc/init.d/$1" start;
 }
 
-function service_start() {
+function duplib::service_start() {
     if [ -z ${1+x} ]; then
         error "Missing argument service";
         return 1;
     fi
 
     if hash systemctl 2>/dev/null; then # systemd
-        _service_start_systemd $@;
+        duplib::_service_start_systemd $@;
 
     elif hash rc-service 2>/dev/null; then # rc-service
-        _get_service_real $1
-        _service_start_rc-service $(_get_service_real $1);
+        duplib::_get_service_real $1
+        duplib::_service_start_rc-service $(duplib::_get_service_real $1);
 
     elif [[ -x "/etc/init.d/$1" ]]; then # init.d
-        _service_start_initd $@;
+        duplib::_service_start_initd $@;
 
-    elif [[ "$(_get_service_alternative $1)" != "" ]]; then
-        service_start $(_get_service_alternative $1);
+    elif [[ "$(duplib::_get_service_alternative $1)" != "" ]]; then
+        duplib::service_start $(duplib::_get_service_alternative $1);
     else
         error "No matching service starter found for $1";
     fi
 }
 
 # Stopping
-function _service_stop_systemd() {
+function duplib::_service_stop_systemd() {
     systemctl daemon-reload;
     systemctl stop "$1.service";
 }
 
-function _service_stop_rc-service() {
+function duplib::_service_stop_rc-service() {
     rc-service "$1" stop;
 }
 
-function _service_stop_initd() {
+function duplib::_service_stop_initd() {
     "/etc/init.d/$1" stop;
 }
 
-function service_stop() {
+function duplib::service_stop() {
     if [ -z ${1+x} ]; then
         error "Missing argument service";
         return 1;
     fi
     if hash systemctl 2>/dev/null; then # systemd
-        _service_stop_systemd $@;
+        duplib::_service_stop_systemd $@;
 
     elif hash rc-service 2>/dev/null; then # rc-service
-        _service_stop_rc-service $(_get_service_real $1);
+        duplib::_service_stop_rc-service $(duplib::_get_service_real $1);
 
     elif [[ -x "/etc/init.d/$1" ]]; then # init.d
-        _service_stop_initd $@;
+        duplib::_service_stop_initd $@;
 
-    elif [[ "$(_get_service_alternative $1)" != "" ]]; then
-        service_stop $(_get_service_alternative $1);
+    elif [[ "$(duplib::_get_service_alternative $1)" != "" ]]; then
+        duplib::service_stop $(duplib::_get_service_alternative $1);
     else
         error "No matching service stopper found for $1";
     fi
 }
 
 # Restart
-function _service_restart_systemd() {
+function duplib::_service_restart_systemd() {
     systemctl daemon-reload;
     systemctl restart "$1.service";
 }
 
-function _service_restart_rc-service() {
+function duplib::_service_restart_rc-service() {
     rc-service "$1" restart;
 }
 
-function _service_restart_initd() {
+function duplib::_service_restart_initd() {
     "/etc/init.d/$1" restart;
 }
 
-function service_restart() {
+function duplib::service_restart() {
     if [ -z ${1+x} ]; then
         error "Missing argument service";
         return 1;
     fi
 
     if hash systemctl 2>/dev/null; then # systemd
-        _service_restart_systemd $@;
+        duplib::_service_restart_systemd $@;
 
     elif hash rc-service 2>/dev/null; then # rc-service
-        _service_restart_rc-service $(_get_service_real $1);
+        duplib::_service_restart_rc-service $(duplib::_get_service_real $1);
 
     elif [[ -x "/etc/init.d/$1" ]]; then # init.d
-        _service_restart_initd $@;
+        duplib::_service_restart_initd $@;
 
-    elif [[ "$(_get_service_alternative $1)" != "" ]]; then
-        service_restart $(_get_service_alternative $1);
+    elif [[ "$(duplib::_get_service_alternative $1)" != "" ]]; then
+        duplib::service_restart $(duplib::_get_service_alternative $1);
     else
         error "No matching service restarter found for $1";
     fi
 }
 
 # Service status
-function _service_status_systemd() {
+function duplib::_service_status_systemd() {
     systemctl --quiet status httpd >/dev/null;
     if [[ $? -ne 0 ]]; then
         echo "down";
@@ -287,7 +287,7 @@ function _service_status_systemd() {
     fi
 }
 
-function _service_status_rc-service() {
+function duplib::_service_status_rc-service() {
     rc-service -q httpd status;
     if [[ $? -ne 0 ]]; then
         echo "down";
@@ -296,28 +296,28 @@ function _service_status_rc-service() {
     fi
 }
 
-function _service_status_initd() {
+function duplib::_service_status_initd() {
     error "Not implemented";
     return 1;
 }
 
-function service_status() {
+function duplib::service_status() {
     if [ -z ${1+x} ]; then
         error "Missing argument service";
         return 1;
     fi
 
     if hash systemctl 2>/dev/null; then # systemd
-        _service_status_systemd $@;
+        duplib::_service_status_systemd $@;
 
     elif hash rc-service 2>/dev/null; then # rc-service
-        _service_status_rc-service $(_get_service_real $1);
+        duplib::_service_status_rc-service $(duplib::_get_service_real $1);
 
     elif [[ -x "/etc/init.d/$1" ]]; then # init.d
-        _service_status_initd $@;
+        duplib::_service_status_initd $@;
 
-    elif [[ "$(_get_service_alternative $1)" != "" ]]; then
-        service_status $(_get_service_alternative $1);
+    elif [[ "$(duplib::_get_service_alternative $1)" != "" ]]; then
+        duplib::service_status $(duplib::_get_service_alternative $1);
     else
         error "Could not determine status for service $1";
     fi
