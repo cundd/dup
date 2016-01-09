@@ -11,14 +11,14 @@ TYPO3_DOWNLOAD_FORCE="${TYPO3_DOWNLOAD_FORCE:-false}";
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
 source "$DUP_LIB_PATH";
 
-function detectTYPO3Version() {
+function detect_typo3_version() {
     find . -maxdepth 1 -iname 'typo3_src-*' -print|head -n1
 }
 
-function installTYPO3() {
+function install_typo3() {
     local typo3_src_archive="typo3_src.tgz";
 
-    if [[ ! -e `detectTYPO3Version` ]] || [[ "$TYPO3_DOWNLOAD_FORCE" == "true" ]]; then
+    if [[ ! -e `detect_typo3_version` ]] || [[ "$TYPO3_DOWNLOAD_FORCE" == "true" ]]; then
         echo "Download TYPO3 into "`pwd`;
         curl -s -L -o $typo3_src_archive get.typo3.org/current;
         ls -hl;
@@ -27,7 +27,7 @@ function installTYPO3() {
         if [[ -h "typo3" ]]; then rm "typo3"; fi
         if [[ -h "index.php" ]]; then rm "index.php"; fi
 
-        ln -s "`detectTYPO3Version`" "typo3_src";
+        ln -s "`detect_typo3_version`" "typo3_src";
         ln -s "typo3_src/typo3" .;
         ln -s "typo3_src/index.php" .;
     fi
@@ -37,7 +37,7 @@ function installTYPO3() {
     fi
 }
 
-function bootstrapTYPO3() {
+function bootstrap_typo3() {
     if [[ "$TYPO3_CLIENT_INSTALL" == "true" ]];then
         echo "Install client";
         if [[ ! -e "typo3conf/ext/client" ]]; then
@@ -48,14 +48,14 @@ function bootstrapTYPO3() {
     fi
 }
 
-function run() {
-    cd `get-vhost-document-root`;
+function main() {
+    cd `get_vhost_document_root`;
     if [[ "$TYPO3_INSTALL" == "true" ]]; then
-        installTYPO3;
-        bootstrapTYPO3;
+        install_typo3;
+        bootstrap_typo3;
     fi
 }
 
 set +e;
-run $@;
+main $@;
 set -e;

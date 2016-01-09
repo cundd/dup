@@ -81,9 +81,9 @@ function test-client-database-tables() {
 function provision-base() {
     if [[ `test-root-password` == "notset" ]]; then
         echo "Provision MySQL base";
-        stop-service mysqld;
+        service_stop mysqld;
         prepare-installation;
-        start-service mysqld;
+        service_start mysqld;
 
         provision-root;
         #mysql_secure_installation

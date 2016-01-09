@@ -48,6 +48,7 @@ packages:
     - php-xmlreader
     - php-ctype
     - php-calendar
+    - php-phar
 
 php:
     features:

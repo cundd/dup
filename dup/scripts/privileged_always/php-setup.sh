@@ -45,12 +45,12 @@ function configure-fpm() {
     fi
 
     ## Copy fpm file
-    copy-linux-distribution-specific-file "php" "$PHP_INI_FILE_NAME" "$PHP_FPM_CONF_FILE_PATH";
+    copy_linux_distribution_specific_file "php" "$PHP_INI_FILE_NAME" "$PHP_FPM_CONF_FILE_PATH";
     chmod o+r "$PHP_FPM_CONF_FILE_PATH";
 
-    add-string-to-file-if-not-found '^include=\/etc\/php\/php-fpm\.d\/\*\.conf' /etc/php/php-fpm.conf 'include=/etc/php/php-fpm.d/*.conf';
+    add_string_to_file_if_not_found '^include=\/etc\/php\/php-fpm\.d\/\*\.conf' /etc/php/php-fpm.conf 'include=/etc/php/php-fpm.d/*.conf';
 
-    add-environment-settings;
+    add_environment_settings;
 }
 
 function configure-opcode-cache() {
@@ -68,12 +68,12 @@ function configure-opcode-cache() {
     fi
 }
 
-function configure-php-ini() {
+function configure_php_ini() {
     local additionalPHPIniPath=`detect-additional-php-ini-path`;
     local dupFilesPath="/vagrant/$DUP_BASE/files/php";
 
     ## Copy PHP.ini file
-    copy-linux-distribution-specific-file "php" "$PHP_INI_FILE_NAME" "$additionalPHPIniPath";
+    copy_linux_distribution_specific_file "php" "$PHP_INI_FILE_NAME" "$additionalPHPIniPath";
     chmod o+r "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
 
     if [[ "$PHP_FEATURE_OPCACHE" == "true" ]]; then
@@ -85,7 +85,7 @@ function configure-php-ini() {
     done
 }
 
-function set-typo3-context-env() {
+function set_typo3_context_env() {
     case "$TYPO3_SITE_ENV" in
         DEV)
             echo "env[TYPO3_CONTEXT] = 'Development'" >> $PHP_FPM_CONF_FILE_PATH;
@@ -105,8 +105,8 @@ function set-typo3-context-env() {
     esac
 }
 
-function add-environment-settings() {
-    set-typo3-context-env;
+function add_environment_settings() {
+    set_typo3_context_env;
     echo "env[SITE_ENV] = '$TYPO3_SITE_ENV'"        >> $PHP_FPM_CONF_FILE_PATH;
     echo "env[DB_USERNAME] = '$DB_USERNAME'"        >> $PHP_FPM_CONF_FILE_PATH;
     echo "env[DB_NAME] = '$DB_NAME'"                >> $PHP_FPM_CONF_FILE_PATH;
@@ -114,12 +114,12 @@ function add-environment-settings() {
     echo "env[DB_HOST] = '$DB_HOST'"                >> $PHP_FPM_CONF_FILE_PATH;
 }
 
-function run() {
-    configure-php-ini;
+function main() {
+    configure_php_ini;
     configure-fpm;
 
-    restart-service httpd;
-    restart-service php-fpm;
+    service_restart httpd;
+    service_restart php-fpm;
 }
 
-run $@
+main $@

@@ -5,20 +5,20 @@ set -o errexit
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
 source "$DUP_LIB_PATH";
 
-function prepare-file-system() {
-    local runDirectory=$(grep "# Mutex default:" $(detect-apache-configuration-file)|awk -F: '{ print $2 }');
+function prepare_file_system() {
+    local runDirectory=$(grep "# Mutex default:" $(detect_apache_configuration_file)|awk -F: '{ print $2 }');
     if [[ ! -e $runDirectory ]]; then
         mkdir $runDirectory;
     fi
 }
 
-function prepare-apache-proxy() {
-    add-string-to-file-if-not-found '^LoadModule slotmem_shm_module modules\/mod_slotmem_shm\.so' $(detect-apache-configuration-file) 'LoadModule slotmem_shm_module modules/mod_slotmem_shm.so';
+function prepare_apache_proxy() {
+    add_string_to_file_if_not_found '^LoadModule slotmem_shm_module modules\/mod_slotmem_shm\.so' $(detect_apache_configuration_file) 'LoadModule slotmem_shm_module modules/mod_slotmem_shm.so';
 }
 
-function prepare-document-root() {
-    #detect-and-set-document-root;
-    local documentRoot=$(get-vhost-document-root);
+function prepare_document_root() {
+    #detect_and_set_document_root;
+    local documentRoot=$(get_vhost_document_root);
 
     # Try
     set +e
@@ -34,7 +34,7 @@ function prepare-document-root() {
     set -e
 }
 
-function prepare-vagrant-user() {
+function prepare_vagrant_user() {
     local userName="vagrant";
     local apacheGroup="";
     if [[ "$(getent group apache)" != "" ]]; then
@@ -57,7 +57,7 @@ function prepare-vagrant-user() {
     fi
 }
 
-function configure-vhost() {
+function configure_vhost() {
     local fileToCopy="vhost.conf";
     local apacheExtraConfigurationPath="";
     local checkIncludeString="no";
@@ -73,21 +73,21 @@ function configure-vhost() {
     fi
 
     ## Copy vhost file
-    copy-linux-distribution-specific-file "apache" "$fileToCopy" "$apacheExtraConfigurationPath";
+    copy_linux_distribution_specific_file "apache" "$fileToCopy" "$apacheExtraConfigurationPath";
     chmod o+r "$apacheExtraConfigurationPath/$fileToCopy";
 
     # Check if the vhost file will be loaded
     if [[ $checkIncludeString == "yes" ]]; then
-        add-string-to-file-if-not-found "Include conf/extra/$fileToCopy" $(detect-apache-configuration-file);
+        add_string_to_file_if_not_found "Include conf/extra/$fileToCopy" $(detect_apache_configuration_file);
     fi
 }
 
-function run() {
-    prepare-file-system;
-    prepare-apache-proxy;
-    prepare-document-root;
-    prepare-vagrant-user;
-    configure-vhost;
+function main() {
+    prepare_file_system;
+    prepare_apache_proxy;
+    prepare_document_root;
+    prepare_vagrant_user;
+    configure_vhost;
 }
 
-run $@
+main $@

@@ -2,12 +2,12 @@
 set -o nounset
 set -o errexit
 
-function _install-with-pacman() {
+function _install_with_pacman() {
     local allPackages=$@;
     pacman -S --noconfirm --needed $allPackages;
 }
 
-function _install-with-apk() {
+function _install_with_apk() {
     local allPackages=$@;
 
     # Replace package names
@@ -17,7 +17,7 @@ function _install-with-apk() {
     apk add $allPackages;
 }
 
-function _install-with-yum() {
+function _install_with_yum() {
     >&2 echo "Not implemented yet";
 }
 
@@ -26,11 +26,11 @@ function install() {
     echo "Request install packages $@";
     set +e;
     if hash pacman 2>/dev/null; then
-        _install-with-pacman $@;
+        _install_with_pacman $@;
     elif hash apk 2>/dev/null; then
-        _install-with-apk $@;
+        _install_with_apk $@;
     elif hash yum 2>/dev/null; then
-        _install-with-yum $@;
+        _install_with_yum $@;
     else
         >&2 echo "No matching installer found";
     fi

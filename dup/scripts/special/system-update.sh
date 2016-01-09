@@ -2,7 +2,7 @@
 set -o nounset
 set -o errexit
 
-function _update-with-pacman() {
+function _update_with_pacman() {
     # System upgrade
     pacman -Syu --noconfirm;
 
@@ -15,24 +15,24 @@ function _update-with-pacman() {
     pacman -Sc --noconfirm;
 }
 
-function _update-with-apk() {
+function _update_with_apk() {
     apk update
     apk upgrade
 
 }
 
-function _update-with-yum() {
+function _update_with_yum() {
     >&2 echo "Not implemented yet";
 }
 
 
 function update() {
     if hash pacman 2>/dev/null; then
-        _update-with-pacman;
+        _update_with_pacman;
     elif hash apk 2>/dev/null; then
-        _update-with-apk;
+        _update_with_apk;
     elif hash yum 2>/dev/null; then
-        _update-with-yum;
+        _update_with_yum;
     else
         >&2 echo "No matching updater found";
     fi

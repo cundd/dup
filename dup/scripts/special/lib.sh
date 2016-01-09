@@ -8,11 +8,11 @@ function error() {
 # --------------------------------------------------------
 # HTTP/Apache methods
 # --------------------------------------------------------
-function _document-root() {
-    echo "/var/www/dup.cundd.net/htdocs";
+function _document_root() {
+    echo "/var/www/vhosts/dup.cundd.net/httpdocs";
 }
 
-function detect-and-set-document-root() {
+function detect_and_set_document_root() {
     local apacheBasePath="/etc";
 
     if [[ -e "/etc/apache2/" ]]; then
@@ -23,11 +23,11 @@ function detect-and-set-document-root() {
 
     local apacheConfFile=$(grep -lir '^DocumentRoot' $apacheBasePath|head -n1);
 
-    add-string-to-file-if-not-found "DocumentRoot \"$(_document-root)\"" $apacheConfFile;
-    detect-document-root;
+    add_string_to_file_if_not_found "DocumentRoot \"$(_document_root)\"" $apacheConfFile;
+    detect_document_root;
 }
 
-function detect-document-root() {
+function detect_document_root() {
     # local apacheBasePath="/etc";
     #
     # if [[ -e "/etc/apache2/" ]]; then
@@ -36,14 +36,14 @@ function detect-document-root() {
     #     apacheBasePath="/etc/httpd/conf";
     # fi
     #echo $(grep -hir '^DocumentRoot' $apacheBasePath|head -n1|awk '/^DocumentRoot/{gsub("\"", ""); print $2}')
-    _document-root;
+    _document_root;
 }
 
-function get-vhost-document-root() {
-    echo "/var/www/dup.cundd.net/htdocs";
+function get_vhost_document_root() {
+    echo "/var/www/vhosts/dup.cundd.net/httpdocs";
 }
 
-function detect-apache-configuration-file() {
+function detect_apache_configuration_file() {
     if [[ -e "/etc/apache2/httpd.conf" ]]; then
         echo "/etc/apache2/httpd.conf";
     elif [[ -e "/etc/httpd/conf/httpd.conf" ]]; then
@@ -56,7 +56,7 @@ function detect-apache-configuration-file() {
 # --------------------------------------------------------
 # OS/Linux methods
 # --------------------------------------------------------
-function detect-linux-distribution() {
+function detect_linux_distribution() {
     if   [ -f "/etc/SUSE-release" ];          then echo "Novell SUSE";
     elif [ -f "/etc/redhat-release," ];       then echo "Red Hat";
     elif [ -f "/etc/fedora-release" ];        then echo "Fedora";
@@ -74,7 +74,7 @@ function detect-linux-distribution() {
     else echo "Linux"; fi
 }
 
-function get-linux-distribution-release-file() {
+function get_linux_distribution_release_file() {
     if   [ -f "/etc/SUSE-release" ];          then echo "/etc/SUSE-release";
     elif [ -f "/etc/redhat-release" ];        then echo "/etc/redhat-release";
     elif [ -f "/etc/fedora-release" ];        then echo "/etc/fedora-release";
@@ -95,11 +95,11 @@ function get-linux-distribution-release-file() {
     fi
 }
 
-function get-dup-linux-distribution-specific-folder() {
-    basename `get-linux-distribution-release-file` | sed 's/release//' | sed 's/[-_]//'| tr '[:upper:]' '[:lower:]';
+function get_dup_linux_distribution_specific_folder() {
+    basename `get_linux_distribution_release_file` | sed 's/release//' | sed 's/[-_]//'| tr '[:upper:]' '[:lower:]';
 }
 
-function copy-linux-distribution-specific-file() {
+function copy_linux_distribution_specific_file() {
     if [ -z ${1+x} ]; then
         error "Missing argument directory";
         return 1;
@@ -122,12 +122,12 @@ function copy-linux-distribution-specific-file() {
     local dupFilesPath="/vagrant/$DUP_BASE/files/$subDirectory";
 
     ## Check if there is a special file for the linux distribution
-    if [[ -e "$dupFilesPath/$(get-dup-linux-distribution-specific-folder)/$fileName" ]]; then
-        cp "$dupFilesPath/$(get-dup-linux-distribution-specific-folder)/$fileName" "$destination";
+    if [[ -e "$dupFilesPath/$(get_dup_linux_distribution_specific_folder)/$fileName" ]]; then
+        cp "$dupFilesPath/$(get_dup_linux_distribution_specific_folder)/$fileName" "$destination";
     elif [[ -e "$dupFilesPath/general/$fileName" ]]; then # Copy the default file
         cp "$dupFilesPath/general/$fileName" "$destination";
     else
-        error "No distribution specific or general file $fileName found $(get-dup-linux-distribution-specific-folder)";
+        error "No distribution specific or general file $fileName found $(get_dup_linux_distribution_specific_folder)";
         return 1;
     fi
 }
@@ -135,7 +135,7 @@ function copy-linux-distribution-specific-file() {
 # --------------------------------------------------------
 # File methods
 # --------------------------------------------------------
-function add-string-to-file-if-not-found() {
+function add_string_to_file_if_not_found() {
     if [[ -z ${1+x} ]]; then echo "Missing argument 1 (pattern)"; return 1; fi;
     if [[ -z ${2+x} ]]; then echo "Missing argument 2 (file)"; return 1; fi;
 
@@ -154,131 +154,131 @@ function add-string-to-file-if-not-found() {
 # --------------------------------------------------------
 # Service methods
 # --------------------------------------------------------
-function _get-service-alternative() {
+function _get_service_alternative() {
     if [[ "$1" == "mysqld" ]]; then
         echo "mariadb";
     fi
     echo "";
 }
 
-function _get-service-real() {
-    if [[ "$(_get-service-alternative $1)" != "" ]]; then
-        echo $(_get-service-alternative $1);
+function _get_service_real() {
+    if [[ "$(_get_service_alternative $1)" != "" ]]; then
+        echo $(_get_service_alternative $1);
     else
         echo "$1";
     fi
 }
 
 # Starting
-function _start-systemd-service() {
+function _service_start_systemd() {
     systemctl daemon-reload;
     systemctl start "$1.service";
 }
 
-function _start-rc-service-service() {
+function _service_start_rc-service() {
     rc-service "$1" start;
 }
 
-function _start-initd-service() {
+function _service_start_initd() {
     "/etc/init.d/$1" start;
 }
 
-function start-service() {
+function service_start() {
     if [ -z ${1+x} ]; then
         error "Missing argument service";
         return 1;
     fi
 
     if hash systemctl 2>/dev/null; then # systemd
-        _start-systemd-service $@;
+        _service_start_systemd $@;
 
     elif hash rc-service 2>/dev/null; then # rc-service
-        _get-service-real $1
-        _start-rc-service-service $(_get-service-real $1);
+        _get_service_real $1
+        _service_start_rc-service $(_get_service_real $1);
 
     elif [[ -x "/etc/init.d/$1" ]]; then # init.d
-        _start-initd-service $@;
+        _service_start_initd $@;
 
-    elif [[ "$(_get-service-alternative $1)" != "" ]]; then
-        start-service $(_get-service-alternative $1);
+    elif [[ "$(_get_service_alternative $1)" != "" ]]; then
+        service_start $(_get_service_alternative $1);
     else
         error "No matching service starter found for $1";
     fi
 }
 
 # Stopping
-function _stop-systemd-service() {
+function _service_stop_systemd() {
     systemctl daemon-reload;
     systemctl stop "$1.service";
 }
 
-function _stop-rc-service-service() {
+function _service_stop_rc-service() {
     rc-service "$1" stop;
 }
 
-function _stop-initd-service() {
+function _service_stop_initd() {
     "/etc/init.d/$1" stop;
 }
 
-function stop-service() {
+function service_stop() {
     if [ -z ${1+x} ]; then
         error "Missing argument service";
         return 1;
     fi
     if hash systemctl 2>/dev/null; then # systemd
-        _stop-systemd-service $@;
+        _service_stop_systemd $@;
 
     elif hash rc-service 2>/dev/null; then # rc-service
-        _stop-rc-service-service $(_get-service-real $1);
+        _service_stop_rc-service $(_get_service_real $1);
 
     elif [[ -x "/etc/init.d/$1" ]]; then # init.d
-        _stop-initd-service $@;
+        _service_stop_initd $@;
 
-    elif [[ "$(_get-service-alternative $1)" != "" ]]; then
-        stop-service $(_get-service-alternative $1);
+    elif [[ "$(_get_service_alternative $1)" != "" ]]; then
+        service_stop $(_get_service_alternative $1);
     else
         error "No matching service stopper found for $1";
     fi
 }
 
 # Restart
-function _restart-systemd-service() {
+function _service_restart_systemd() {
     systemctl daemon-reload;
     systemctl restart "$1.service";
 }
 
-function _restart-rc-service-service() {
+function _service_restart_rc-service() {
     rc-service "$1" restart;
 }
 
-function _restart-initd-service() {
+function _service_restart_initd() {
     "/etc/init.d/$1" restart;
 }
 
-function restart-service() {
+function service_restart() {
     if [ -z ${1+x} ]; then
         error "Missing argument service";
         return 1;
     fi
 
     if hash systemctl 2>/dev/null; then # systemd
-        _restart-systemd-service $@;
+        _service_restart_systemd $@;
 
     elif hash rc-service 2>/dev/null; then # rc-service
-        _restart-rc-service-service $(_get-service-real $1);
+        _service_restart_rc-service $(_get_service_real $1);
 
     elif [[ -x "/etc/init.d/$1" ]]; then # init.d
-        _restart-initd-service $@;
+        _service_restart_initd $@;
 
-    elif [[ "$(_get-service-alternative $1)" != "" ]]; then
-        restart-service $(_get-service-alternative $1);
+    elif [[ "$(_get_service_alternative $1)" != "" ]]; then
+        service_restart $(_get_service_alternative $1);
     else
         error "No matching service restarter found for $1";
     fi
 }
 
 # Service status
-function _service-status-systemd() {
+function _service_status_systemd() {
     systemctl --quiet status httpd >/dev/null;
     if [[ $? -ne 0 ]]; then
         echo "down";
@@ -287,7 +287,7 @@ function _service-status-systemd() {
     fi
 }
 
-function _service-status-rc-service() {
+function _service_status_rc-service() {
     rc-service -q httpd status;
     if [[ $? -ne 0 ]]; then
         echo "down";
@@ -296,28 +296,28 @@ function _service-status-rc-service() {
     fi
 }
 
-function _service-status-initd() {
+function _service_status_initd() {
     error "Not implemented";
     return 1;
 }
 
-function service-status() {
+function service_status() {
     if [ -z ${1+x} ]; then
         error "Missing argument service";
         return 1;
     fi
 
     if hash systemctl 2>/dev/null; then # systemd
-        _service-status-systemd $@;
+        _service_status_systemd $@;
 
     elif hash rc-service 2>/dev/null; then # rc-service
-        _service-status-rc-service $(_get-service-real $1);
+        _service_status_rc-service $(_get_service_real $1);
 
     elif [[ -x "/etc/init.d/$1" ]]; then # init.d
-        _service-status-initd $@;
+        _service_status_initd $@;
 
-    elif [[ "$(_get-service-alternative $1)" != "" ]]; then
-        service-status $(_get-service-alternative $1);
+    elif [[ "$(_get_service_alternative $1)" != "" ]]; then
+        service_status $(_get_service_alternative $1);
     else
         error "Could not determine status for service $1";
     fi
