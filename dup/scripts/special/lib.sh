@@ -2,7 +2,7 @@
 # Helpers
 # --------------------------------------------------------
 function error() {
-    >& 2 echo "$@";
+    >&2 echo "$@";
 }
 
 # --------------------------------------------------------
@@ -193,7 +193,6 @@ function duplib::service_start() {
         duplib::_service_start_systemd $@;
 
     elif hash rc-service 2>/dev/null; then # rc-service
-        duplib::_get_service_real $1
         duplib::_service_start_rc-service $(duplib::_get_service_real $1);
 
     elif [[ -x "/etc/init.d/$1" ]]; then # init.d
@@ -203,6 +202,7 @@ function duplib::service_start() {
         duplib::service_start $(duplib::_get_service_alternative $1);
     else
         error "No matching service starter found for $1";
+        return 1;
     fi
 }
 
@@ -238,6 +238,7 @@ function duplib::service_stop() {
         duplib::service_stop $(duplib::_get_service_alternative $1);
     else
         error "No matching service stopper found for $1";
+        return 1;
     fi
 }
 
@@ -274,12 +275,13 @@ function duplib::service_restart() {
         duplib::service_restart $(duplib::_get_service_alternative $1);
     else
         error "No matching service restarter found for $1";
+        return 1;
     fi
 }
 
 # Service status
 function duplib::_service_status_systemd() {
-    systemctl --quiet status httpd >/dev/null;
+    systemctl --quiet status "$1" >/dev/null;
     if [[ $? -ne 0 ]]; then
         echo "down";
     else
@@ -288,12 +290,7 @@ function duplib::_service_status_systemd() {
 }
 
 function duplib::_service_status_rc-service() {
-    rc-service -q httpd status;
-    if [[ $? -ne 0 ]]; then
-        echo "down";
-    else
-        echo "up";
-    fi
+    rc-service -q "$1" status && echo "up" || echo "down";
 }
 
 function duplib::_service_status_initd() {
@@ -320,5 +317,40 @@ function duplib::service_status() {
         duplib::service_status $(duplib::_get_service_alternative $1);
     else
         error "Could not determine status for service $1";
+        return 1;
     fi
+}
+
+function duplib::service_is_up() {
+    if [ -z ${1+x} ]; then
+        error "Missing argument service";
+        return 2;
+    fi
+
+    if [[ $(duplib::service_status $1) == "up" ]]; then
+        return 0;
+    else
+        return 1;
+    fi
+}
+
+function duplib::service_is_down() {
+    if [ -z ${1+x} ]; then
+        error "Missing argument service";
+        return 2;
+    fi
+
+    if [[ $(duplib::service_status $1) == "down" ]]; then
+        return 0;
+    else
+        return 1;
+    fi
+}
+
+function duplib::service_start_if_down() {
+    duplib::service_is_up $1 || duplib::service_start $@;
+}
+
+function duplib::service_stop_if_running() {
+    duplib::service_is_down $1 || duplib::service_stop $@;
 }
