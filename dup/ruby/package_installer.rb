@@ -5,3 +5,9 @@ def configureInstallPackages(config, packages)
     allPackages = packages.join(" ")
     config.vm.provision "install-packages", type: "shell", privileged: true, path: installerPath, args: [allPackages]
 end
+def configureInstallAllPackages(config)
+    packages = getConfig()['packages']
+    if packages
+        configureInstallPackages(config, packages)
+    end
+end

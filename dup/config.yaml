@@ -1,13 +1,22 @@
 vagrant:
     vm:
         # Change the VM's static IP address
-        ip: "192.168.0.10"
+        ip: "192.168.12.10"
 
         # Configure the hostname setup
         # "automatic"       = set to the folder name the Vagrant file is located
         # "" (Empty string) = do not set the hostname
         # "my-hostname"     = use the value as hostname
-        hostname: 
+        hostname:
+
+        # Vagrant box to use
+        # "dupal"               = small size Alpine Linux (PHP 5.6)
+        # "terrywang/archlinux" = Arch Linux (PHP 7)
+        box: "dupal"
+
+        # forwarded_ports:
+        #     # Guest => Host
+        #     80: 8080
 scripts:
     ENV:
         DB_ROOT_PASSWORD: "3FwDkQ6gGeVVYDkES3H95auCVekAnG"

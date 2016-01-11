@@ -5,11 +5,13 @@ def configureVagrant(config)
     dupFilesBase = "#{dir}/../files"
     vagrantBase = File.expand_path("#{dir}/../../")
 
-    # Use the vagrant box "dupal" from
+    # Vagrant box to use
+    # Default dup box is "dupal" from
     # https://github.com/cundd/vagrant-boxes/releases/download/0.1.0/alpine-3.3.0-x86_64.box
-    config.vm.box = "dupal"
+    config.vm.box = getConfig()['vagrant']['vm']['box']
 
-    config.vm.network "forwarded_port", guest: 80, host: 8080
+    configureAllForwardedPorts(config)
+
     config.vm.network "private_network", ip: getConfig()['vagrant']['vm']['ip']
 
     # Configure synced folders
@@ -26,7 +28,7 @@ def configureVagrant(config)
     configureRunScriptsFromDirectory(config, dupScriptsBase + '/special/system-update.sh', privileged: true)
 
     # Install packages
-    configureInstallPackages(config, getConfig()['packages'])
+    configureInstallAllPackages(config)
 
     # Run scripts
     configureRunScriptsFromDirectory(config, dupScriptsBase + '/privileged_once/*.sh', privileged: true)
@@ -35,5 +37,5 @@ def configureVagrant(config)
     configureRunScriptsFromDirectory(config, dupScriptsBase + '/unprivileged_always/*.sh', always: true)
 
     # Start services
-    configureServices(config, getConfig()['services'])
+    configureAllServices(config)
 end

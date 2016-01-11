@@ -11,3 +11,10 @@ def configureServices(config, services)
         configureService(config, service)
     end
 end
+
+def configureAllServices(config)
+    services = getConfig()['services']
+    if services
+        configureServices(config, services)
+    end
+end
