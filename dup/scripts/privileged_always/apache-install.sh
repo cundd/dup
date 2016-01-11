@@ -6,9 +6,13 @@ DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
 source "$DUP_LIB_PATH";
 
 function prepare_file_system() {
-    local runDirectory=$(grep "# Mutex default:" $(duplib::detect_apache_configuration_file)|awk -F: '{ print $2 }');
-    if [[ ! -e $runDirectory ]]; then
-        mkdir $runDirectory;
+    local apacheConfFile=$(duplib::detect_apache_configuration_file);
+    local runDirectory=$(grep "# Mutex default:" $apacheConfFile|awk -F: '{ print $2 }');
+
+    if [[ "$runDirectory" != "" ]]
+        if [[ ! -e $runDirectory ]]; then
+            mkdir $runDirectory;
+        fi
     fi
 }
 

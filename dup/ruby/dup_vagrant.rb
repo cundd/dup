@@ -4,7 +4,7 @@ def configureVagrant(config)
     vagrantBase = dir + '/' + vagrantName
     vagrantScriptsBase = vagrantBase + '/scripts'
     vagrantFileBase = vagrantBase + '/files'
-    
+
     # Use the vagrant box "dupal" from
     # https://github.com/cundd/vagrant-boxes/releases/download/0.1.0/alpine-3.3.0-x86_64.box
     config.vm.box = "dupal"
@@ -22,6 +22,7 @@ def configureVagrant(config)
 
     # Install packages
     configureInstallPackages(config, getConfig()['packages'])
+    
 
     # Run scripts
     configureRunScriptsFromDirectory(config, vagrantScriptsBase + '/privileged_once/*.sh', privileged: true)
