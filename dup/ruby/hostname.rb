@@ -1,3 +1,3 @@
 def configureAutomaticHostname(config, path)
-    config.vm.hostname = File.basename(File.dirname(File.expand_path(path)))
+    config.vm.hostname = File.basename(File.expand_path(path))
 end
