@@ -19,7 +19,7 @@ function prepare_installation() {
 }
 
 function test_root_password() {
-    duplib::service_start_if_down mysqld > /dev/null;
+    duplib::service_start_if_down mysqld &> /dev/null;
     {
         mysql -u root -p$DB_ROOT_PASSWORD -e "SHOW DATABASES" &> /dev/null;
     } || {
@@ -35,7 +35,7 @@ function provision_root() {
 }
 
 function test_client_database() {
-    duplib::service_start_if_down mysqld > /dev/null;
+    duplib::service_start_if_down mysqld &> /dev/null;
     set +e;
     local result="";
     result=$(mysql -u$DB_USERNAME -p$DB_PASSWORD -D$DB_NAME -e "SHOW TABLES;" 2>&1);
