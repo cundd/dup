@@ -1,6 +1,6 @@
 vagrant:
     vm:
-        ip: "192.168.200.10"
+        ip: "192.168.200.10" # <- Change this
 scripts:
     ENV:
         DB_ROOT_PASSWORD: "3FwDkQ6gGeVVYDkES3H95auCVekAnG"
