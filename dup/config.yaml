@@ -34,6 +34,7 @@ scripts:
 
         DUP_BASE: "dup"
         SETUP_BASH: true
+        SETUP_SASS: true
 
 packages:
     - git
