@@ -9,7 +9,7 @@ function prepare_file_system() {
     local apacheConfFile=$(duplib::detect_apache_configuration_file);
     local runDirectory=$(grep "# Mutex default:" $apacheConfFile|awk -F: '{ print $2 }');
 
-    if [[ "$runDirectory" != "" ]]
+    if [[ "$runDirectory" != "" ]]; then
         if [[ ! -e $runDirectory ]]; then
             mkdir $runDirectory;
         fi
