@@ -18,10 +18,12 @@ def configureVagrant(config)
 
     # Set the hostname
     configureAutomaticHostname(config, vagrantBase)
+    
+    # Configure networking
+    configureRunScriptsFromDirectory(config, dupScriptsBase + '/special/networking-setup.sh', privileged: true)
 
     # Upgrade the system
     configureRunScriptsFromDirectory(config, dupScriptsBase + '/special/system-update.sh', privileged: true)
-
 
     # Install packages
     configureInstallPackages(config, getConfig()['packages'])
