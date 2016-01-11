@@ -1,6 +1,13 @@
 vagrant:
     vm:
-        ip: "192.168.200.10" # <- Change this
+        # Change the VM's static IP address
+        ip: "192.168.0.10"
+
+        # Configure the hostname setup
+        # "automatic"       = set to the folder name the Vagrant file is located
+        # "" (Empty string) = do not set the hostname
+        # "my-hostname"     = use the value as hostname
+        hostname: 
 scripts:
     ENV:
         DB_ROOT_PASSWORD: "3FwDkQ6gGeVVYDkES3H95auCVekAnG"

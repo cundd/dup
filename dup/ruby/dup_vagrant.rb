@@ -1,9 +1,9 @@
 def configureVagrant(config)
     dir = File.dirname(File.expand_path(__FILE__))
     dupDirectoryName = 'dup'
-    dupScriptsBase = dir + '/../scripts'
-    dupFilesBase = dir + '/../files'
-    vagrantBase = File.expand_path(dir + '/../../')
+    dupScriptsBase = "#{dir}/../scripts"
+    dupFilesBase = "#{dir}/../files"
+    vagrantBase = File.expand_path("#{dir}/../../")
 
     # Use the vagrant box "dupal" from
     # https://github.com/cundd/vagrant-boxes/releases/download/0.1.0/alpine-3.3.0-x86_64.box
@@ -18,7 +18,7 @@ def configureVagrant(config)
 
     # Set the hostname
     configureAutomaticHostname(config, vagrantBase)
-    
+
     # Configure networking
     configureRunScriptsFromDirectory(config, dupScriptsBase + '/special/networking-setup.sh', privileged: true)
 
