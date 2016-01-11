@@ -1,6 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+Vagrant.require_version ">= 1.8.0"
+
 dir = File.dirname(File.expand_path(__FILE__))
 vagrantName = 'dup'
 vagrantBase = dir + '/' + vagrantName
@@ -13,6 +15,7 @@ require "#{vagrantBase}/ruby/include.rb"
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure(2) do |config|
+  # Let dup configure vagrant
   configureVagrant(config)
 
   # The most common configuration options are documented and commented below.
