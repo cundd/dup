@@ -59,17 +59,30 @@ function provision_client() {
 }
 
 function provision_client_database() {
-    local dupDatabaseFilesPath="/vagrant/$DUP_BASE/files/database";
-    local dupImportDatabaseName="import.sql";
-    if [[ -e "$dupDatabaseFilesPath/$dupImportDatabaseName" ]]; then # SQL file
-        echo "Import $dupImportDatabaseName";
-        cat "$dupDatabaseFilesPath/$dupImportDatabaseName" | mysql -u$DB_USERNAME -p$DB_PASSWORD -D$DB_NAME;
-    elif [[ -e "$dupDatabaseFilesPath/$dupImportDatabaseName.gz" ]]; then # GZIP SQL file
-        echo "Import $dupImportDatabaseName.gz";
-        gunzip < "$dupDatabaseFilesPath/$dupImportDatabaseName.gz" | mysql -u$DB_USERNAME -p$DB_PASSWORD -D$DB_NAME;
-    else
-        echo "No database file to import";
+    local file="$1";
+    local gz="$2";
+    if [[ -e $file ]]; then # SQL file
+        echo "Import datbase file $(basename $file)";
+        echo "This may take a while...";
+
+        if [[ "$gz" == "true" ]]; then
+            gunzip < "$file" | mysql -u$DB_USERNAME -p$DB_PASSWORD -D$DB_NAME;
+        else
+            cat "$file" | mysql -u$DB_USERNAME -p$DB_PASSWORD -D$DB_NAME;
+        fi
     fi
+}
+
+function provision_client_databases() {
+    local dupDatabaseFilesPath="/vagrant/$DUP_BASE/files/database/import";
+
+    for file in $(ls -1 $dupDatabaseFilesPath/*.sql 2> /dev/null); do
+        provision_client_database $file "false";
+    done
+
+    for file in $(ls -1 $dupDatabaseFilesPath/*.sql.gz 2> /dev/null); do
+        provision_client_database $file "true";
+    done
 }
 
 function test_client_database_tables() {
@@ -103,8 +116,10 @@ function provision_user() {
     fi
 
     if [[ `test_client_database_tables` == "notset" ]]; then
-       echo "Provision MySQL client tables";
-       provision_client_database;
+        echo "Provision MySQL client tables";
+        provision_client_databases;
+    else
+        echo "MySQL client table already exists";
     fi
 }
 
@@ -112,6 +127,5 @@ function main() {
     provision_base;
     provision_user;
 }
-
 
 main $@
