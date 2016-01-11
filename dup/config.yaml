@@ -14,9 +14,9 @@ vagrant:
         # "terrywang/archlinux" = Arch Linux (PHP 7)
         box: "dupal"
 
-        # forwarded_ports:
-        #     # Guest => Host
-        #     80: 8080
+        forwarded_ports:
+            # Guest => Host
+            80: 8080
 scripts:
     ENV:
         DB_ROOT_PASSWORD: "3FwDkQ6gGeVVYDkES3H95auCVekAnG"
