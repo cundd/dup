@@ -37,6 +37,10 @@ function print_help() {
 
 Commands:
     download user@server    downloads fileadmin and typo3conf using rsync
+    halt                    stops the vagrant machine
+    provision               provisions the vagrant machine
+    ssh                     connects to the vagrant machine via SSH
+    up                      starts and provisions the vagrant environment
 ";
 }
 
@@ -51,6 +55,18 @@ function main() {
     case "$subcommand" in
         download)
             download $@;
+        ;;
+        halt)
+            vagrant halt $@
+        ;;
+        provision)
+            vagrant provision $@
+        ;;
+        ssh)
+            vagrant ssh $@
+        ;;
+        up)
+            vagrant up $@
         ;;
         *)
             print_help;
