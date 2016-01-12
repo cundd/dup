@@ -2,7 +2,7 @@
 set -o nounset
 
 SETUP_SASS="${SETUP_SASS:-false}";
-SOURCE_DIRECTORY_PATH="${SOURCE_DIRECTORY_PATH:-sassc-source}";
+SOURCE_DIRECTORY_PATH="${SOURCE_DIRECTORY_PATH:-.sassc-source}";
 BINARY_TARGET_PATH="${BINARY_TARGET_PATH:-/usr/local/bin/sassc}";
 
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
