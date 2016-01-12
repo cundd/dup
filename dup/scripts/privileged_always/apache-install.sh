@@ -33,7 +33,7 @@ function prepare_document_root() {
         chown http:http $documentRoot;
         chmod g+w $documentRoot;
     else
-        >&2 echo "Could not detect apache/http group name";
+        duplib::error "Could not detect apache/http group name";
     fi
     set -e
 }
@@ -54,7 +54,7 @@ function prepare_vagrant_user() {
         elif hash adduser 2>/dev/null; then # adduser
             adduser $userName $apacheGroup;
         else
-            >&2 echo "No command known to add the user to the group";
+            duplib::error "No command known to add the user to the group";
         fi
     else
         echo "User $userName already in apache group: $apacheGroup";
@@ -72,7 +72,7 @@ function configure_vhost() {
         apacheExtraConfigurationPath="/etc/httpd/conf/extra";
         checkIncludeString="yes";
     else
-        >&2 echo "Apache configuration directory not found";
+        duplib::error "Apache configuration directory not found";
         return 1;
     fi
 
