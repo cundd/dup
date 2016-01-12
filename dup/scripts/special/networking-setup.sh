@@ -2,16 +2,17 @@
 set -o nounset
 set -o errexit
 
-function setup-nameserver() {
-    echo "<<NS_SETUP
-# Add Google DNS
-nameserver 8.8.8.8
-nameserver 8.8.4.4
-NS_SETUP" >> /etc/resolv.conf;
+DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
+source "$DUP_LIB_PATH";
+
+function setup_nameserver() {
+    duplib::add_string_to_file_if_not_found "# Add Google DNS" /etc/resolv.conf;
+    duplib::add_string_to_file_if_not_found "nameserver 8.8.8.8" /etc/resolv.conf;
+    duplib::add_string_to_file_if_not_found "nameserver 8.8.4.4" /etc/resolv.conf;
 }
 
 function main() {
-    setup-nameserver;
+    setup_nameserver;
 }
 
 main $@
