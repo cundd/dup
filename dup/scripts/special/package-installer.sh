@@ -8,7 +8,7 @@ source "$DUP_LIB_PATH";
 function main() {
     echo "Request install packages $@";
     set +e;
-    duplib::package_install;
+    duplib::package_install $@;
     set -e;
 }
 
