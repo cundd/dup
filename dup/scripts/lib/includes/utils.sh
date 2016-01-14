@@ -22,7 +22,7 @@ function duplib::add_string_to_file_if_not_found() {
 # Helpers
 # --------------------------------------------------------
 function duplib::get_option_is_set() {
-    if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (user@server)"; return 1; fi;
+    if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (option)"; return 1; fi;
 
     local option="$1";
     shift;
