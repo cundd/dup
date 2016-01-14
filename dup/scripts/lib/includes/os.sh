@@ -2,24 +2,27 @@
 # OS/Linux methods
 # --------------------------------------------------------
 function duplib::detect_linux_distribution() {
-    if   [ -f "/etc/SUSE-release" ];          then echo "Novell SUSE";
-    elif [ -f "/etc/redhat-release," ];       then echo "Red Hat";
-    elif [ -f "/etc/fedora-release" ];        then echo "Fedora";
-    elif [ -f "/etc/slackware-release," ];    then echo "Slackware";
-    elif [ -f "/etc/debian_release," ];       then echo "Debian";
-    elif [ -f "/etc/mandrake-release" ];      then echo "Mandrake";
-    elif [ -f "/etc/yellowdog-release" ];     then echo "Yellow dog";
-    elif [ -f "/etc/sun-release" ];           then echo "Sun JDS";
-    elif [ -f "/etc/release" ];               then echo "Solaris/Sparc";
-    elif [ -f "/etc/gentoo-release" ];        then echo "Gentoo";
-    elif [ -f "/etc/UnitedLinux-release" ];   then echo "UnitedLinux";
-    elif [ -f "/etc/lsb-release" ];           then echo "ubuntu";
-    elif [ -f "/etc/alpine-release" ];        then echo "Alpine";
-    elif [ -f "/etc/arch-release" ];          then echo "Arch Linux";
-    else echo "Linux"; fi
+    case $(duplib::get_linux_distribution_release_file 2> /dev/null) in
+        '/etc/SUSE-release')          echo "Novell SUSE";;
+        '/etc/redhat-release')        echo "Red Hat";;
+        '/etc/fedora-release')        echo "Fedora";;
+        '/etc/slackware-release')     echo "Slackware";;
+        '/etc/debian_release')        echo "Debian";;
+        '/etc/mandrake-release')      echo "Mandrake";;
+        '/etc/yellowdog-release')     echo "Yellow dog";;
+        '/etc/sun-release')           echo "Sun JDS";;
+        '/etc/release')               echo "Solaris/Sparc";;
+        '/etc/gentoo-release')        echo "Gentoo";;
+        '/etc/UnitedLinux-release')   echo "UnitedLinux";;
+        '/etc/lsb-release')           echo "Ubuntu";;
+        '/etc/alpine-release')        echo "Alpine";;
+        '/etc/arch-release')          echo "Arch Linux";;
+        '/etc/os-release')            echo "Debian";; # Is this correct?
+        *) uname;;
+    esac
 }
 
-function get_linux_distribution_release_file() {
+function duplib::get_linux_distribution_release_file() {
     if   [ -f "/etc/SUSE-release" ];          then echo "/etc/SUSE-release";
     elif [ -f "/etc/redhat-release" ];        then echo "/etc/redhat-release";
     elif [ -f "/etc/fedora-release" ];        then echo "/etc/fedora-release";
@@ -34,6 +37,7 @@ function get_linux_distribution_release_file() {
     elif [ -f "/etc/lsb-release" ];           then echo "/etc/lsb-release";
     elif [ -f "/etc/alpine-release" ];        then echo "/etc/alpine-release";
     elif [ -f "/etc/arch-release" ];          then echo "/etc/arch-release";
+    elif [ -f "/etc/os-release" ];            then echo "/etc/os-release";
     else
         error "Could not determine the release file";
         return 1;
@@ -41,7 +45,7 @@ function get_linux_distribution_release_file() {
 }
 
 function duplib::get_dup_linux_distribution_specific_folder() {
-    basename `get_linux_distribution_release_file` | sed 's/release//' | sed 's/[-_]//'| tr '[:upper:]' '[:lower:]';
+    basename `duplib::get_linux_distribution_release_file` | sed 's/release//' | sed 's/[-_]//'| tr '[:upper:]' '[:lower:]';
 }
 
 function duplib::copy_linux_distribution_specific_file() {
