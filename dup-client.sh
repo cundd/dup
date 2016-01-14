@@ -5,7 +5,10 @@ set -o errexit
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/dup/scripts/lib/duplib.sh}";
 source "$DUP_LIB_PATH";
 
-function download() {
+# --------------------------------------------------------
+# Subcommands
+# --------------------------------------------------------
+function dupcli::download() {
     if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (user@server)"; return 1; fi;
 
     local user_and_server="$1";
@@ -28,11 +31,28 @@ function download() {
     rsync -zar $progress $dry $excludes "$user_and_server:httpdocs/fileadmin/" "httpdocs/fileadmin/"
 }
 
+function dupcli::halt() {
+    vagrant halt $@;
+}
+
+function dupcli::provision() {
+    vagrant provision $@;
+}
+
+function dupcli::ssh() {
+    vagrant ssh $@;
+}
+
+function dupcli::up() {
+    vagrant up $@;
+}
+
+
 
 # --------------------------------------------------------
 # Helper methods
 # --------------------------------------------------------
-function print_help() {
+function dupcli::_print_help() {
     echo "Usage $0 <command> [<args>]
 
 Commands:
@@ -46,32 +66,19 @@ Commands:
 
 function main() {
     if [[ -z ${1+x} ]]; then
-        print_help;
+        dupcli::_print_help;
         return 1;
     fi;
 
     local subcommand="$1";
     shift;
-    case "$subcommand" in
-        download)
-            download $@;
-        ;;
-        halt)
-            vagrant halt $@
-        ;;
-        provision)
-            vagrant provision $@
-        ;;
-        ssh)
-            vagrant ssh $@
-        ;;
-        up)
-            vagrant up $@
-        ;;
-        *)
-            print_help;
-        ;;
-    esac
+
+    if type "dupcli::$subcommand" &> /dev/null; then
+        dupcli::$subcommand $@;
+    else
+        dupcli::_print_help;
+        return 1;
+    fi
 }
 
 main $@;
