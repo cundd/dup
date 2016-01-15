@@ -22,13 +22,20 @@ function dupcli::list_plugins() {
 function dupcli::_print_help() {
     echo "Usage $0 <command> [<args>]
 
-Commands:
-    download user@server    downloads fileadmin and typo3conf using rsync
-    halt                    stops the vagrant machine
-    provision               provisions the vagrant machine
-    ssh                     connects to the vagrant machine via SSH
-    up                      starts and provisions the vagrant environment
-";
+Commands:";
+    for command in $(dupcli::_list_commands;); do
+        echo "    $command";
+    done
+
+#     echo "Usage $0 <command> [<args>]
+#
+# Commands:
+#     download user@server    downloads fileadmin and typo3conf using rsync
+#     halt                    stops the vagrant machine
+#     provision               provisions the vagrant machine
+#     ssh                     connects to the vagrant machine via SSH
+#     up                      starts and provisions the vagrant environment
+# ";
 }
 
 function dupcli::_list_plugin_files() {
@@ -41,13 +48,17 @@ function dupcli::_load_plugins() {
     done
 }
 
+function dupcli::_list_commands() {
+    local line_start='declare -f dupcli::';
+    declare -F|grep "$line_start"|sed "s/$line_start//"|sed "/^_/d";
+}
+
 function main() {
+    dupcli::_load_plugins;
     if [[ -z ${1+x} ]]; then
         dupcli::_print_help;
         return 1;
     fi;
-
-    dupcli::_load_plugins;
 
     local subcommand="$1";
     shift;
