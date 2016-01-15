@@ -5,49 +5,16 @@ set -o errexit
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/scripts/lib/duplib.sh}";
 source "$DUP_LIB_PATH";
 
+DUP_CLI_DIRECTORY_PATH="$(dirname "$0")/scripts/cli";
+
 # --------------------------------------------------------
 # Subcommands
 # --------------------------------------------------------
-function dupcli::download() {
-    if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (user@server)"; return 1; fi;
-
-    local user_and_server="$1";
-    local excludes="--exclude _processed_ --exclude _temp_";
-
-    local dry="";
-    if [[ $(duplib::get_option_is_set "-n" $@) == "true" ]]; then
-        dry="-n";
-    fi
-
-    local progress="";
-    if [[ $(duplib::get_option_is_set "--progress" $@) == "true" ]]; then
-        progress="--progress";
-    fi
-
-    echo "Download typo3conf";
-    rsync -zar $progress $dry $excludes "$user_and_server:httpdocs/typo3conf/" "httpdocs/typo3conf/"
-
-    echo "Download fileadmin";
-    rsync -zar $progress $dry $excludes "$user_and_server:httpdocs/fileadmin/" "httpdocs/fileadmin/"
+function dupcli::list_plugins() {
+    for plugin in $(dupcli::_list_plugin_files); do
+        basename $plugin ".sh";
+    done
 }
-
-function dupcli::halt() {
-    vagrant halt $@;
-}
-
-function dupcli::provision() {
-    vagrant provision $@;
-}
-
-function dupcli::ssh() {
-    vagrant ssh $@;
-}
-
-function dupcli::up() {
-    vagrant up $@;
-}
-
-
 
 # --------------------------------------------------------
 # Helper methods
@@ -64,11 +31,23 @@ Commands:
 ";
 }
 
+function dupcli::_list_plugin_files() {
+    find $DUP_CLI_DIRECTORY_PATH/plugins -maxdepth 1 -type f -iname '*.sh';
+}
+
+function dupcli::_load_plugins() {
+    for plugin in $(dupcli::_list_plugin_files); do
+        source $plugin;
+    done
+}
+
 function main() {
     if [[ -z ${1+x} ]]; then
         dupcli::_print_help;
         return 1;
     fi;
+
+    dupcli::_load_plugins;
 
     local subcommand="$1";
     shift;
