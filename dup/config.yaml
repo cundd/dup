@@ -25,10 +25,10 @@ scripts:
         DB_NAME: "client"
         DB_PASSWORD: "R77bm8pYNkNfSGBf2z2McNxHazR45Z"
 
-        TYPO3_INSTALL: true
+        TYPO3_INSTALL: false
         TYPO3_SITE_ENV: DEV
 
-        TYPO3_CLIENT_INSTALL: true
+        TYPO3_CLIENT_INSTALL: false
         TYPO3_CLIENT_BRANCH: feature/typo3-7-lts
         TYPO3_DOWNLOAD_FORCE: false
 

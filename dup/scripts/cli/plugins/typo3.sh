@@ -4,23 +4,18 @@ set -o errexit
 
 function dupcli::typo3::download() {
     if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (user@server)"; return 1; fi;
+    if [[ -z ${2+x} ]]; then duplib::error "Missing argument 2 (remote_base_path)"; return 1; fi;
+
+    cd `dupcli::_get_httpdocs_directory`;
 
     local user_and_server="$1";
-    local excludes="--exclude _processed_ --exclude _temp_";
-
-    local dry="";
-    if [[ $(duplib::get_option_is_set "-n" $@) == "true" ]]; then
-        dry="-n";
-    fi
-
-    local progress="";
-    if [[ $(duplib::get_option_is_set "--progress" $@) == "true" ]]; then
-        progress="--progress";
-    fi
+    local remote_base_path="$2";
+    shift 2;
+    local excludes='--exclude var --exclude downloader --exclude includes';
 
     echo "Download typo3conf";
-    rsync -zar $progress $dry $excludes "$user_and_server:httpdocs/typo3conf/" "httpdocs/typo3conf/"
+    duplib::rsync $user_and_server "$remote_base_path/typo3conf/" "httpdocs/typo3conf/" "$excludes" $@;
 
     echo "Download fileadmin";
-    rsync -zar $progress $dry $excludes "$user_and_server:httpdocs/fileadmin/" "httpdocs/fileadmin/"
+    duplib::rsync $user_and_server "$remote_base_path/fileadmin/" "httpdocs/fileadmin/" "$excludes" $@;
 }

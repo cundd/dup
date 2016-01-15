@@ -38,6 +38,10 @@ Commands:";
 # ";
 }
 
+function dupcli::_get_httpdocs_directory() {
+    echo "$(dirname "$0")/../httpdocs";
+}
+
 function dupcli::_list_plugin_files() {
     find $DUP_CLI_DIRECTORY_PATH/plugins -maxdepth 1 -type f -iname '*.sh';
 }
@@ -53,6 +57,10 @@ function dupcli::_list_commands() {
     declare -F|grep "$line_start"|sed "s/$line_start//"|sed "/^_/d";
 }
 
+
+# --------------------------------------------------------
+# Main function
+# --------------------------------------------------------
 function main() {
     dupcli::_load_plugins;
     if [[ -z ${1+x} ]]; then
