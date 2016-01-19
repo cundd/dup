@@ -45,7 +45,11 @@ function duplib::get_linux_distribution_release_file() {
 }
 
 function duplib::get_dup_linux_distribution_specific_folder() {
-    basename `duplib::get_linux_distribution_release_file` | sed 's/release//' | sed 's/[-_]//'| tr '[:upper:]' '[:lower:]';
+    if [ -f "/etc/lsb-release" ]; then
+        echo "ubuntu";
+    else
+        basename `duplib::get_linux_distribution_release_file` | sed 's/release//' | sed 's/[-_]//'| tr '[:upper:]' '[:lower:]';
+    fi
 }
 
 function duplib::copy_linux_distribution_specific_file() {
