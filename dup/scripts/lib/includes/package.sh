@@ -28,7 +28,8 @@ function duplib::package_install() {
     elif hash yum 2>/dev/null; then
         duplib::_package_install_with_yum $@;
     else
-        error "No matching installer found";
+        error "No matching installer for platform $(duplib::detect_linux_distribution) found";
+        return 103;
     fi
 }
 
@@ -63,6 +64,7 @@ function duplib::system_upgrade() {
     elif hash yum 2>/dev/null; then
         duplib::_system_upgrade_with_yum;
     else
-        error "No matching updater found";
+        error "No matching updater for platform $(duplib::detect_linux_distribution) found";
+    #    return 103;
     fi
 }
