@@ -7,6 +7,10 @@ source "$DUP_LIB_PATH";
 
 function prepare_file_system() {
     local apacheConfFile=$(duplib::detect_apache_configuration_file);
+    if [[ "$apacheConfFile" == "" ]]; then
+        return 1;
+    fi
+
     local runDirectory=$(grep "# Mutex default:" $apacheConfFile|awk -F: '{ print $2 }');
 
     if [[ "$runDirectory" != "" ]]; then
@@ -17,11 +21,19 @@ function prepare_file_system() {
 }
 
 function prepare_apache_proxy() {
-    duplib::add_string_to_file_if_not_found '^LoadModule slotmem_shm_module modules\/mod_slotmem_shm\.so' $(duplib::detect_apache_configuration_file) 'LoadModule slotmem_shm_module modules/mod_slotmem_shm.so';
+    if hash a2enmod 2>/dev/null; then
+        a2enmod proxy;
+    else
+        duplib::add_string_to_file_if_not_found '^LoadModule slotmem_shm_module modules\/mod_slotmem_shm\.so' $(duplib::detect_apache_configuration_file) 'LoadModule slotmem_shm_module modules/mod_slotmem_shm.so';
+    fi
 }
 
 function prepare_apache_rewrite() {
-    duplib::add_string_to_file_if_not_found '^LoadModule rewrite_module modules\/mod_rewrite\.so' $(duplib::detect_apache_configuration_file) 'LoadModule rewrite_module modules/mod_rewrite.so';
+    if hash a2enmod 2>/dev/null; then
+        a2enmod rewrite;
+    else
+        duplib::add_string_to_file_if_not_found '^LoadModule rewrite_module modules\/mod_rewrite\.so' $(duplib::detect_apache_configuration_file) 'LoadModule rewrite_module modules/mod_rewrite.so';
+    fi
 }
 
 function prepare_document_root() {
@@ -70,11 +82,13 @@ function configure_vhost() {
     local apacheExtraConfigurationPath="";
     local checkIncludeString="no";
 
-    if [[ -e "/etc/apache2/" ]]; then
+    if [[ -e "/etc/apache2/conf.d/" ]]; then
         apacheExtraConfigurationPath="/etc/apache2/conf.d";
     elif [[ -e "/etc/httpd/conf/" ]]; then
         apacheExtraConfigurationPath="/etc/httpd/conf/extra";
         checkIncludeString="yes";
+    elif [[ -e "/etc/apache2/sites-enabled" ]]; then
+        apacheExtraConfigurationPath="/etc/apache2/sites-enabled";
     else
         duplib::error "Apache configuration directory not found";
         return 1;
