@@ -2,11 +2,6 @@
 set -o nounset
 set -o errexit
 
-DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/scripts/lib/duplib.sh}";
-source "$DUP_LIB_PATH";
-
-DUP_CLI_DIRECTORY_PATH="$(dirname "$0")/scripts/cli";
-
 # --------------------------------------------------------
 # Subcommands
 # --------------------------------------------------------
@@ -19,6 +14,28 @@ function dupcli::list_plugins() {
 # --------------------------------------------------------
 # Helper methods
 # --------------------------------------------------------
+function dupcli::_load_duplib() {
+    DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/scripts/lib/duplib.sh}";
+    if [[ ! -e "$DUP_LIB_PATH" ]] && [[ -e "/vagrant/dup/scripts/lib/duplib.sh" ]]; then
+        DUP_LIB_PATH="/vagrant/dup/scripts/lib/duplib.sh";
+    else
+        >&2 echo "Could not find dup lib";
+        exit 1;
+    fi
+    source "$DUP_LIB_PATH";
+}
+
+function dupcli::_get_cli_directory() {
+    if [[ -e "$(dirname "$0")/scripts/cli" ]]; then
+        echo "$(dirname "$0")/scripts/cli";
+    elif [[ -e "/vagrant/dup/scripts/cli" ]]; then
+        echo "/vagrant/dup/scripts/cli";
+    else
+        >&2 echo "Could not find dup cli directory";
+        exit 1;
+    fi
+}
+
 function dupcli::_print_help() {
     echo "Usage $0 <command> [<args>]
 
@@ -43,7 +60,7 @@ function dupcli::_get_httpdocs_directory() {
 }
 
 function dupcli::_list_plugin_files() {
-    find $DUP_CLI_DIRECTORY_PATH/plugins -maxdepth 1 -type f -iname '*.sh';
+    find "$(dupcli::_get_cli_directory)/plugins" -maxdepth 1 -type f -iname '*.sh';
 }
 
 function dupcli::_load_plugins() {
@@ -54,7 +71,7 @@ function dupcli::_load_plugins() {
 
 function dupcli::_list_commands() {
     local line_start='declare -f dupcli::';
-    declare -F|grep "$line_start"|sed "s/$line_start//"|sed "/^_/d";
+    declare -F|grep "$line_start"|sed "s/$line_start//"|sed "/^_/d"
 }
 
 
@@ -62,6 +79,7 @@ function dupcli::_list_commands() {
 # Main function
 # --------------------------------------------------------
 function main() {
+    dupcli::_load_duplib;
     dupcli::_load_plugins;
     if [[ -z ${1+x} ]]; then
         dupcli::_print_help;
