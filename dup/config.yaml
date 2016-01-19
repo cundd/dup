@@ -44,7 +44,7 @@ packages:
     - apache-proxy
 
     # Install MySQL server (actually MariaDb)
-    - mysql
+    - mysql-server
     - mysql-client
 
     - graphicsmagick
