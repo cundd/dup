@@ -14,6 +14,13 @@ DUP_BASE="${DUP_BASE:-dup}";
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
 source "$DUP_LIB_PATH";
 
+function check_php() {
+    if ! hash php 2>/dev/null; then
+        duplib::error "Could not find PHP binary";
+        return 1;
+    fi
+}
+
 function detect_additional_php_ini_path() {
     php --ini|grep "Scan for additional .ini files in"|awk -F: '{ gsub(/ /, "", $2); print $2 }'
 }
@@ -115,6 +122,7 @@ function add_environment_settings() {
 }
 
 function main() {
+    check_php;
     configure_php_ini;
     configure_fpm;
 
