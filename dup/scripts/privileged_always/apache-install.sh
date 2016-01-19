@@ -20,6 +20,10 @@ function prepare_apache_proxy() {
     duplib::add_string_to_file_if_not_found '^LoadModule slotmem_shm_module modules\/mod_slotmem_shm\.so' $(duplib::detect_apache_configuration_file) 'LoadModule slotmem_shm_module modules/mod_slotmem_shm.so';
 }
 
+function prepare_apache_rewrite() {
+    duplib::add_string_to_file_if_not_found '^LoadModule rewrite_module modules\/mod_rewrite\.so' $(duplib::detect_apache_configuration_file) 'LoadModule rewrite_module modules/mod_rewrite.so';
+}
+
 function prepare_document_root() {
     #duplib::detect_and_set_document_root;
     local documentRoot=$(duplib::get_vhost_document_root);
@@ -88,10 +92,13 @@ function configure_vhost() {
 
 function main() {
     prepare_file_system;
+    prepare_apache_rewrite;
     prepare_apache_proxy;
     prepare_document_root;
     prepare_vagrant_user;
     configure_vhost;
+
+    duplib::service_restart httpd;
 }
 
 main $@
