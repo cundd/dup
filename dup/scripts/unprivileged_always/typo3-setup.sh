@@ -56,8 +56,10 @@ function prepare_typo3temp() {
         fi
 
         if [[ ! -e "/tmp/typo3temp" ]]; then
-            ln -s "/tmp/typo3temp" .;
+            mkdir "/tmp/typo3temp";
         fi
+
+        ln -s "/tmp/typo3temp" .;
     fi
 }
 
