@@ -1,38 +1,137 @@
 # --------------------------------------------------------
 # Package management
 # --------------------------------------------------------
-function duplib::_package_install_with_pacman() {
-    local allPackages=$@;
-    pacman -S --noconfirm --needed $allPackages;
-}
-
-function duplib::_package_install_with_apk() {
-    local allPackages=$@;
-
-    # Replace package names
-    allPackages=$(echo $allPackages | sed 's/\bapache\b/apache2/g')             # apache => apache2
-    allPackages=$(echo $allPackages | sed 's/\bgraphicsmagick\b/imagemagick/g') # graphicsmagick => imagemagick
-    apk add $allPackages;
-}
-
-function duplib::_package_install_with_yum() {
-    error "Not implemented yet";
-}
-
-
 function duplib::package_install() {
     if hash pacman 2>/dev/null; then
-        duplib::_package_install_with_pacman $@;
+        duplib::_package_install_with_pacman $(duplib::transform_package_names $@);
     elif hash apk 2>/dev/null; then
-        duplib::_package_install_with_apk $@;
+        duplib::_package_install_with_apk $(duplib::transform_package_names $@);
     elif hash yum 2>/dev/null; then
-        duplib::_package_install_with_yum $@;
+        duplib::_package_install_with_yum $(duplib::transform_package_names $@);
+    elif hash apt-get 2>/dev/null; then
+        duplib::_package_install_with_apt-get $(duplib::transform_package_names $@);
     else
         error "No matching installer for platform $(duplib::detect_linux_distribution) found";
         return 103;
     fi
 }
 
+function duplib::system_upgrade() {
+    if hash pacman 2>/dev/null; then
+        duplib::_system_upgrade_with_pacman;
+    elif hash apk 2>/dev/null; then
+        duplib::_system_upgrade_with_apk;
+    elif hash yum 2>/dev/null; then
+        duplib::_system_upgrade_with_yum;
+    elif hash apt-get 2>/dev/null; then
+        duplib::_system_upgrade_with_apt-get;
+    else
+        error "No matching updater for platform $(duplib::detect_linux_distribution) found";
+        return 103;
+    fi
+}
+
+
+# --------------------------------------------------------
+# Private methods
+# --------------------------------------------------------
+function duplib::_transform_package_names_general() {
+    local allPackages=$@;
+    echo $allPackages;
+}
+
+function duplib::_transform_package_names_ubuntu() {
+    local allPackages=$@;
+
+    # Replace package names
+    allPackages=$(echo $allPackages | sed 's/\bapache\b/apache2/g')                 # apache => apache2
+    allPackages=$(echo $allPackages | sed 's/\bphp-mysqli\b/php5-mysql/g')          # php-mysqli => php5-mysql
+    allPackages=$(echo $allPackages | sed 's/\bphp\-\b/php5-/g')                    # php- => php5-
+    allPackages=$(echo $allPackages | sed 's/\bmysql-server\b/mariadb-server/g')    # mysql-server => mariadb-server
+    allPackages=$(echo $allPackages | sed 's/\bmysql-client\b/mariadb-client/g')    # mysql-client => mariadb-client
+
+    local arrayOfPackagesToRemoveFromList="apache2-proxy
+php5-pdo_mysql
+php5-soap
+php5-opcache
+php5-xml
+php5-zip
+php5-zlib
+php5-openssl
+php5-xmlreader
+php5-ctype
+php5-calendar
+php5-phar
+php5-iconv";
+
+    for packageToRemoveFromList in $arrayOfPackagesToRemoveFromList; do
+        allPackages=$(echo $allPackages | sed "s/\b$packageToRemoveFromList\b//g");
+    done
+
+    # Install php5-cli if other PHP packages are installed
+    if [[ $allPackages == *php5-* ]]; then
+        allPackages="$allPackages php5-cli";
+    fi
+
+    echo $allPackages;
+}
+
+function duplib::_transform_package_names_alpine() {
+    local allPackages=$@;
+
+    # Replace package names
+    allPackages=$(echo $allPackages | sed 's/\bapache\b/apache2/g')             # apache => apache2
+    allPackages=$(echo $allPackages | sed 's/\bmysql-server\b/mysql/g')         # mysql-server => mysql
+    allPackages=$(echo $allPackages | sed 's/\bgraphicsmagick\b/imagemagick/g') # graphicsmagick => imagemagick
+
+    echo $allPackages;
+}
+
+function duplib::_transform_package_names_arch() {
+    local allPackages=$@;
+
+    # Replace package names
+    allPackages=$(echo $allPackages | sed 's/\bmysql-server\b/mysql/g')         # mysql-server => mysql
+
+    echo $allPackages;
+}
+
+function duplib::transform_package_names() {
+    if [ -z ${1+x} ]; then
+        error "Please specify at least one package";
+        return 1;
+    fi
+
+    if type "duplib::_transform_package_names_$(duplib::get_dup_linux_distribution_specific_folder)" &> /dev/null; then
+        "duplib::_transform_package_names_$(duplib::get_dup_linux_distribution_specific_folder)" $@;
+    else
+        duplib::_transform_package_names_general $@;
+    fi
+}
+
+# --------------------------------------------------------
+# Installation
+function duplib::_package_install_with_pacman() {
+    pacman -S --noconfirm --needed $@;
+}
+
+function duplib::_package_install_with_apk() {
+    apk add $@;
+}
+
+function duplib::_package_install_with_yum() {
+    error "Not implemented yet";
+}
+
+function duplib::_package_install_with_apt-get() {
+    echo "Will install packages. This may take a while"
+    echo "apt-get --assume-yes install $@";
+    export DEBIAN_FRONTEND=noninteractive;
+    apt-get -y install $@;
+}
+
+# --------------------------------------------------------
+# Updates
 function duplib::_system_upgrade_with_pacman() {
     # System upgrade
     pacman -Syu --noconfirm;
@@ -47,24 +146,15 @@ function duplib::_system_upgrade_with_pacman() {
 }
 
 function duplib::_system_upgrade_with_apk() {
-    apk update
-    apk upgrade
-
+    apk update;
+    apk upgrade;
 }
 
 function duplib::_system_upgrade_with_yum() {
     error "Not implemented yet";
 }
 
-function duplib::system_upgrade() {
-    if hash pacman 2>/dev/null; then
-        duplib::_system_upgrade_with_pacman;
-    elif hash apk 2>/dev/null; then
-        duplib::_system_upgrade_with_apk;
-    elif hash yum 2>/dev/null; then
-        duplib::_system_upgrade_with_yum;
-    else
-        error "No matching updater for platform $(duplib::detect_linux_distribution) found";
-    #    return 103;
-    fi
+function duplib::_system_upgrade_with_apt-get() {
+    apt-get update;
+    apt-get -y upgrade;
 }
