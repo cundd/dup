@@ -18,7 +18,7 @@ function dupcli::_load_duplib() {
     DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/scripts/lib/duplib.sh}";
     if [[ ! -e "$DUP_LIB_PATH" ]] && [[ -e "/vagrant/dup/scripts/lib/duplib.sh" ]]; then
         DUP_LIB_PATH="/vagrant/dup/scripts/lib/duplib.sh";
-    else
+    elif [[ ! -e "$DUP_LIB_PATH" ]]; then
         >&2 echo "Could not find dup lib";
         exit 1;
     fi
