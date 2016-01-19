@@ -12,6 +12,7 @@ vagrant:
         # Vagrant box to use
         # "dupal"               = small size Alpine Linux (PHP 5.6)
         # "terrywang/archlinux" = Arch Linux (PHP 7)
+        # "ubuntu/trusty64"     = Ubuntu
         box: "dupal"
 
         forwarded_ports:
