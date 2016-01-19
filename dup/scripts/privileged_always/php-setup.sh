@@ -14,17 +14,17 @@ DUP_BASE="${DUP_BASE:-dup}";
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
 source "$DUP_LIB_PATH";
 
-function detect-additional-php-ini-path() {
+function detect_additional_php_ini_path() {
     php --ini|grep "Scan for additional .ini files in"|awk -F: '{ gsub(/ /, "", $2); print $2 }'
 }
 
-function detect-loaded-php-ini-files() {
+function detect_loaded_php_ini_files() {
     php --ini|grep -A100 'Additional .ini files parsed:' | \
         sed 's/Additional .ini files parsed:\s*//' | \
         sed 's/,//';
 }
 
-function prepare-fpm-socket-folder() {
+function prepare_fpm_socket_folder() {
     local fpmSocketFolder="/run/php-fpm";
 
     if [[ ! -e $fpmSocketFolder ]]; then
@@ -33,8 +33,8 @@ function prepare-fpm-socket-folder() {
     fi
 }
 
-function configure-fpm() {
-    prepare-fpm-socket-folder;
+function configure_fpm() {
+    prepare_fpm_socket_folder;
     local dupFilesPath="/vagrant/$DUP_BASE/files/php";
 
     if [[ ! -e "$PHP_FPM_CONF_FILE_DIRECTORY" ]]; then
@@ -45,7 +45,7 @@ function configure-fpm() {
     fi
 
     ## Copy fpm file
-    duplib::copy_linux_distribution_specific_file "php" "$PHP_INI_FILE_NAME" "$PHP_FPM_CONF_FILE_PATH";
+    duplib::copy_linux_distribution_specific_file "php" "$PHP_FPM_CONF_FILE_NAME" "$PHP_FPM_CONF_FILE_PATH";
     chmod o+r "$PHP_FPM_CONF_FILE_PATH";
 
     duplib::add_string_to_file_if_not_found '^include=\/etc\/php\/php-fpm\.d\/\*\.conf' /etc/php/php-fpm.conf 'include=/etc/php/php-fpm.d/*.conf';
@@ -53,9 +53,9 @@ function configure-fpm() {
     add_environment_settings;
 }
 
-function configure-opcode-cache() {
+function configure_opcode_cache() {
     local found="no";
-    for file in $(detect-loaded-php-ini-files); do
+    for file in $(detect_loaded_php_ini_files); do
         local result=$(grep '^zend_extension=opcache\.so' "$file" >/dev/null);
         if [[ $? -eq 0 ]]; then
             found="yes";
@@ -69,7 +69,7 @@ function configure-opcode-cache() {
 }
 
 function configure_php_ini() {
-    local additionalPHPIniPath=`detect-additional-php-ini-path`;
+    local additionalPHPIniPath=`detect_additional_php_ini_path`;
     local dupFilesPath="/vagrant/$DUP_BASE/files/php";
 
     ## Copy PHP.ini file
@@ -77,7 +77,7 @@ function configure_php_ini() {
     chmod o+r "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
 
     if [[ "$PHP_FEATURE_OPCACHE" == "true" ]]; then
-        configure-opcode-cache;
+        configure_opcode_cache;
     fi
 
     for iniRow in $PHP_CUSTOM_INI; do
@@ -116,7 +116,7 @@ function add_environment_settings() {
 
 function main() {
     configure_php_ini;
-    configure-fpm;
+    configure_fpm;
 
     duplib::service_restart httpd;
     duplib::service_restart php-fpm;

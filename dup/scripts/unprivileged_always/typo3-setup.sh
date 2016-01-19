@@ -26,7 +26,7 @@ function install_typo3() {
         tar xzf $typo3_src_archive && rm $typo3_src_archive;
 
         if [[ -h "typo3" ]]; then rm "typo3"; fi
-        if [[ -h "index.php" ]]; then rm "index.php"; fi
+        if [[ -e "index.php" ]]; then rm "index.php"; fi
 
         ln -s "`detect_typo3_source_directory`" "typo3_src";
         ln -s "typo3_src/typo3" .;
@@ -56,8 +56,10 @@ function prepare_typo3temp() {
         fi
 
         if [[ ! -e "/tmp/typo3temp" ]]; then
-            ln -s "/tmp/typo3temp" .;
+            mkdir "/tmp/typo3temp";
         fi
+
+        ln -s "/tmp/typo3temp" .;
     fi
 }
 
