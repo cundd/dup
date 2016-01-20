@@ -78,6 +78,10 @@ function duplib::rsync() {
         progress="--progress";
     fi
 
+    if [[ $(duplib::get_option_is_set "--not-stop-on-error" $@) == "true" ]]; then
+        set +e;
+    fi
+    
     eval "rsync -zar $progress $dry $excludes -e '$ssh_options' $user_and_server:$remote_path $local_path";
 }
 
