@@ -17,7 +17,7 @@ vagrant:
 
         forwarded_ports:
             # Guest => Host
-            80: 8080
+            # 80: 8080
 scripts:
     ENV:
         DB_ROOT_PASSWORD: "3FwDkQ6gGeVVYDkES3H95auCVekAnG"
@@ -38,7 +38,9 @@ scripts:
         SETUP_SASS: true
 
 packages:
+    # Utilizties
     - git
+    - htop
 
     - apache
     - apache-proxy
