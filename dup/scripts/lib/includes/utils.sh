@@ -63,7 +63,7 @@ function duplib::rsync() {
     shift 4;
 
     local ssh_options="ssh";
-    if [[ ! -z $1+x} ]] && [[ "$(duplib::is_integer $1)" == "true" ]]; then
+    if [[ ! -z ${1+x} ]] && [[ "$(duplib::is_integer $1)" == "true" ]]; then
         ssh_options="ssh -p $1";
         shift;
     fi;
