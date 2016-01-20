@@ -81,8 +81,16 @@ function duplib::rsync() {
     eval "rsync -zar $progress $dry $excludes -e '$ssh_options' $user_and_server:$remote_path $local_path";
 }
 
+function duplib::_tput() {
+    if hash tput 2>/dev/null; then
+        tput $@;
+    fi
+}
+
 function duplib::error() {
+    duplib::_tput setaf 1;
     >&2 echo "$@";
+    duplib::_tput sgr0;
 }
 
 function error() {
