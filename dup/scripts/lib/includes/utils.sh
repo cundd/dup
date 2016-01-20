@@ -63,7 +63,7 @@ function duplib::rsync() {
     shift 4;
 
     local ssh_options="ssh";
-    if [[ ! -z $1+x} ]] && [[ "$(duplib::is_integer $1)" == "true" ]]; then
+    if [[ ! -z ${1+x} ]] && [[ "$(duplib::is_integer $1)" == "true" ]]; then
         ssh_options="ssh -p $1";
         shift;
     fi;
@@ -78,11 +78,23 @@ function duplib::rsync() {
         progress="--progress";
     fi
 
+    if [[ $(duplib::get_option_is_set "--not-stop-on-error" $@) == "true" ]]; then
+        set +e;
+    fi
+    
     eval "rsync -zar $progress $dry $excludes -e '$ssh_options' $user_and_server:$remote_path $local_path";
 }
 
+function duplib::_tput() {
+    if hash tput 2>/dev/null; then
+        tput $@;
+    fi
+}
+
 function duplib::error() {
+    duplib::_tput setaf 1;
     >&2 echo "$@";
+    duplib::_tput sgr0;
 }
 
 function error() {

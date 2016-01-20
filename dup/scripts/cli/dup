@@ -1,0 +1,72 @@
+#!/bin/bash
+# DUP CLI master binary
+set -o nounset
+set -o errexit
+set -e
+
+function dupcli::_search_directory_tree_down() {
+    if [ $# -eq 0 ]; then
+        >&2 echo "Missing parameter 1";
+        return 1;
+    fi
+    local base=`pwd`;
+    local foundPath=$(find -L "$base" -maxdepth 3 -mindepth 1 -name "$1" -type d | head -n 1)
+    if [[ "$foundPath" == "" ]] || [[ ! -e "$foundPath" ]]; then
+        return 1;
+    fi
+    echo $foundPath;
+}
+
+function dupcli::_search_directory_tree_up() {
+    if [ $# -eq 0 ]; then
+        >&2 echo "Missing parameter 1";
+        return 1;
+    fi
+
+    local startDirectory=`pwd`
+    local searchedDirectory="$1";
+    while [[ ! -d "$searchedDirectory" ]]; do
+        if [[ `pwd` == "/" ]]; then
+            cd $startDirectory
+            return 1
+        fi
+        cd ..
+    done
+
+    # Print the found path
+    cd "$searchedDirectory";
+    pwd;
+    cd $startDirectory
+    return 0
+}
+
+function dupcli::_search_directory_tree() {
+    if [ $# -eq 0 ]; then
+        >&2 echo "Missing parameter 1";
+        return 1;
+    fi
+
+    dupcli::_search_directory_tree_down $@;
+    if [ $? -ne 0 ]; then
+        dupcli::_search_directory_tree_up $@
+
+        if [ $? -ne 0 ]; then
+            return 1;
+        fi
+    fi
+}
+
+function main() {
+    local result;
+    local status;
+    result=$(dupcli::_search_directory_tree "dup");
+    status=$?;
+    if [ $status -ne 0 ] || [ ! -e "$result/cli" ]; then
+        >&2 echo "Could not find dup/cli";
+        exit 1;
+    fi
+
+    "$result/cli" $*;
+}
+
+main $@
