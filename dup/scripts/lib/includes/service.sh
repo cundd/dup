@@ -72,34 +72,7 @@ function duplib::service_start() {
         return 1;
     fi
 
-    #duplib::_find_service_method_implementation "service_start" $1;
-    local service=$(duplib::_transform_service_names $1);
-    if [[ "$(duplib::service_exists $service)" != "true" ]]; then
-        if [[ "$(duplib::_get_service_alternative $service)" != "" ]]; then
-            duplib::service_start $(duplib::_get_service_alternative $service);
-        else
-            duplib::error "Service $service does not exist and no alternative names can be found";
-            return 1;
-        fi
-        return;
-    fi
-
-    if hash systemctl 2>/dev/null; then # systemd
-        duplib::_service_start_systemd $service;
-
-    elif hash rc-service 2>/dev/null; then # rc-service
-        duplib::_service_start_rc-service $service;
-
-    elif hash service 2>/dev/null; then # service
-        duplib::_service_start_service $service;
-
-    elif [[ -x "/etc/init.d/$service" ]]; then # init.d
-        duplib::_service_start_initd $service;
-
-    else
-        duplib::error "No matching service starter found for $1";
-        return 1;
-    fi
+    duplib::_find_service_method_implementation "service_start" $1;
 }
 
 
@@ -129,34 +102,7 @@ function duplib::service_stop() {
         return 1;
     fi
 
-    #duplib::_find_service_method_implementation "service_stop" $1;
-    local service=$(duplib::_transform_service_names $1);
-    if [[ "$(duplib::service_exists $service)" != "true" ]]; then
-        if [[ "$(duplib::_get_service_alternative $service)" != "" ]]; then
-            duplib::service_stop $(duplib::_get_service_alternative $service);
-        else
-            duplib::error "Service $service does not exist and no alternative names can be found";
-            return 1;
-        fi
-        return;
-    fi
-
-    if hash systemctl 2>/dev/null; then # systemd
-        duplib::_service_stop_systemd $service;
-
-    elif hash rc-service 2>/dev/null; then # rc-service
-        duplib::_service_stop_rc-service $service;
-
-    elif hash service 2>/dev/null; then # service
-        duplib::_service_stop_service $service;
-
-    elif [[ -x "/etc/init.d/$service" ]]; then # init.d
-        duplib::_service_stop_initd $service;
-
-    else
-        duplib::error "No matching service stopper found for $1";
-        return 1;
-    fi
+    duplib::_find_service_method_implementation "service_stop" $1;
 }
 
 
@@ -185,34 +131,7 @@ function duplib::service_restart() {
         return 1;
     fi
 
-    #duplib::_find_service_method_implementation "service_restart" $1;
-    local service=$(duplib::_transform_service_names $1);
-    if [[ "$(duplib::service_exists $service)" != "true" ]]; then
-        if [[ "$(duplib::_get_service_alternative $service)" != "" ]]; then
-            duplib::service_restart $(duplib::_get_service_alternative $service);
-        else
-            duplib::error "Service $service does not exist and no alternative names can be found";
-            return 1;
-        fi
-        return;
-    fi
-
-    if hash systemctl 2>/dev/null; then # systemd
-        duplib::_service_restart_systemd $service;
-
-    elif hash rc-service 2>/dev/null; then # rc-service
-        duplib::_service_restart_rc-service $service;
-
-    elif hash service 2>/dev/null; then # service
-        duplib::_service_restart_service $service;
-
-    elif [[ -x "/etc/init.d/$1" ]]; then # init.d
-        duplib::_service_restart_initd $service;
-
-    else
-        duplib::error "No matching service restarter found for $1";
-        return 1;
-    fi
+    duplib::_find_service_method_implementation "service_restart" $1;
 }
 
 
@@ -246,34 +165,7 @@ function duplib::service_status() {
         return 1;
     fi
 
-    #duplib::_find_service_method_implementation "service_status" $1;
-    local service=$(duplib::_transform_service_names $1);
-    if [[ "$(duplib::service_exists $service)" != "true" ]]; then
-        if [[ "$(duplib::_get_service_alternative $service)" != "" ]]; then
-            duplib::service_status $(duplib::_get_service_alternative $service);
-        else
-            duplib::error "Service $service does not exist and no alternative names can be found";
-            return 1;
-        fi
-        return;
-    fi
-
-    if hash systemctl 2>/dev/null; then # systemd
-        duplib::_service_status_systemd $service;
-
-    elif hash rc-service 2>/dev/null; then # rc-service
-        duplib::_service_status_rc-service $service;
-
-    elif hash service 2>/dev/null; then # service
-        duplib::_service_status_service $service;
-
-    elif [[ -x "/etc/init.d/$1" ]]; then # init.d
-        duplib::_service_status_initd $service;
-
-    else
-        duplib::error "Could not determine status for service $1";
-        return 1;
-    fi
+    duplib::_find_service_method_implementation "service_status" $1;
 }
 
 function duplib::service_is_up() {
@@ -398,5 +290,4 @@ function duplib::_find_service_method_implementation() {
         duplib::error "No matching implementation found for method $method and service $1";
         return 1;
     fi
-
 }
