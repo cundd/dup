@@ -26,6 +26,8 @@ scripts:
         DB_NAME: "client"
         DB_PASSWORD: "R77bm8pYNkNfSGBf2z2McNxHazR45Z"
 
+        MAGENTO_SETUP: true
+        
         TYPO3_INSTALL: false
         TYPO3_SITE_ENV: DEV
 
