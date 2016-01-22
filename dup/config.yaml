@@ -27,7 +27,7 @@ scripts:
         DB_PASSWORD: "R77bm8pYNkNfSGBf2z2McNxHazR45Z"
 
         MAGENTO_SETUP: true
-        
+
         TYPO3_INSTALL: false
         TYPO3_SITE_ENV: DEV
 
@@ -36,8 +36,8 @@ scripts:
         TYPO3_DOWNLOAD_FORCE: false
 
         DUP_BASE: "dup"
-        SETUP_BASH: true
-        SETUP_SASS: true
+        BASH_SETUP: true
+        SASS_SETUP: true
 
 packages:
     # Utilizties

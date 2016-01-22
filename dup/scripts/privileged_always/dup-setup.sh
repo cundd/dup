@@ -2,10 +2,10 @@
 set -o nounset
 set -o errexit
 
-SETUP_BASH="${SETUP_BASH:-true}";
+BASH_SETUP="${BASH_SETUP:-true}";
 
 function run() {
-    if [[ "$SETUP_BASH" == "true" ]]; then
+    if [[ "$BASH_SETUP" == "true" ]]; then
         if [[ ! -e "/usr/local/bin/dup" ]]; then
             ln -s "/vagrant/dup/cli" "/usr/local/bin/dup";
         fi
