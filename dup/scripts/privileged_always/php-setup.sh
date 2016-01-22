@@ -75,7 +75,7 @@ function configure_fpm() {
     duplib::copy_linux_distribution_specific_file "php" "$PHP_FPM_CONF_FILE_NAME" "$php_fpm_conf_file_directory/$PHP_FPM_CONF_FILE_NAME";
     chmod o+r "$php_fpm_conf_file_directory/$PHP_FPM_CONF_FILE_NAME";
 
-    if [[ detect_installation_uses_external_pool_files == "true" ]]; then
+    if [[ detect_installation_uses_external_pool_files != "true" ]]; then
         duplib::add_string_to_file_if_not_found '^include=\/etc\/php\/php-fpm\.d\/\*\.conf' /etc/php/php-fpm.conf 'include=/etc/php/php-fpm.d/*.conf';
     fi
 
