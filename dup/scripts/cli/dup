@@ -1,5 +1,8 @@
 #!/bin/bash
+#
 # DUP CLI master binary
+#
+# This script will look for the nearest dup/cli path and forwards calls to it
 set -o nounset
 set -o errexit
 set -e
