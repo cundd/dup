@@ -38,34 +38,12 @@ function dupcli::_get_cli_directory() {
 
 # Try to find out if the current machine is the guest
 function dupcli::is_guest() {
-    local is_guest_value=10;
-
-    if hash VBoxManage 2>/dev/null; then
-        let is_guest_value--;
-    fi
-
-    if [[ -e "/proc/scsi/scsi" ]] && grep -qF "VBOX HARDDISK" /proc/scsi/scsi; then
-        let is_guest_value++;
-    fi
-
-    if [ -z ${DUP_VHOST_DOCUMENT_ROOT+x} ]; then
-        let is_guest_value++;
-    fi
-
-    if [ $is_guest_value -gt 10 ]; then
-        echo "yes";
-    else
-        echo "no";
-    fi
+    duplib::is_guest;
 }
 
 # Try to find out if the current machine is the host
 function dupcli::is_host() {
-    if [[ $(dupcli::is_guest) == "no" ]]; then
-        echo "yes";
-    else
-        echo "no";
-    fi
+    duplib::is_host;
 }
 
 function dupcli::_print_help() {

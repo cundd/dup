@@ -19,6 +19,45 @@ function duplib::add_string_to_file_if_not_found() {
 
 
 # --------------------------------------------------------
+# Host/guest detection
+# --------------------------------------------------------
+# Try to find out if the current machine is the guest
+function duplib::is_guest() {
+    local is_guest_value=10;
+
+    if hash VBoxManage 2>/dev/null; then
+        let is_guest_value--;
+    fi
+
+    if [[ -e "/vagrant" ]]; then
+        let is_guest_value++;
+    fi
+
+    if [[ -e "/proc/scsi/scsi" ]] && grep -qF "VBOX HARDDISK" /proc/scsi/scsi; then
+        let is_guest_value++;
+    fi
+
+    if [ -z ${DUP_VHOST_DOCUMENT_ROOT+x} ]; then
+        let is_guest_value++;
+    fi
+
+    if [ $is_guest_value -gt 10 ]; then
+        echo "yes";
+    else
+        echo "no";
+    fi
+}
+
+# Try to find out if the current machine is the host
+function duplib::is_host() {
+    if [[ $(dupcli::is_guest) == "no" ]]; then
+        echo "yes";
+    else
+        echo "no";
+    fi
+}
+
+# --------------------------------------------------------
 # Helpers
 # --------------------------------------------------------
 function duplib::get_option_is_set() {
