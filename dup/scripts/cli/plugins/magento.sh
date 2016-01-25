@@ -21,6 +21,9 @@ function dupcli::magento::download() {
     echo "Download Lib";
     duplib::rsync $user_and_server "$remote_base_path/lib/" "$local_path/lib/" "$excludes" $@;
 
+    echo "Download Media";
+    duplib::rsync $user_and_server "$remote_base_path/media/" "$local_path/media/" "$excludes --exclude cache --exclude media/tmp/" $@;
+
     echo "Download Skin";
     duplib::rsync $user_and_server "$remote_base_path/skin/" "$local_path/skin/" "$excludes" $@;
 
@@ -41,3 +44,4 @@ function dupcli::magento::download() {
     echo "Download .modman";
     duplib::rsync $user_and_server "$remote_base_path/.modman/" "$local_path/.modman/" "$excludes" $@;
 }
+
