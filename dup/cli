@@ -20,6 +20,22 @@ function dupcli::list_commands() {
     dupcli::_list_commands;
 }
 
+function dupcli::config() {
+    if ! duplib::command_exists "ruby"; then
+        duplib::error "Ruby must be installed";
+        return 1;
+    fi
+
+    local script_path=$(dirname "$0");
+
+    if [[ ! -e "$script_path/ruby/config-get" ]]; then
+        duplib::error "$script_path/ruby/config-get not found";
+        return 1;
+    fi
+
+    "$script_path/ruby/config-get" $*;
+}
+
 # Try to find out if the current machine is the guest
 function dupcli::is_guest() {
     duplib::is_guest;

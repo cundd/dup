@@ -60,6 +60,15 @@ function duplib::is_host() {
 # --------------------------------------------------------
 # Helpers
 # --------------------------------------------------------
+function duplib::command_exists() {
+    if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (command name)"; return 1; fi;
+    if hash "$1" 2>/dev/null; then
+        return 0;
+    else
+        return 1;
+    fi
+}
+
 function duplib::get_option_is_set() {
     if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (option)"; return 1; fi;
 

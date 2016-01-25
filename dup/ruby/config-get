@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+dir = File.dirname(File.expand_path(__FILE__))
+require "#{dir}/include.rb"
+
+class DupConfig
+    def initialize(argv)
+        if argv.length < 1
+            puts "Missing argument"
+            exit 1
+        end
+        @keyPath = argv[0].split('.')
+    end
+
+    def main
+        configuration = getConfig()
+        puts @keyPath.inject(configuration) {|acc, value| acc[value]}
+    end
+end
+
+app = DupConfig.new(ARGV)
+
+app.main()
