@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
-# duplib = a bash library
+# duplib = a bash function library
 
 DUP_LIB_PATH="${DUP_LIB_PATH:-$0}";
 DUP_LIB_INCLUDES_PATH="${DUP_LIB_INCLUDES_PATH:-$(dirname "$DUP_LIB_PATH")/includes}";
