@@ -3,6 +3,8 @@
 
 Vagrant.require_version ">= 1.8.0"
 
+# Create the file ./dup/custom-config.yaml to overwrite the default configuration
+
 dir = File.dirname(File.expand_path(__FILE__))
 vagrantName = 'dup'
 vagrantBase = dir + '/' + vagrantName

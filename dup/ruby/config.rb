@@ -2,7 +2,9 @@ require 'yaml'
 
 def getConfig
     dir = File.dirname(File.expand_path(__FILE__))
-    return YAML.load_file("#{dir}/../config.yaml")
+    defaultConfig = YAML.load_file("#{dir}/../config.yaml")
+    customConfig = YAML.load_file("#{dir}/../custom-config.yaml")
+    return defaultConfig.deep_merge(customConfig)
 end
 
 def phpIni

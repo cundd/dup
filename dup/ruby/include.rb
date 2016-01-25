@@ -1,5 +1,6 @@
 dir = File.dirname(File.expand_path(__FILE__))
 
+require "#{dir}/deep_merge.rb"
 require "#{dir}/config.rb"
 require "#{dir}/script_runner.rb"
 require "#{dir}/package_installer.rb"
