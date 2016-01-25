@@ -17,6 +17,8 @@ function run() {
         duplib::add_string_to_file_if_not_found "export DB_PASSWORD=$DB_PASSWORD" "$HOME/.profile";
         duplib::add_string_to_file_if_not_found 'alias dup-mysql="mysql -u$DB_USERNAME -p$DB_PASSWORD -D$DB_NAME"' "$HOME/.profile";
         duplib::add_string_to_file_if_not_found 'alias dup-mysql="mysql -u$DB_USERNAME -p$DB_PASSWORD -D$DB_NAME"' "$HOME/.profile";
+
+        # Change to the vhost document root
         duplib::add_string_to_file_if_not_found "cd $vhost_document_root" "$HOME/.profile";
     fi
 }

@@ -1,4 +1,9 @@
 #!/bin/bash
+#
+# DUP CLI client binary
+#
+# This is the main DUP commmand line tool.
+# It will also load plugins from dup/scripts/cli/plugins
 set -o nounset
 set -o errexit
 
@@ -10,6 +15,21 @@ function dupcli::list_plugins() {
         basename $plugin ".sh";
     done
 }
+
+function dupcli::list_commands() {
+    dupcli::_list_commands;
+}
+
+# Try to find out if the current machine is the guest
+function dupcli::is_guest() {
+    duplib::is_guest;
+}
+
+# Try to find out if the current machine is the host
+function dupcli::is_host() {
+    duplib::is_host;
+}
+
 
 # --------------------------------------------------------
 # Helper methods
@@ -34,16 +54,6 @@ function dupcli::_get_cli_directory() {
         >&2 echo "Could not find dup cli directory";
         exit 1;
     fi
-}
-
-# Try to find out if the current machine is the guest
-function dupcli::is_guest() {
-    duplib::is_guest;
-}
-
-# Try to find out if the current machine is the host
-function dupcli::is_host() {
-    duplib::is_host;
 }
 
 function dupcli::_print_help() {
