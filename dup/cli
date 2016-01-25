@@ -36,6 +36,16 @@ function dupcli::_get_cli_directory() {
     fi
 }
 
+# Try to find out if the current machine is the guest
+function dupcli::is_guest() {
+    duplib::is_guest;
+}
+
+# Try to find out if the current machine is the host
+function dupcli::is_host() {
+    duplib::is_host;
+}
+
 function dupcli::_print_help() {
     echo "Usage $0 <command> [<args>]
 
@@ -55,8 +65,22 @@ Commands:";
 # ";
 }
 
-function dupcli::_get_httpdocs_directory() {
-    echo "$(dirname "$0")/../httpdocs";
+# Returns the vhost document root for the host VM
+function dupcli::_get_host_vhost_document_root() {
+    if [ -z ${DUP_VHOST_DOCUMENT_ROOT+x} ]; then
+        echo $DUP_VHOST_DOCUMENT_ROOT;
+    else
+        echo "$(dirname "$0")/../httpdocs";
+    fi
+}
+
+# Returns the vhost document root for the guest VM
+function dupcli::_get_guest_vhost_document_root() {
+    if [ -z ${DUP_VHOST_DOCUMENT_ROOT+x} ]; then
+        echo $DUP_VHOST_DOCUMENT_ROOT;
+    else
+        duplib::get_vhost_document_root;
+    fi
 }
 
 function dupcli::_list_plugin_files() {

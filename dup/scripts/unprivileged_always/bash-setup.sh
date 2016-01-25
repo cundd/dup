@@ -2,13 +2,13 @@
 set -o nounset
 set -o errexit
 
-SETUP_BASH="${SETUP_BASH:-true}";
+BASH_SETUP="${BASH_SETUP:-true}";
 
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
 source "$DUP_LIB_PATH";
 
 function run() {
-    if [[ "$SETUP_BASH" == "true" ]]; then
+    if [[ "$BASH_SETUP" == "true" ]]; then
         local vhost_document_root="$(duplib::get_vhost_document_root)";
         duplib::add_string_to_file_if_not_found "export DUP_LIB_PATH=$DUP_LIB_PATH" "$HOME/.profile";
         duplib::add_string_to_file_if_not_found "export DUP_VHOST_DOCUMENT_ROOT=$vhost_document_root" "$HOME/.profile";

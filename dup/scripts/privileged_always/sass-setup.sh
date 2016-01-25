@@ -1,7 +1,7 @@
 #!/bin/bash
 set -o nounset
 
-SETUP_SASS="${SETUP_SASS:-false}";
+SASS_SETUP="${SASS_SETUP:-false}";
 SOURCE_DIRECTORY_PATH="${SOURCE_DIRECTORY_PATH:-.sassc-source}";
 BINARY_TARGET_PATH="${BINARY_TARGET_PATH:-/usr/local/bin/sassc}";
 
@@ -48,7 +48,7 @@ function build() {
 }
 
 function main() {
-    if [[ "$SETUP_SASS" == "true" ]]; then
+    if [[ "$SASS_SETUP" == "true" ]]; then
         if [[ ! -x $BINARY_TARGET_PATH ]]; then
             echo "Install sass";
             mkdir -p "$SOURCE_DIRECTORY_PATH";
