@@ -28,3 +28,8 @@ function dupcli::vagrant::up() {
     dupcli::_vagrant::check;
     vagrant up $@;
 }
+
+function dupcli::vagrant::reload() {
+    dupcli::_vagrant::check;
+    vagrant reload $@;
+}
