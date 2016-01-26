@@ -138,7 +138,7 @@ function duplib::rsync() {
 
 function duplib::_tput() {
     if hash tput 2>/dev/null; then
-        tput $@;
+        >&2 tput $@;
     fi
 }
 
