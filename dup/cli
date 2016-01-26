@@ -74,21 +74,19 @@ function dupcli::_get_cli_directory() {
 
 function dupcli::_print_help() {
     echo "Usage $0 <command> [<args>]
+";
 
-Commands:";
-    for command in $(dupcli::_list_commands;); do
+    local filter_commands='';
+    if [[ ! -z ${1+x} ]] && [[ "$1" != "" ]]; then
+        filter_commands="$1";
+        echo "Did you mean one of these?";
+    else
+        echo "Commands:";
+    fi
+
+    for command in $(dupcli::_list_commands $filter_commands); do
         echo "    $command";
     done
-
-#     echo "Usage $0 <command> [<args>]
-#
-# Commands:
-#     download user@server    downloads fileadmin and typo3conf using rsync
-#     halt                    stops the vagrant machine
-#     provision               provisions the vagrant machine
-#     ssh                     connects to the vagrant machine via SSH
-#     up                      starts and provisions the vagrant environment
-# ";
 }
 
 # Returns the vhost document root for the host VM
@@ -121,7 +119,12 @@ function dupcli::_load_plugins() {
 
 function dupcli::_list_commands() {
     local line_start='declare -f dupcli::';
-    declare -F|grep "$line_start"|sed "s/$line_start//"|sed "/^_/d"
+    local line_start_search="$line_start";
+    if [[ ! -z ${1+x} ]]; then
+        line_start_search="$line_start_search$1";
+    fi
+
+    declare -F|grep "$line_start_search"|sed "s/$line_start//"|sed "/^_/d"
 }
 
 
@@ -132,7 +135,7 @@ function main() {
     dupcli::_load_duplib;
     dupcli::_load_plugins;
     if [[ -z ${1+x} ]]; then
-        dupcli::_print_help;
+        dupcli::_print_help '';
         return 1;
     fi;
 
@@ -142,7 +145,7 @@ function main() {
     if type "dupcli::$subcommand" &> /dev/null; then
         dupcli::$subcommand $@;
     else
-        dupcli::_print_help;
+        dupcli::_print_help $subcommand;
         return 1;
     fi
 }
