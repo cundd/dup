@@ -67,12 +67,10 @@ function main() {
     result=$(dupcli::_search_directory_tree "dup");
     status=$?;
     set -e;
-    
+
     if [ $status -eq 0 ] && [ -e "$result/cli" ]; then
-        echo "Use $result/cli"
         "$result/cli" $*;
     elif [ -e "/vagrant/dup/cli" ]; then
-        echo "Use /vagrant/dup/cli"
         /vagrant/dup/cli $*
     else
         >&2 echo "Could not find dup/cli";
