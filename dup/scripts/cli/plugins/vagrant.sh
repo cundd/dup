@@ -34,6 +34,11 @@ function dupcli::vagrant::reload() {
     vagrant reload $@;
 }
 
+function dupcli::vagrant::status() {
+    dupcli::_vagrant::check;
+    vagrant status $@;
+}
+
 function dupcli::vagrant::hosts_add() {
     if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (domain.local)"; return 1; fi;
 
