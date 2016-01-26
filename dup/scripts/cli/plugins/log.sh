@@ -6,7 +6,7 @@ set -o errexit
 function dupcli::_log::get_first_existing() {
     if [[ -z ${1+x} ]]; then duplib::error "Please specify at least one path"; return 1; fi;
 
-    for file in "$1"; do
+    for file in $1; do
         if [ -e "$file" ]; then
             echo "$file";
             return 0;
@@ -20,13 +20,13 @@ function dupcli::_log::get_first_existing() {
 function dupcli::log::http() {
     local directory=$(dupcli::_log::get_first_existing "/var/log/apache2 /var/log/httpd");
     if [ "$directory" == "" ]; then return 1; fi
-    tail $* "$directory/access_log";
+    tail $* "$directory/access.log";
 }
 
 function dupcli::log::http_error() {
     local directory=$(dupcli::_log::get_first_existing "/var/log/apache2 /var/log/httpd");
     if [ "$directory" == "" ]; then return 1; fi
-    tail $* "$directory/error_log";
+    tail $* "$directory/error.log";
 }
 
 function dupcli::log::mysql() {
