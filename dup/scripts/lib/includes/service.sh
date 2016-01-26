@@ -6,16 +6,16 @@
 # Service available
 function duplib::_service_exists_systemd() {
     systemctl daemon-reload;
-    systemctl list-units    |grep -Fq "$1" && echo "true" || echo "false";
+    systemctl list-units        |grep -q "\s$1$" && echo "true" || echo "false";
 
 }
 
 function duplib::_service_exists_rc-service() {
-    rc-service --list       |grep -Fq "$1" && echo "true" || echo "false";
+    rc-service --list           |grep -q "\s$1$" && echo "true" || echo "false";
 }
 
 function duplib::_service_exists_service() {
-    service --status-all    |grep -Fq "$1" && echo "true" || echo "false";
+    service --status-all 2>&1   |grep -q "\s$1$" && echo "true" || echo "false";
 }
 
 function duplib::_service_exists_initd() {
