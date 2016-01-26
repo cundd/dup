@@ -69,9 +69,9 @@ function main() {
     set -e;
 
     if [ $status -eq 0 ] && [ -e "$result/cli" ]; then
-        "$result/cli" $*;
+        $SHELL "$result/cli" $*;
     elif [ -e "/vagrant/dup/cli" ]; then
-        /vagrant/dup/cli $*
+        $SHELL "/vagrant/dup/cli" $*
     else
         >&2 echo "Could not find dup/cli";
         exit 1;
