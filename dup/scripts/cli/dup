@@ -62,14 +62,22 @@ function dupcli::_search_directory_tree() {
 function main() {
     local result;
     local status;
+
+    set +e;
     result=$(dupcli::_search_directory_tree "dup");
     status=$?;
-    if [ $status -ne 0 ] || [ ! -e "$result/cli" ]; then
+    set -e;
+    
+    if [ $status -eq 0 ] && [ -e "$result/cli" ]; then
+        echo "Use $result/cli"
+        "$result/cli" $*;
+    elif [ -e "/vagrant/dup/cli" ]; then
+        echo "Use /vagrant/dup/cli"
+        /vagrant/dup/cli $*
+    else
         >&2 echo "Could not find dup/cli";
         exit 1;
     fi
-
-    "$result/cli" $*;
 }
 
 main $@
