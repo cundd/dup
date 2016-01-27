@@ -11,7 +11,7 @@ function duplib::_service_exists_systemd() {
 }
 
 function duplib::_service_exists_rc-service() {
-    rc-service --list           |grep -q "\s$1$" && echo "true" || echo "false";
+    rc-service --list           |grep -q "$1$" && echo "true" || echo "false";
 }
 
 function duplib::_service_exists_service() {
