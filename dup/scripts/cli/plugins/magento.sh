@@ -46,7 +46,7 @@ function dupcli::magento::download() {
 }
 
 function dupcli::magento::n98-magerun() {
-    if [[ dupcli::is_guest == "yes" ]]; then
+    if [[ $(dupcli::is_guest) == "yes" ]]; then
         n98-magerun.phar $*;
     else
         dupcli::_vagrant::check;
@@ -55,7 +55,7 @@ function dupcli::magento::n98-magerun() {
 }
 
 function dupcli::magento::modman() {
-    if [[ dupcli::is_guest == "yes" ]]; then
+    if [[ $(dupcli::is_guest) == "yes" ]]; then
         modman $*;
     else
         dupcli::_vagrant::check;

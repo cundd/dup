@@ -20,7 +20,7 @@ function dupcli::typo3::download() {
 }
 
 function dupcli::typo3::cli() {
-    if [[ dupcli::is_guest == "yes" ]]; then
+    if [[ $(dupcli::is_guest) == "yes" ]]; then
         php "$(dupcli::_get_host_vhost_document_root)/typo3/cli_dispatch.phpsh" $*;
     else
         dupcli::_vagrant::check;
