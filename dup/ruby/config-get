@@ -4,11 +4,12 @@ require "#{dir}/include.rb"
 
 class DupConfig
     def initialize(argv)
-        if argv.length < 1
-            puts "Missing argument"
-            exit 1
+        if argv.length > 0
+            @keyPath = argv[0].split('.')
+        else
+            @keyPath = []
         end
-        @keyPath = argv[0].split('.')
+
     end
 
     def main
