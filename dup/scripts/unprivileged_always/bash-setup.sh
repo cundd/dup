@@ -8,6 +8,7 @@ DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
 source "$DUP_LIB_PATH";
 
 function configure-completion() {
+    touch $HOME/.inputrc;
     duplib::add_string_to_file_if_not_found "set completion-ignore-case on" "$HOME/.inputrc";
 }
 
