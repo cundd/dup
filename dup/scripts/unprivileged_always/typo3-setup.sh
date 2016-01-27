@@ -51,7 +51,7 @@ function bootstrap_typo3() {
 
 function prepare_typo3temp() {
     if [[ "$TYPO3_SYMLINK_FOR_TEMP" == "true" ]] && [[ -e `detect_typo3_source_directory` ]]; then
-        if [[ -e "typo3temp" ]]; then
+        if [[ -e "typo3temp" ]] || [[ -h "typo3temp" ]]; then
             rm -rf "typo3temp";
         fi
 
