@@ -60,6 +60,7 @@ function dupcli::_search_directory_tree() {
 }
 
 function main() {
+    local dup_cli_path;
     local result;
     local status;
 
@@ -69,13 +70,15 @@ function main() {
     set -e;
 
     if [ $status -eq 0 ] && [ -e "$result/cli" ]; then
-        $SHELL "$result/cli" $*;
+        dup_cli_path="$result/cli";
     elif [ -e "/vagrant/dup/cli" ]; then
-        $SHELL "/vagrant/dup/cli" $*
+        dup_cli_path="/vagrant/dup/cli";
     else
         >&2 echo "Could not find dup/cli";
         exit 1;
     fi
+
+    /usr/bin/env bash $dup_cli_path "$@";
 }
 
 main $@
