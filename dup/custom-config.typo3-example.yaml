@@ -4,7 +4,7 @@ scripts:
         TYPO3_SITE_ENV: DEV
 
         TYPO3_CLIENT_INSTALL: true
-        TYPO3_CLIENT_BRANCH: feature/typo3-7-lts
+        TYPO3_CLIENT_BRANCH: master
         TYPO3_DOWNLOAD_FORCE: false
 
         SASS_SETUP: true
