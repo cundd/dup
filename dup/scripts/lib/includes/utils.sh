@@ -60,12 +60,40 @@ function duplib::is_host() {
 # --------------------------------------------------------
 # Helpers
 # --------------------------------------------------------
+#
+function duplib::dup_checksum() {
+    if [ -z ${DUP_CLI_PATH+x} ]; then
+        duplib::fatal_error "Variable DUP_CLI_PATH not set";
+    fi
+    local md5_command;
+    if hash "md5sum" 2>/dev/null; then
+        md5_command="md5sum";
+    elif hash "md5" 2>/dev/null; then
+        md5_command="md5";
+    else
+        duplib::fatal_error "No md5 tool found";
+    fi
+
+    find "$DUP_CLI_PATH" -type f -exec $md5_command {} + | awk '{print $1}' | sort | $md5_command;
+}
+
+# Returns if the given command is available
 function duplib::command_exists() {
     if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (command name)"; return 1; fi;
     if hash "$1" 2>/dev/null; then
         return 0;
     else
         return 1;
+    fi
+}
+
+# Display a fatal error and exit if the given command is not available
+function duplib::check_required_command() {
+    if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (command name)"; return 1; fi;
+    if hash "$1" 2>/dev/null; then
+        return 0;
+    else
+        duplib::fatal_error "Command $1 not found";
     fi
 }
 

@@ -46,6 +46,13 @@ function dupcli::is_host() {
     duplib::is_host;
 }
 
+# Returns the version as git commit hash
+function dupcli::version() {
+    duplib::check_required_command "git";
+    cd $DUP_CLI_PATH;
+    git rev-parse HEAD;
+}
+
 
 # --------------------------------------------------------
 # Helper methods
