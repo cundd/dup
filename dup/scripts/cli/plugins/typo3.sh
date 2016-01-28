@@ -23,7 +23,18 @@ function dupcli::typo3::cli() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
         php "$(dupcli::_get_host_vhost_document_root)/typo3/cli_dispatch.phpsh" $*;
     else
-        dupcli::_vagrant::check;
-        vagrant ssh -c "php typo3/cli_dispatch.phpsh $*";
+        dupcli::ssh::execute "php typo3/cli_dispatch.phpsh $*";
+    fi
+}
+
+function dupcli::typo3::extbase() {
+    if [ $# -eq 0 ]; then
+        dupcli::typo3::extbase "help";
+    else
+        if [[ $(dupcli::is_guest) == "yes" ]]; then
+            php "$(dupcli::_get_host_vhost_document_root)/typo3/cli_dispatch.phpsh" "extbase" $*;
+        else
+            dupcli::ssh::execute "php typo3/cli_dispatch.phpsh extbase $*";
+        fi
     fi
 }
