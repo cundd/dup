@@ -151,3 +151,8 @@ function duplib::error() {
 function error() {
     duplib::error $@;
 }
+
+function duplib::fatal_error() {
+    duplib::error "$@";
+    exit;
+}
