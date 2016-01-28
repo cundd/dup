@@ -50,7 +50,10 @@ function dupcli::_ssh::vagrant_get_port() {
 }
 
 function dupcli::_ssh::vagrant_connect() {
-    local verbose="";
+    local user_and_server=$(dupcli::_ssh::get_vagrant_user_and_host);
+    local port=$(dupcli::_ssh::vagrant_get_port);
+
+    local verbose='';
     if [[ $(duplib::get_option_is_set "-v" $@) == "true" ]]; then
         verbose="-v";
     elif [[ $(duplib::get_option_is_set "-vv" $@) == "true" ]]; then
@@ -59,7 +62,7 @@ function dupcli::_ssh::vagrant_connect() {
         verbose="-vvv";
     fi
 
-    ssh "$verbose" -o ConnectTimeout=1 -o ConnectionAttempts=1 -p $(dupcli::_ssh::vagrant_get_port) $(dupcli::_ssh::get_vagrant_user_and_host) || {
+    ssh $verbose -o ConnectTimeout=1 -o ConnectionAttempts=1 -p "$port" "$user_and_server" || {
          # Check if a timeout occurred
          if [ $? -eq 255 ]; then
              echo "Try to connect through vagrant binary";
@@ -71,7 +74,10 @@ function dupcli::_ssh::vagrant_connect() {
 }
 
 function dupcli::_ssh::vagrant_execute() {
-    local verbose="";
+    local user_and_server=$(dupcli::_ssh::get_vagrant_user_and_host);
+    local port=$(dupcli::_ssh::vagrant_get_port);
+
+    local verbose='';
     if [[ $(duplib::get_option_is_set "-v" $@) == "true" ]]; then
         verbose="-v";
     elif [[ $(duplib::get_option_is_set "-vv" $@) == "true" ]]; then
@@ -80,7 +86,7 @@ function dupcli::_ssh::vagrant_execute() {
         verbose="-vvv";
     fi
 
-    ssh "$verbose" -o ConnectTimeout=1 -o ConnectionAttempts=1 -p $(dupcli::_ssh::vagrant_get_port) $(dupcli::_ssh::get_vagrant_user_and_host) "bash -l -c '$@'" || {
+    ssh $verbose -o ConnectTimeout=1 -o ConnectionAttempts=1 -p "$port" "$user_and_server" "bash -l -c '$@'" || {
         # Check if a timeout occurred
         if [ $? -eq 255 ]; then
             echo "Try to connect through vagrant binary";
