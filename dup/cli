@@ -51,7 +51,7 @@ function dupcli::is_host() {
 # Helper methods
 # --------------------------------------------------------
 function dupcli::_load_duplib() {
-    DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/scripts/lib/duplib.sh}";
+    DUP_LIB_PATH="${DUP_LIB_PATH:-$DUP_CLI_PATH/scripts/lib/duplib.sh}";
     if [[ ! -e "$DUP_LIB_PATH" ]] && [[ -e "/vagrant/dup/scripts/lib/duplib.sh" ]]; then
         DUP_LIB_PATH="/vagrant/dup/scripts/lib/duplib.sh";
     elif [[ ! -e "$DUP_LIB_PATH" ]]; then
@@ -61,9 +61,14 @@ function dupcli::_load_duplib() {
     source "$DUP_LIB_PATH";
 }
 
+function dupcli::_init_globals() {
+    DUP_CLI_PATH="${DUP_CLI_PATH:-$(dirname "$0")}";
+    DUP_BASE="${DUP_BASE:-"$DUP_CLI_PATH/.."}";
+}
+
 function dupcli::_get_cli_directory() {
-    if [[ -e "$(dirname "$0")/scripts/cli" ]]; then
-        echo "$(dirname "$0")/scripts/cli";
+    if [[ -e "$DUP_CLI_PATH/scripts/cli" ]]; then
+        echo "$DUP_CLI_PATH/scripts/cli";
     elif [[ -e "/vagrant/dup/scripts/cli" ]]; then
         echo "/vagrant/dup/scripts/cli";
     else
@@ -132,6 +137,7 @@ function dupcli::_list_commands() {
 # Main function
 # --------------------------------------------------------
 function main() {
+    dupcli::_init_globals;
     dupcli::_load_duplib;
     dupcli::_load_plugins;
     if [[ -z ${1+x} ]]; then
