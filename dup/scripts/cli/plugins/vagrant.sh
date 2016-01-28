@@ -9,6 +9,11 @@ function dupcli::_vagrant::check() {
     fi
 }
 
+function dupcli::_vagrant::ssh() {
+    dupcli::_vagrant::check;
+    vagrant ssh "$*";
+}
+
 function dupcli::vagrant::halt() {
     dupcli::_vagrant::check;
     vagrant halt $@;
@@ -20,8 +25,7 @@ function dupcli::vagrant::provision() {
 }
 
 function dupcli::vagrant::ssh() {
-    dupcli::_vagrant::check;
-    vagrant ssh $@;
+    dupcli::_ssh::vagrant_connect "$@";
 }
 
 function dupcli::vagrant::up() {
