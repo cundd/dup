@@ -49,8 +49,7 @@ function dupcli::magento::n98-magerun() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
         n98-magerun.phar $*;
     else
-        dupcli::_vagrant::check;
-        vagrant ssh -c "n98-magerun.phar $*";
+        dupcli::ssh::execute "n98-magerun.phar $*";
     fi
 }
 
@@ -58,7 +57,6 @@ function dupcli::magento::modman() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
         modman $*;
     else
-        dupcli::_vagrant::check;
-        vagrant ssh -c "modman $*";
+        dupcli::ssh::execute "modman $*";
     fi
 }
