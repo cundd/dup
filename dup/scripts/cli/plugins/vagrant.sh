@@ -25,7 +25,7 @@ function dupcli::vagrant::provision() {
 }
 
 function dupcli::vagrant::ssh() {
-    dupcli::_ssh::vagrant_connect "$@";
+    dupcli::_vagrant::ssh "$@";
 }
 
 function dupcli::vagrant::up() {
