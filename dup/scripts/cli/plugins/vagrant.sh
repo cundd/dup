@@ -28,6 +28,11 @@ function dupcli::vagrant::ssh() {
     dupcli::_vagrant::ssh "$@";
 }
 
+function dupcli::vagrant::ssh-config() {
+    dupcli::_vagrant::check;
+    vagrant ssh-config "$@";
+}
+
 function dupcli::vagrant::up() {
     dupcli::_vagrant::check;
     vagrant up $@;
