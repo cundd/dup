@@ -2,8 +2,16 @@ require 'yaml'
 
 def getConfig
     dir = File.dirname(File.expand_path(__FILE__))
-    defaultConfig = YAML.load_file("#{dir}/../config.yaml")
-    if File.exist?("#{dir}/../../custom-config.yaml")
+    defaultConfig = YAML.load_file("#{dir}/../default-config.yaml")
+
+    if File.exist?("#{dir}/../config.yaml")
+        oldConfig = YAML.load_file("#{dir}/../config.yaml")
+        defaultConfig.deep_merge!(oldConfig)
+    end
+
+    if File.exist?("#{dir}/../../config.yaml")
+        customConfig = YAML.load_file("#{dir}/../../config.yaml")
+    elsif File.exist?("#{dir}/../../custom-config.yaml")
         customConfig = YAML.load_file("#{dir}/../../custom-config.yaml")
     elsif File.exist?("#{dir}/../custom-config.yaml")
         customConfig = YAML.load_file("#{dir}/../custom-config.yaml")
