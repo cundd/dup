@@ -16,6 +16,21 @@ function duplib::package_install() {
     fi
 }
 
+function duplib::package_search() {
+    if hash pacman 2>/dev/null; then
+        duplib::_package_search_with_pacman $(duplib::transform_package_names $@);
+    elif hash apk 2>/dev/null; then
+        duplib::_package_search_with_apk $(duplib::transform_package_names $@);
+    elif hash yum 2>/dev/null; then
+        duplib::_package_search_with_yum $(duplib::transform_package_names $@);
+    elif hash apt-get 2>/dev/null; then
+        duplib::_package_search_with_apt-get $(duplib::transform_package_names $@);
+    else
+        error "No matching installer for platform $(duplib::detect_linux_distribution) found";
+        return 103;
+    fi
+}
+
 function duplib::system_upgrade() {
     if hash pacman 2>/dev/null; then
         duplib::_system_upgrade_with_pacman;
@@ -112,22 +127,38 @@ function duplib::transform_package_names() {
 # --------------------------------------------------------
 # Installation
 function duplib::_package_install_with_pacman() {
-    pacman -S --noconfirm --needed $@;
+    pacman -S --noconfirm --needed "$@";
 }
 
 function duplib::_package_install_with_apk() {
-    apk add $@;
+    apk add "$@";
 }
 
 function duplib::_package_install_with_yum() {
-    error "Not implemented yet";
+    yum -y install "$@";
 }
 
 function duplib::_package_install_with_apt-get() {
-    echo "Will install packages. This may take a while"
-    echo "apt-get --assume-yes install $@";
     export DEBIAN_FRONTEND=noninteractive;
-    apt-get -y install $@;
+    apt-get -y install "$@";
+}
+
+# --------------------------------------------------------
+# Search
+function duplib::_package_search_with_pacman() {
+    pacman -Ss "$@";
+}
+
+function duplib::_package_search_with_apk() {
+    apk search "$@";
+}
+
+function duplib::_package_search_with_yum() {
+    yum search "$@";
+}
+
+function duplib::_package_search_with_apt-get() {
+    apt-cache search "$@";
 }
 
 # --------------------------------------------------------
