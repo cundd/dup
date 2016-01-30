@@ -28,7 +28,7 @@ git clone https://git.iresults.li/git/COD/dup.git project-url.local
 cd project-url.local
 ```
 
-Configure the VM in `dup/config.yaml`
+Configure the VM in `config.yaml`
 
 ```yaml
 vagrant:
