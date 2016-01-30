@@ -1,8 +1,8 @@
 def configureVagrant(config)
     dir = File.dirname(File.expand_path(__FILE__))
     dupDirectoryName = 'dup'
-    dupScriptsBase = "#{dir}/../scripts"
-    dupFilesBase = "#{dir}/../files"
+    dupScriptsBase = "#{dir}/../vagrant/scripts"
+    dupFilesBase = "#{dir}/../vagrant/files"
     vagrantBase = File.expand_path("#{dir}/../../")
 
     # Vagrant box to use

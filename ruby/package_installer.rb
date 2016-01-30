@@ -1,6 +1,6 @@
 def configureInstallPackages(config, packages)
     rubyDir = File.dirname(File.expand_path(__FILE__))
-    installerPath = "#{rubyDir}/../scripts/special/package-installer.sh"
+    installerPath = "#{rubyDir}/../vagrant/scripts/special/package-installer.sh"
     env = getScriptEnvironment()
 
     allPackages = packages.join(" ")

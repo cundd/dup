@@ -72,7 +72,7 @@ function duplib::copy_linux_distribution_specific_file() {
         local destination="$3";
     fi
 
-    local dupFilesPath="/vagrant/$DUP_BASE/files/$subDirectory";
+    local dupFilesPath="/vagrant/$DUP_BASE/vagrant/files/$subDirectory";
 
     ## Check if there is a special file for the linux distribution
     if [[ -e "$dupFilesPath/$(duplib::get_dup_linux_distribution_specific_folder)/$fileName" ]]; then

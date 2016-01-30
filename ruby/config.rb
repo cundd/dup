@@ -44,7 +44,7 @@ def getScriptEnvironment
     env['PHP_CUSTOM_INI'] = phpIni.join(" ")
     addPhpFeaturesToEnvironment(env)
 
-    env['DUP_LIB_PATH'] = "/vagrant/dup/scripts/lib/duplib.sh"
+    env['DUP_LIB_PATH'] = "/vagrant/dup/shell/lib/duplib.sh"
 
     return env
 end

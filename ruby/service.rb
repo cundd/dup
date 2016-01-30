@@ -1,7 +1,7 @@
 def configureService(config, service)
     env = getScriptEnvironment()
     rubyDir = File.dirname(File.expand_path(__FILE__))
-    serviceStarterPath = "#{rubyDir}/../scripts/special/service-starter.sh";
+    serviceStarterPath = "#{rubyDir}/../vagrant/scripts/special/service-starter.sh";
 
     config.vm.provision "service-#{service}", type: "shell", privileged: true, env: env, path: serviceStarterPath, args: [service], run: "always"
 end

@@ -58,9 +58,9 @@ function dupcli::version() {
 # Helper methods
 # --------------------------------------------------------
 function dupcli::_load_duplib() {
-    DUP_LIB_PATH="${DUP_LIB_PATH:-$DUP_CLI_PATH/scripts/lib/duplib.sh}";
-    if [[ ! -e "$DUP_LIB_PATH" ]] && [[ -e "/vagrant/dup/scripts/lib/duplib.sh" ]]; then
-        DUP_LIB_PATH="/vagrant/dup/scripts/lib/duplib.sh";
+    DUP_LIB_PATH="${DUP_LIB_PATH:-$DUP_CLI_PATH/shell/lib/duplib.sh}";
+    if [[ ! -e "$DUP_LIB_PATH" ]] && [[ -e "/vagrant/dup/shell/lib/duplib.sh" ]]; then
+        DUP_LIB_PATH="/vagrant/dup/shell/lib/duplib.sh";
     elif [[ ! -e "$DUP_LIB_PATH" ]]; then
         >&2 echo "Could not find dup lib";
         exit 1;
@@ -74,10 +74,10 @@ function dupcli::_init_globals() {
 }
 
 function dupcli::_get_cli_directory() {
-    if [[ -e "$DUP_CLI_PATH/scripts/cli" ]]; then
-        echo "$DUP_CLI_PATH/scripts/cli";
-    elif [[ -e "/vagrant/dup/scripts/cli" ]]; then
-        echo "/vagrant/dup/scripts/cli";
+    if [[ -e "$DUP_CLI_PATH/shell/cli" ]]; then
+        echo "$DUP_CLI_PATH/shell/cli";
+    elif [[ -e "/vagrant/dup/shell/cli" ]]; then
+        echo "/vagrant/dup/shell/cli";
     else
         >&2 echo "Could not find dup cli directory";
         exit 1;

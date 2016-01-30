@@ -21,11 +21,15 @@ vagrant plugin install vagrant-alpine
 
 ### Project setup
 
-Clone the dup repository and change into the folder
+Clone the dup repository and copy the Vagrant file
 
 ```bash
-git clone https://git.iresults.li/git/COD/dup.git project-url.local
-cd project-url.local
+mkdir project-url.local;
+cd project-url.local;
+git clone https://git.iresults.li/git/COD/dup.git dup
+mkdir httpdocs;
+cp dup/Vagrantfile Vagrantfile;
+cp dup/default-config.yaml config.yaml;
 ```
 
 Configure the VM in `config.yaml`
@@ -39,5 +43,5 @@ vagrant:
 Start the VM and enter the **host's** password when asked
 
 ```bash
-vagrant up
+dup vagrant::up
 ```

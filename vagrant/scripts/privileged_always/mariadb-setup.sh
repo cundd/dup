@@ -6,7 +6,7 @@ set -o errexit
 MYSQL_DATADIR="${MYSQL_DATADIR:-/var/lib/mysql}";
 
 DUP_BASE="${DUP_BASE:-dup}";
-DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../special/lib.sh}";
+DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib.sh}";
 source "$DUP_LIB_PATH";
 
 function prepare_installation() {
