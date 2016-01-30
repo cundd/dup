@@ -18,6 +18,8 @@ vagrant:
         forwarded_ports:
             # Guest => Host
             # 80: 8080
+
+        share_type: "nfs"
 scripts:
     ENV:
         DB_ROOT_PASSWORD: "3FwDkQ6gGeVVYDkES3H95auCVekAnG"

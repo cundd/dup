@@ -15,8 +15,14 @@ def configureVagrant(config)
     config.vm.network "private_network", ip: getConfig()['vagrant']['vm']['ip']
 
     # Configure synced folders
-    config.vm.synced_folder "httpdocs", "/var/www/vhosts/dup.cundd.net/httpdocs", type: "nfs"
-    config.vm.synced_folder ".", "/vagrant", type: "nfs"
+    shareType = getConfig()['vagrant']['vm']['share_type']
+    if shareType && shareType != "default"
+        config.vm.synced_folder "httpdocs", "/var/www/vhosts/dup.cundd.net/httpdocs", type: shareType
+        config.vm.synced_folder ".", "/vagrant", type: shareType
+    else
+        config.vm.synced_folder "httpdocs", "/var/www/vhosts/dup.cundd.net/httpdocs"
+        config.vm.synced_folder ".", "/vagrant"
+    end
 
     # Set the hostname
     configureAutomaticHostname(config, vagrantBase)
