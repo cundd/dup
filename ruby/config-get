@@ -1,20 +1,40 @@
 #!/usr/bin/env ruby
+require 'json'
+require 'yaml'
+
 dir = File.dirname(File.expand_path(__FILE__))
 require "#{dir}/include.rb"
 
 class DupConfig
     def initialize(argv)
+        @format = :json
+        @keyPath = []
         if argv.length > 0
-            @keyPath = argv[0].split('.')
-        else
-            @keyPath = []
-        end
+            if argv.last[0] != '-'
+                @keyPath = argv.last.split('.')
+            end
 
+            if argv.include? '--json'
+                @format = :json
+            elsif argv.include? '--yaml'
+                @format = :yaml
+            end
+        end
+    end
+
+    def fetch
+        configuration = getConfig()
+        @keyPath.inject(configuration) {|acc, value| acc[value]}
     end
 
     def main
-        configuration = getConfig()
-        puts @keyPath.inject(configuration) {|acc, value| acc[value]}
+        case @format
+            when :json
+                puts fetch().to_json
+
+            when :yaml
+                puts fetch().to_yaml
+        end
     end
 end
 

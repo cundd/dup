@@ -33,7 +33,7 @@ function dupcli::config() {
         return 1;
     fi
 
-    "$script_path/ruby/config-get" $*;
+    "$script_path/ruby/config-get" "$@";
 }
 
 # Try to find out if the current machine is the guest
