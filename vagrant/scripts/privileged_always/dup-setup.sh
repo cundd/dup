@@ -11,9 +11,9 @@ function run() {
         if [[ ! -e "/usr/local/bin/dup" ]]; then
             if [[ -h "/usr/local/bin/dup" ]]; then
                 duplib::error "Path /usr/local/bin/dup exists but does not point to a valid file";
-                return 1;
+            else
+                ln -s "/vagrant/dup/shell/cli/dup" "/usr/local/bin/dup";
             fi
-            ln -s "/vagrant/dup/shell/cli/dup" "/usr/local/bin/dup";
         fi
     fi
 }
