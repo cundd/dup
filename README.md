@@ -28,7 +28,7 @@ mkdir project-url.local;
 cd project-url.local;
 git clone https://git.iresults.li/git/COD/dup.git dup
 mkdir httpdocs;
-cp dup/Vagrantfile Vagrantfile;
+cp dup/default-Vagrantfile.rb Vagrantfile;
 cp dup/default-config.yaml config.yaml;
 ```
 
