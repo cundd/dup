@@ -47,12 +47,16 @@ function dupcli::_ssh::vagrant::user_and_host() {
     echo "vagrant@127.0.0.1";
 }
 
+function dupcli::_ssh::vagrant::connect_timeout() {
+    echo "1";
+}
+
 function dupcli::_ssh::vagrant::options() {
     echo "" \
         "-o Compression=yes -o DSAAuthentication=yes -o LogLevel=FATAL " \
         "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null " \
         "-o IdentitiesOnly=yes -i $DUP_BASE/.vagrant/machines/default/virtualbox/private_key" \
-        "-o ConnectTimeout=1 -o ConnectionAttempts=1";
+        "-o ConnectTimeout=$(dupcli::_ssh::vagrant::connect_timeout) -o ConnectionAttempts=1";
 }
 
 function dupcli::_ssh::vagrant::port() {
@@ -75,11 +79,19 @@ function dupcli::_ssh::vagrant::connect() {
         verbose="-vvv";
     fi
 
+    local ssh_connection_start_time=$(date +%s);
+
     ssh $verbose $options -p "$port" "$user_and_server" || {
+         local status=$?;
+
          # Check if a timeout occurred
-         if [ $? -eq 255 ]; then
+         local ssh_connection_end_time=$(date +%s);
+         local connection_timeout=$(dupcli::_ssh::vagrant::connect_timeout);
+         let difference=ssh_connection_end_time-ssh_connection_start_time;
+         
+         if [ $status -eq 255 ] && [[ "$difference" -lt "$connection_timeout" ]]; then
              echo "Try to connect through vagrant binary";
-             dupcli::_vagrant::ssh;
+             dupcli::_vagrant::ssh -c "$@";
          else
              return 1;
          fi
@@ -100,9 +112,17 @@ function dupcli::_ssh::vagrant::execute() {
         verbose="-vvv";
     fi
 
+    local ssh_connection_start_time=$(date +%s);
+
     ssh $verbose $options -p "$port" "$user_and_server" "bash -l -c '$@'" || {
+        local status=$?;
+
         # Check if a timeout occurred
-        if [ $? -eq 255 ]; then
+        local ssh_connection_end_time=$(date +%s);
+        local connection_timeout=$(dupcli::_ssh::vagrant::connect_timeout);
+        let difference=ssh_connection_end_time-ssh_connection_start_time;
+        
+        if [ $status -eq 255 ] && [[ "$difference" -lt "$connection_timeout" ]]; then
             echo "Try to connect through vagrant binary";
             dupcli::_vagrant::ssh -c "$@";
         else
