@@ -7,6 +7,9 @@
 set -o nounset
 set -o errexit
 
+# Global settings
+: ${DUP_CLI_CACHE_LIFETIME="300"}
+
 # --------------------------------------------------------
 # Subcommands
 # --------------------------------------------------------
@@ -63,6 +66,15 @@ function dupcli::selfupdate() {
     git pull;
 }
 
+# Display this information
+function dupcli::help() {
+    if [ "$#" -lt 1 ]; then
+        dupcli::_cache::check_cache_or_set_and_print "help" "dupcli::_print_help";
+    else
+        dupcli::_cache::check_cache_or_set_and_print "help" "dupcli::_print_help $1" ;
+    fi
+}
+
 
 # --------------------------------------------------------
 # Helper methods
@@ -81,6 +93,11 @@ function dupcli::_duplib::load() {
 function dupcli::_init_globals() {
     DUP_CLI_PATH="${DUP_CLI_PATH:-$(dirname "$0")}";
     DUP_BASE="${DUP_BASE:-"$DUP_CLI_PATH/.."}";
+
+    DUP_CACHE_PATH="$DUP_CLI_PATH/.dup_cache";
+    if [ ! -e "$DUP_CACHE_PATH" ]; then
+        mkdir "$DUP_CACHE_PATH";
+    fi
 }
 
 function dupcli::_get_cli_directory() {
@@ -127,8 +144,6 @@ function dupcli::_print_command_help_line() {
 
     local line=$(printf '%0.1s' " "{1..28});
     printf "    %s %s $help\n" $command "${line:${#command}}"
-
-
 }
 
 
@@ -199,7 +214,7 @@ function main() {
     dupcli::_duplib::load;
     dupcli::_plugins::load;
     if [[ -z ${1+x} ]]; then
-        dupcli::_print_help '';
+        dupcli::help '';
         return 1;
     fi;
 
@@ -209,7 +224,7 @@ function main() {
     if type "dupcli::$subcommand" &> /dev/null; then
         dupcli::$subcommand $@;
     else
-        dupcli::_print_help $subcommand;
+        dupcli::help $subcommand;
         return 1;
     fi
 }
