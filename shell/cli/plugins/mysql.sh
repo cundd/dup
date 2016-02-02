@@ -42,6 +42,14 @@ function dupcli::mysql::dump() {
     }
 
     local output_file="$HOME/$DB_NAME-$(date +%F-%H%m%S).sql.gz";
+    if [ "$#" -eq 1 ]; then
+        output_file="$1";
+    fi
+
+    if [ ! -e "$(dirname $output_file)" ]; then
+        mkdir -p "$(dirname $output_file)";
+    fi
+
     echo "Export database '$DB_NAME' to $output_file";
     mysqldump -h$DB_HOST -u$DB_USERNAME -p$DB_PASSWORD $DB_NAME|gzip -c > $output_file;
 }
