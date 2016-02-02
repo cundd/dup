@@ -2,6 +2,7 @@
 set -o nounset
 set -o errexit
 
+# Download Magento files from the given remote
 function dupcli::magento::download() {
     if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (user@server)"; return 1; fi;
     if [[ -z ${2+x} ]]; then duplib::error "Missing argument 2 (remote_base_path)"; return 1; fi;
@@ -45,6 +46,7 @@ function dupcli::magento::download() {
     duplib::rsync $user_and_server "$remote_base_path/.modman/" "$local_path/.modman/" "$excludes" $@;
 }
 
+# Call n98-magerun
 function dupcli::magento::n98-magerun() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
         n98-magerun.phar $*;
@@ -53,6 +55,7 @@ function dupcli::magento::n98-magerun() {
     fi
 }
 
+# Call modman
 function dupcli::magento::modman() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
         modman $*;

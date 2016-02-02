@@ -2,10 +2,12 @@
 set -o nounset
 set -o errexit
 
+# Alias for dupcli::mysql::connect
 function dupcli::mysql() {
     dupcli::mysql::connect;
 }
 
+# Connect to the databank defined in the configuration
 function dupcli::mysql::connect() {
     if [ -z ${DB_USERNAME+x} ]; then
         DB_USERNAME='';
@@ -28,6 +30,7 @@ function dupcli::mysql::connect() {
     }
 }
 
+# Dump and gzip the databank defined in the configuration
 function dupcli::mysql::dump() {
     duplib::command_exists mysqldump || {
         duplib::error "Command mysqldump not found";

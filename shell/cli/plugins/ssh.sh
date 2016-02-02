@@ -7,6 +7,8 @@ set -o errexit
 # --------------------------------------------------------
 # Commands
 # --------------------------------------------------------
+
+# Connect to the Vagrant machine through SSH
 function dupcli::ssh::connect() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
         duplib::fatal_error "This machine appears to be the guest machine";
@@ -17,6 +19,7 @@ function dupcli::ssh::connect() {
     fi
 }
 
+# Execute a command on the Vagrant machine through SSH
 function dupcli::ssh::execute() {
     if [ $# -eq 0 ]; then
         duplib::fatal_error "Missing argument 1 (command)";
@@ -31,6 +34,7 @@ function dupcli::ssh::execute() {
     fi
 }
 
+# Alias for ssh::execute
 function dupcli::ssh::exec() {
     dupcli::ssh::execute "$@";
 }

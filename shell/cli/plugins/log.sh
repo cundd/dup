@@ -17,24 +17,28 @@ function dupcli::_log::get_first_existing() {
     return 1;
 }
 
+# Print the HTTP access log
 function dupcli::log::http() {
     local directory=$(dupcli::_log::get_first_existing "/var/log/apache2 /var/log/httpd");
     if [ "$directory" == "" ]; then return 1; fi
     tail $* "$directory/access.log";
 }
 
+# Print the HTTP error log
 function dupcli::log::http_error() {
     local directory=$(dupcli::_log::get_first_existing "/var/log/apache2 /var/log/httpd");
     if [ "$directory" == "" ]; then return 1; fi
     tail $* "$directory/error.log";
 }
 
+# Print the MySQL log
 function dupcli::log::mysql() {
     local file=$(dupcli::_log::get_first_existing "/var/log/mariadb/mariadb.log /var/log/mysql/mysql.log /var/log/mysql.log");
     if [ "$file" == "" ]; then return 1; fi
     tail $* "$file";
 }
 
+# Print the PHP FPM log
 function dupcli::log::php_fpm() {
     local file=$(dupcli::_log::get_first_existing "/var/log/php-fpm.log /var/log/php5-fpm.log /var/log/php-fpm/error.log");
     if [ "$file" == "" ]; then return 1; fi
