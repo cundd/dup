@@ -39,7 +39,7 @@ scripts:
 
         DUP_BASE: "dup"
         BASH_SETUP: true
-        SASS_SETUP: true
+        SASS_SETUP: false
 
 packages:
     # Utilizties
