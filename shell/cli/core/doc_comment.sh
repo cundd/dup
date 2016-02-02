@@ -1,8 +1,62 @@
 # --------------------------------------------------------
 # Doc Comment methods
 # --------------------------------------------------------
+
+function dupcli::_doc_comment::cache_dir() {
+    echo "$DUP_CACHE_PATH/doc_comment";
+}
+
+function dupcli::_doc_comment::cache_age_test() {
+    if [ "$#" -ne 1 ]; then
+        duplib::fatal_error "Missing argument 1 (cache_file)";
+    fi
+    local cache_file="$1";
+
+    if stat --version &>/dev/null; then
+        let cache_age=$(date "+%s")-$(stat -c "%Y" $cache_file );
+    else
+        let cache_age=$(date "+%s")-$(stat -f "%a" $cache_file );
+    fi
+
+    if [[ $cache_age -gt 300 ]]; then
+        echo "false";
+    else
+        echo "true";
+    fi
+}
+
 function dupcli::_doc_comment::doc_comment_for_command() {
-    local command=$1;
+    if [ "$#" -ne 1 ]; then
+        duplib::fatal_error "Missing argument 1 (command)";
+    fi
+
+    local command="$1";
+    local command_clean=$(echo $command | sed 's/:/-/g');
+    local cache_directory="$(dupcli::_doc_comment::cache_dir)";
+
+    if [ ! -e "$cache_directory" ]; then
+        mkdir "$cache_directory";
+    fi
+
+    local cache_file="$cache_directory/command_$command_clean";
+
+    # Check if the cache file exists and that it isn't too old
+    if [[ -e "$cache_file" ]]; then
+        if [ "$(dupcli::_doc_comment::cache_age_test "$cache_file")" != "true" ]; then
+            dupcli::_doc_comment::build_doc_comment_for_command "$command" > "$cache_file";
+        fi
+    else
+        dupcli::_doc_comment::build_doc_comment_for_command "$command" > "$cache_file";
+    fi
+
+    cat "$cache_file";
+}
+
+function dupcli::_doc_comment::build_doc_comment_for_command() {
+    if [ "$#" -ne 1 ]; then
+        duplib::fatal_error "Missing argument 1 (command)";
+    fi
+    local command="$1";
     local function_definition="function dupcli::$command()";
 
     local file="";
