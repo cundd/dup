@@ -10,11 +10,14 @@ function dupcli::_cache::cache_age_test() {
     fi
     local cache_file="$1";
 
-    if stat --version &>/dev/null; then
-        let cache_age=$(date "+%s")-$(stat -c "%Y" $cache_file );
-    else
-        let cache_age=$(date "+%s")-$(stat -f "%a" $cache_file );
+    local cache_file_time=0;
+    if stat -c "%Y" $cache_file &>/dev/null; then
+        cache_file_time=$(stat -c "%Y" $cache_file 2>/dev/null);
+    elif stat -f "%a" $cache_file &>/dev/null; then
+        cache_file_time=$(stat -f "%a" $cache_file 2>/dev/null);
     fi
+
+    let cache_age=$(date "+%s")-cache_file_time;
 
     if [[ $cache_age -gt "$DUP_CLI_CACHE_LIFETIME" ]]; then
         echo "false";
@@ -62,7 +65,6 @@ function dupcli::_cache::check_cache_or_set() {
 
     local key="$1";
     local callable="$2";
-
     local cache_file="$(dupcli::_cache::_get_cache_file_path $key)";
 
     if [[ "$(dupcli::_cache::check_cache $key)" != "true" ]]; then
@@ -78,5 +80,6 @@ function dupcli::_cache::check_cache_or_set_and_print() {
     fi
 
     dupcli::_cache::check_cache_or_set "$1" "$2";
+
     cat "$(dupcli::_cache::_get_cache_file_path $1)";
 }

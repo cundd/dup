@@ -69,12 +69,11 @@ function dupcli::selfupdate() {
 # Display this information
 function dupcli::help() {
     if [ "$#" -lt 1 ]; then
-        dupcli::_cache::check_cache_or_set_and_print "help" "dupcli::_print_help";
+        dupcli::_cache::check_cache_or_set_and_print "general-help" "dupcli::_print_help";
     else
-        dupcli::_cache::check_cache_or_set_and_print "help" "dupcli::_print_help $1" ;
+        dupcli::_print_help "$1" ;
     fi
 }
-
 
 # --------------------------------------------------------
 # Helper methods
@@ -126,14 +125,21 @@ function dupcli::_print_help() {
 ";
 
     local filter_commands='';
-    if [[ ! -z ${1+x} ]] && [[ "$1" != "" ]]; then
+    if [ $# -gt 0 ] && [[ "$1" != "" ]]; then
         filter_commands="$1";
+    fi
+
+    local matching_commands=$(dupcli::_list_commands $filter_commands);
+
+    if [ "$filter_commands" != "" ] && [ "$matching_commands" != "" ]; then
         echo "Did you mean one of these?";
+    elif [ "$filter_commands" != "" ]; then
+        echo "No matching commands found";
     else
         echo "Commands:";
     fi
 
-    for command in $(dupcli::_list_commands $filter_commands); do
+    for command in $matching_commands; do
         dupcli::_print_command_help_line $command;
     done
 }
@@ -213,8 +219,8 @@ function main() {
     dupcli::_core::load;
     dupcli::_duplib::load;
     dupcli::_plugins::load;
-    if [[ -z ${1+x} ]]; then
-        dupcli::help '';
+    if [[ $# -eq 0 ]]; then
+        dupcli::help;
         return 1;
     fi;
 

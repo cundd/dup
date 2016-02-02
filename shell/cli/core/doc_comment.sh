@@ -7,7 +7,7 @@ function dupcli::_doc_comment::doc_comment_for_command() {
     fi
 
     local command="$1";
-    dupcli::_cache::check_cache_or_set_and_print "$command" "dupcli::_doc_comment::build_doc_comment_for_command $command";
+    dupcli::_cache::check_cache_or_set_and_print "command-$command" "dupcli::_doc_comment::build_doc_comment_for_command $command";
 }
 
 function dupcli::_doc_comment::build_doc_comment_for_command() {
