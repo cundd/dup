@@ -2,6 +2,13 @@
 # Package management
 # --------------------------------------------------------
 function duplib::package_install() {
+    if [[ $# -gt 0 ]] && [[ "$1" == "-y" ]]; then
+        DUP_LIB_PACKAGE_NONINTERACTIVE="true";
+        shift;
+    elif [[ -z ${DUP_LIB_PACKAGE_NONINTERACTIVE+x} ]]; then
+        DUP_LIB_PACKAGE_NONINTERACTIVE="false";
+    fi
+
     if hash pacman 2>/dev/null; then
         duplib::_package_install_with_pacman $(duplib::transform_package_names $@);
     elif hash apk 2>/dev/null; then
@@ -32,14 +39,21 @@ function duplib::package_search() {
 }
 
 function duplib::system_upgrade() {
+    if [[ $# -gt 0 ]] && [[ "$1" == "-y" ]]; then
+        DUP_LIB_PACKAGE_NONINTERACTIVE="true";
+        shift;
+    elif [[ -z ${DUP_LIB_PACKAGE_NONINTERACTIVE+x} ]]; then
+        DUP_LIB_PACKAGE_NONINTERACTIVE="false";
+    fi
+
     if hash pacman 2>/dev/null; then
-        duplib::_system_upgrade_with_pacman;
+        duplib::_system_upgrade_with_pacman "$@";
     elif hash apk 2>/dev/null; then
-        duplib::_system_upgrade_with_apk;
+        duplib::_system_upgrade_with_apk "$@";
     elif hash yum 2>/dev/null; then
-        duplib::_system_upgrade_with_yum;
+        duplib::_system_upgrade_with_yum "$@";
     elif hash apt-get 2>/dev/null; then
-        duplib::_system_upgrade_with_apt-get;
+        duplib::_system_upgrade_with_apt-get "$@";
     else
         error "No matching updater for platform $(duplib::detect_linux_distribution) found";
         return 103;
@@ -127,7 +141,11 @@ function duplib::transform_package_names() {
 # --------------------------------------------------------
 # Installation
 function duplib::_package_install_with_pacman() {
-    pacman -S --noconfirm --needed "$@";
+    if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
+        pacman -S --noconfirm --needed "$@";
+    else
+        pacman -S --needed "$@";
+    fi
 }
 
 function duplib::_package_install_with_apk() {
@@ -135,12 +153,21 @@ function duplib::_package_install_with_apk() {
 }
 
 function duplib::_package_install_with_yum() {
-    yum -y install "$@";
+    if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
+        yum -y install "$@";
+    else
+        yum install "$@";
+    fi
 }
 
 function duplib::_package_install_with_apt-get() {
-    export DEBIAN_FRONTEND=noninteractive;
-    apt-get -y install "$@";
+    if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
+        apt-get update;
+        DEBIAN_FRONTEND=noninteractive apt-get -y install "$@";
+    else
+        apt-get update;
+        apt-get install "$@";
+    fi
 }
 
 # --------------------------------------------------------
@@ -164,16 +191,29 @@ function duplib::_package_search_with_apt-get() {
 # --------------------------------------------------------
 # Updates
 function duplib::_system_upgrade_with_pacman() {
-    # System upgrade
-    pacman -Syu --noconfirm;
+    if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
+        # System upgrade
+        pacman -Syu --noconfirm;
 
-    # Remove orphans
-    if [[ "$(pacman -Qtdq)" != "" ]]; then
-        pacman -Rns --noconfirm $(pacman -Qtdq);
+        # Remove orphans
+        if [[ "$(pacman -Qtdq)" != "" ]]; then
+            pacman -Rns --noconfirm $(pacman -Qtdq);
+        fi
+
+        # Remove cache
+        pacman -Sc --noconfirm;
+    else
+        # System upgrade
+        pacman -Syu;
+
+        # Remove orphans
+        if [[ "$(pacman -Qtdq)" != "" ]]; then
+            pacman -Rns $(pacman -Qtdq);
+        fi
+
+        # Remove cache
+        pacman -Sc;
     fi
-
-    # Remove cache
-    pacman -Sc --noconfirm;
 }
 
 function duplib::_system_upgrade_with_apk() {
@@ -186,6 +226,11 @@ function duplib::_system_upgrade_with_yum() {
 }
 
 function duplib::_system_upgrade_with_apt-get() {
-    apt-get update;
-    apt-get -y upgrade;
+    if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
+        apt-get update;
+        DEBIAN_FRONTEND=noninteractive apt-get -y upgrade;
+    else
+        apt-get update;
+        apt-get upgrade;
+    fi
 }
