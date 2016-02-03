@@ -227,7 +227,9 @@ function main() {
     local subcommand="$1";
     shift;
 
-    if type "dupcli::$subcommand" &> /dev/null; then
+    if [[ "$subcommand" == "-h" ]] || [[ "$subcommand" == "--help" ]]; then
+        dupcli::help;
+    elif type "dupcli::$subcommand" &> /dev/null; then
         dupcli::$subcommand $@;
     else
         dupcli::help $subcommand;
