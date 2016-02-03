@@ -10,7 +10,7 @@ TYPO3_CLIENT_BRANCH="${TYPO3_CLIENT_BRANCH:-master}";
 TYPO3_DOWNLOAD_FORCE="${TYPO3_DOWNLOAD_FORCE:-false}";
 TYPO3_SYMLINK_FOR_TEMP="${TYPO3_SYMLINK_FOR_TEMP:-true}";
 
-DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib.sh}";
+DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib/duplib.sh}";
 source "$DUP_LIB_PATH";
 
 function detect_typo3_source_directory() {

@@ -4,7 +4,7 @@ set -o errexit
 
 BASH_SETUP="${BASH_SETUP:-true}";
 
-DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib.sh}";
+DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib/duplib.sh}";
 source "$DUP_LIB_PATH";
 
 function configure-completion() {

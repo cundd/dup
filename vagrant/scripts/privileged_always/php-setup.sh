@@ -8,7 +8,7 @@ PHP_FEATURE_OPCACHE="${PHP_FEATURE_OPCACHE:-true}";
 PHP_CUSTOM_INI=${PHP_CUSTOM_INI:-""};
 DUP_BASE="${DUP_BASE:-dup}";
 
-DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib.sh}";
+DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib/duplib.sh}";
 source "$DUP_LIB_PATH";
 
 function check_php() {
