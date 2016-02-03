@@ -150,8 +150,8 @@ function duplib::_service_status_rc-service() {
     rc-service -q "$1" status && echo "up" || echo "down";
 }
 
-function duplib::_service_status_rc-service() {
-    service -q "$1" status && echo "up" || echo "down";
+function duplib::_service_status_service() {
+    $(service "$1" status 2> /dev/null | grep -q "^$1 start") && echo "up" || echo "down";
 }
 
 function duplib::_service_status_initd() {
