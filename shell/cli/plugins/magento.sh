@@ -11,7 +11,7 @@ function dupcli::magento::download() {
     local remote_base_path="$2";
     shift 2;
     local excludes='--exclude var --exclude downloader --exclude includes';
-    local local_path=`dupcli::_get_host_vhost_document_root`;
+    local local_path=`dupcli::_webserver::get_host_vhost_document_root`;
 
     echo "Download App";
     duplib::rsync $user_and_server "$remote_base_path/app/" "$local_path/app/" "$excludes" $@;
