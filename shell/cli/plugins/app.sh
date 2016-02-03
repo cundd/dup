@@ -17,3 +17,8 @@ function dupcli::app::search() {
 
     duplib::package_search "$@";
 }
+
+# Perform a system upgrade
+function dupcli::app::system_upgrade() {
+    duplib::system_upgrade "$@";
+}
