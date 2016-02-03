@@ -37,7 +37,6 @@ function prepare_apache_rewrite() {
 }
 
 function prepare_document_root() {
-    #duplib::detect_and_set_document_root;
     local documentRoot=$(duplib::get_vhost_document_root);
 
     # Try

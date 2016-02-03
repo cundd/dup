@@ -154,28 +154,6 @@ function dupcli::_print_command_help_line() {
 
 
 # --------------------------------------------------------
-# HTTP methods
-# --------------------------------------------------------
-# Returns the vhost document root for the host VM
-function dupcli::_get_host_vhost_document_root() {
-    if [ ! -z ${DUP_VHOST_DOCUMENT_ROOT+x} ]; then
-    echo $DUP_VHOST_DOCUMENT_ROOT;
-    else
-        echo "$(dirname "$0")/../httpdocs";
-    fi
-}
-
-# Returns the vhost document root for the guest VM
-function dupcli::_get_guest_vhost_document_root() {
-    if [ ! -z ${DUP_VHOST_DOCUMENT_ROOT+x} ]; then
-        echo $DUP_VHOST_DOCUMENT_ROOT;
-    else
-        duplib::get_vhost_document_root;
-    fi
-}
-
-
-# --------------------------------------------------------
 # Core methods
 # --------------------------------------------------------
 function dupcli::_core::directory() {
