@@ -2,6 +2,7 @@ def configureVagrant(config)
     dir = File.dirname(File.expand_path(__FILE__))
     dupDirectoryName = 'dup'
     dupScriptsBase = "#{dir}/../vagrant/scripts"
+    dupUserScriptsBase = "#{dir}/../../provision/scripts"
     dupFilesBase = "#{dir}/../vagrant/files"
     vagrantBase = File.expand_path("#{dir}/../../")
 
@@ -38,9 +39,13 @@ def configureVagrant(config)
 
     # Run scripts
     configureRunScriptsFromDirectory(config, dupScriptsBase + '/privileged_once/*.sh', privileged: true)
+    configureRunScriptsFromDirectory(config, dupUserScriptsBase + '/privileged_once/*.sh', privileged: true)
     configureRunScriptsFromDirectory(config, dupScriptsBase + '/privileged_always/*.sh', privileged: true, always: true)
+    configureRunScriptsFromDirectory(config, dupUserScriptsBase + '/privileged_always/*.sh', privileged: true, always: true)
     configureRunScriptsFromDirectory(config, dupScriptsBase + '/unprivileged_once/*.sh')
+    configureRunScriptsFromDirectory(config, dupUserScriptsBase + '/unprivileged_once/*.sh')
     configureRunScriptsFromDirectory(config, dupScriptsBase + '/unprivileged_always/*.sh', always: true)
+    configureRunScriptsFromDirectory(config, dupUserScriptsBase + '/unprivileged_always/*.sh', always: true)
 
     # Start services
     configureAllServices(config)
