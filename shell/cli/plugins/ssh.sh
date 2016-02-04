@@ -88,7 +88,7 @@ function dupcli::_ssh::vagrant::connect() {
          local ssh_connection_end_time=$(date +%s);
          local connection_timeout=$(dupcli::_ssh::vagrant::connect_timeout);
          let difference=ssh_connection_end_time-ssh_connection_start_time;
-         
+
          if [ $status -eq 255 ] && [[ "$difference" -lt "$connection_timeout" ]]; then
              echo "Try to connect through vagrant binary";
              dupcli::_vagrant::ssh -c "$@";
@@ -121,7 +121,7 @@ function dupcli::_ssh::vagrant::execute() {
         local ssh_connection_end_time=$(date +%s);
         local connection_timeout=$(dupcli::_ssh::vagrant::connect_timeout);
         let difference=ssh_connection_end_time-ssh_connection_start_time;
-        
+
         if [ $status -eq 255 ] && [[ "$difference" -lt "$connection_timeout" ]]; then
             echo "Try to connect through vagrant binary";
             dupcli::_vagrant::ssh -c "$@";

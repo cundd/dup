@@ -63,3 +63,12 @@ function dupcli::magento::modman() {
         dupcli::ssh::execute "modman $*";
     fi
 }
+
+# Open Magento system.log
+function dupcli::magento::system_log() {
+    if [[ $(dupcli::is_guest) == "yes" ]]; then
+        tail "$@" "$(dupcli::_webserver::get_guest_vhost_document_root)/var/log/system.log";
+    else
+        dupcli::ssh::execute tail "$@" "$(dupcli::_webserver::get_guest_vhost_document_root)/var/log/system.log";
+    fi
+}
