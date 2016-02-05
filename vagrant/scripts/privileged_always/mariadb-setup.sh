@@ -3,7 +3,8 @@ set -o nounset
 set -o errexit
 
 
-MYSQL_DATADIR="${MYSQL_DATADIR:-/var/lib/mysql}";
+: ${MYSQL_DATADIR="/var/lib/mysql"}
+: ${DUP_CUSTOM_PROVISION_FOLDER="provision"}
 
 DUP_BASE="${DUP_BASE:-dup}";
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib/duplib.sh}";
@@ -74,13 +75,23 @@ function provision_client_database() {
 }
 
 function provision_client_databases() {
+    # Import databases from dup/files/database/import/
     local dupDatabaseFilesPath="/vagrant/$DUP_BASE/files/database/import";
-
     for file in $(ls -1 $dupDatabaseFilesPath/*.sql 2> /dev/null); do
         provision_client_database $file "false";
     done
 
     for file in $(ls -1 $dupDatabaseFilesPath/*.sql.gz 2> /dev/null); do
+        provision_client_database $file "true";
+    done
+
+    # Import databases from provision/files/database/import/
+    local dupCustomDatabaseFilesPath="/vagrant/$DUP_CUSTOM_PROVISION_FOLDER/files/database/import";
+    for file in $(ls -1 $dupCustomDatabaseFilesPath/*.sql 2> /dev/null); do
+        provision_client_database $file "false";
+    done
+
+    for file in $(ls -1 $dupCustomDatabaseFilesPath/*.sql.gz 2> /dev/null); do
         provision_client_database $file "true";
     done
 }

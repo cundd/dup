@@ -2,7 +2,8 @@
 #
 # duplib = a bash function library
 
-DUP_LIB_PATH="${DUP_LIB_PATH:-$0}";
+: ${DUP_CUSTOM_PROVISION_FOLDER="provision"}
+: ${DUP_LIB_PATH="$0"}
 if [ ! -e "$DUP_LIB_PATH" ]; then
     >&2 echo "Defined duplib path '$DUP_LIB_PATH' not found";
     exit 1;
