@@ -9,6 +9,7 @@ set -o errexit
 
 : ${VERBOSE="false"};
 
+FAILURES=0;
 FAILED="false";
 
 # --------------------------------------------------------
@@ -78,12 +79,18 @@ function dupcli_test() {
 # Helpers
 # --------------------------------------------------------
 function duptest::fail() {
+    duptest::_tput setaf 1;
     >&2 echo "[FAILED] $@";
+    duptest::_tput sgr0;
+
     FAILED="true";
+    FAILURES=$((FAILURES + 1));
 }
 
 function duptest::pass() {
+    duptest::_tput setaf 3;
     echo "[PASSED] $@";
+    duptest::_tput sgr0;
 }
 
 function duptest::test() {
@@ -95,6 +102,13 @@ function duptest::test() {
     fi
     set +e;
 }
+
+function duptest::_tput() {
+    if hash tput 2>/dev/null; then
+        >&2 tput $@;
+    fi
+}
+
 
 function main() {
     # Prepare the environment
@@ -114,10 +128,16 @@ function main() {
 
     echo "";
     if [[ "$FAILED" != "false" ]]; then
-        >&2 echo "Test(s) failed";
+        duptest::_tput setaf 1;
+        >&2 echo "$FAILURES Test(s) failed";
+        duptest::_tput sgr0;
+
         return 1;
     else
+        duptest::_tput setaf 3;
         echo "Test(s) passed";
+        duptest::_tput sgr0;
+        
         return 0;
     fi
 }
