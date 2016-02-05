@@ -56,16 +56,16 @@ php-iconv"
 }
 
 function dupcli_provision::run() {
-    for provisioner in $DUP_CLI_PATH/vagrant/scripts/privileged_once/*.sh; do
+    for provisioner in $(find $DUP_CLI_PATH/vagrant/scripts/privileged_once -iname "*.sh"); do
         duptest::test "bash" "$provisioner";
     done
-    for provisioner in $DUP_CLI_PATH/vagrant/scripts/privileged_always/*.sh; do
+    for provisioner in $(find $DUP_CLI_PATH/vagrant/scripts/privileged_always -iname "*.sh"); do
         duptest::test "bash" "$provisioner";
     done
-    for provisioner in $DUP_CLI_PATH/vagrant/scripts/unprivileged_once/*.sh; do
+    for provisioner in $(find $DUP_CLI_PATH/vagrant/scripts/unprivileged_once -iname "*.sh"); do
         duptest::test "bash" "$provisioner";
     done
-    for provisioner in $DUP_CLI_PATH/vagrant/scripts/unprivileged_always/*.sh; do
+    for provisioner in $(find $DUP_CLI_PATH/vagrant/scripts/unprivileged_always -iname "*.sh"); do
         duptest::test "bash" "$provisioner";
     done
 }
