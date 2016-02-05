@@ -1,7 +1,7 @@
 vagrant:
     vm:
         # Change the VM's static IP address
-        ip: "192.168.12.10"
+        # ip: "192.168.12.10" # <- Define the IP address to use for the VM
 
         # Configure the hostname setup
         # "automatic"       = set to the folder name the Vagrant file is located

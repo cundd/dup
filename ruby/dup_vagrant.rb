@@ -13,7 +13,11 @@ def configureVagrant(config)
 
     configureAllForwardedPorts(config)
 
-    config.vm.network "private_network", ip: getConfig()['vagrant']['vm']['ip']
+    if getConfig()['vagrant']['vm']['ip']
+        config.vm.network "private_network", ip: getConfig()['vagrant']['vm']['ip']
+    else
+        abort("Please specify an IP for the VM in your config.yaml")
+    end
 
     # Configure synced folders
     shareType = getConfig()['vagrant']['vm']['share_type']
