@@ -51,11 +51,11 @@ function detect_loaded_php_ini_files() {
 }
 
 function prepare_fpm_socket_folder() {
-    local fpmSocketFolder="/run/php-fpm";
+    local fpm_socket_folder="/run/php-fpm";
 
-    if [[ ! -e $fpmSocketFolder ]]; then
-        echo "create $fpmSocketFolder"
-        mkdir -p "$fpmSocketFolder";
+    if [[ ! -e $fpm_socket_folder ]]; then
+        echo "create $fpm_socket_folder"
+        mkdir -p "$fpm_socket_folder";
     fi
 }
 
@@ -83,19 +83,19 @@ function configure_fpm() {
 }
 
 function configure_php_ini() {
-    local additionalPHPIniPath=`detect_additional_php_ini_path`;
+    local additional_php_ini_path=`detect_additional_php_ini_path`;
     local dupFilesPath="$DUP_BASE/files/php";
 
     ## Copy PHP.ini file
-    duplib::copy_linux_distribution_specific_file "php" "$PHP_INI_FILE_NAME" "$additionalPHPIniPath";
-    chmod o+r "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
+    duplib::copy_linux_distribution_specific_file "php" "$PHP_INI_FILE_NAME" "$additional_php_ini_path";
+    chmod o+r "$additional_php_ini_path/$PHP_INI_FILE_NAME";
 
     if [[ "$PHP_FEATURE_OPCACHE" == "true" ]]; then
         configure_opcode_cache;
     fi
 
-    for iniRow in $PHP_CUSTOM_INI; do
-        echo $iniRow >> "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
+    for ini_row in $PHP_CUSTOM_INI; do
+        echo $ini_row >> "$additional_php_ini_path/$PHP_INI_FILE_NAME";
     done
 }
 
@@ -120,16 +120,21 @@ function set_typo3_context_env() {
 }
 
 function add_environment_settings() {
-    set_typo3_context_env;
-    echo "env[SITE_ENV] = '$TYPO3_SITE_ENV'"        >> $(detect_php_fpm_conf_file_path);
     echo "env[DB_USERNAME] = '$DB_USERNAME'"        >> $(detect_php_fpm_conf_file_path);
     echo "env[DB_NAME] = '$DB_NAME'"                >> $(detect_php_fpm_conf_file_path);
     echo "env[DB_PASSWORD] = '$DB_PASSWORD'"        >> $(detect_php_fpm_conf_file_path);
     echo "env[DB_HOST] = '$DB_HOST'"                >> $(detect_php_fpm_conf_file_path);
+
+    # TODO: Move TYPO3 related setup
+    if [[ ! -z ${TYPO3_SITE_ENV+x} ]]; then
+        set_typo3_context_env;
+        echo "env[SITE_ENV] = '$TYPO3_SITE_ENV'"        >> $(detect_php_fpm_conf_file_path);
+    fi
 }
 
 
 function configure_opcode_cache() {
+    local additional_php_ini_path=`detect_additional_php_ini_path`;
     local found="no";
     for file in $(detect_loaded_php_ini_files); do
         local result=$(grep '^zend_extension=opcache\.so' "$file" >/dev/null);
@@ -140,7 +145,7 @@ function configure_opcode_cache() {
     done
 
     if [[ $found == "no" ]]; then
-        echo "zend_extension=opcache.so" >> "$additionalPHPIniPath/$PHP_INI_FILE_NAME";
+        echo "zend_extension=opcache.so" >> "$additional_php_ini_path/$PHP_INI_FILE_NAME";
     fi
 }
 

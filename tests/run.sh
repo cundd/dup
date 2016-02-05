@@ -8,6 +8,7 @@ set -o nounset
 set -o errexit
 
 : ${VERBOSE="false"};
+: ${SILENT="false"};
 
 FAILURES=0;
 FAILED="false";
@@ -95,10 +96,12 @@ function duptest::pass() {
 
 function duptest::test() {
     set -e;
-    if [[ "$VERBOSE" != "true" ]]; then
+    if [[ "$SILENT" == "true" ]]; then
         "$@" &> /dev/null && duptest::pass "$@" || duptest::fail "$@";
-    else
+    elif [[ "$VERBOSE" == "true" ]]; then
         "$@" && duptest::pass "$@" || duptest::fail "$@";
+    else
+        "$@" > /dev/null && duptest::pass "$@" || duptest::fail "$@";
     fi
     set +e;
 }
@@ -109,6 +112,26 @@ function duptest::_tput() {
     fi
 }
 
+
+# function duptest::error_buffer::clear() {
+#     if [[ -e $(duptest::error_buffer::file) ]]; then
+#         rm "$(duptest::error_buffer::file)";
+#     fi
+# }
+#
+# function duptest::error_buffer::print_clear() {
+#     if [[ -e $(duptest::error_buffer::file) ]]; then
+#         cat "$(duptest::error_buffer::file)";
+#         duptest::error_buffer::clear;
+#     fi
+# }
+#
+# function duptest::error_buffer::file() {
+#     if [[ -z ${DUPTEST_ERROR_BUFFER_FILE+x} ]]; then
+#         DUPTEST_ERROR_BUFFER_FILE="/tmp/duptest_$(date +%s)";
+#     fi
+#     echo $DUPTEST_ERROR_BUFFER_FILE;
+# }
 
 function main() {
     # Prepare the environment
