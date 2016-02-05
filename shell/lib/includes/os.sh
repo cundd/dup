@@ -48,7 +48,12 @@ function duplib::get_dup_linux_distribution_specific_folder() {
     if [ -f "/etc/lsb-release" ]; then
         echo "ubuntu";
     else
-        basename `duplib::get_linux_distribution_release_file` | sed 's/release//' | sed 's/[-_]//'| tr '[:upper:]' '[:lower:]';
+        local release_file=$(duplib::get_linux_distribution_release_file);
+        if [[ "$release_file" == "" ]]; then
+            echo "none";
+        else
+            basename $release_file | sed 's/release//' | sed 's/[-_]//'| tr '[:upper:]' '[:lower:]';
+        fi
     fi
 }
 
@@ -107,8 +112,6 @@ function duplib::_copy_linux_distribution_specific_file_dup() {
     local absolute_file_path="$DUP_BASE/$1";
     local file_name="$2";
     local destination="$3";
-
-    >&2 echo "look in absolute_file_path=$absolute_file_path"
 
     ## Check if there is a special file for the linux distribution
     local file_path_linux_distribution_specific_path="$absolute_file_path/$(duplib::get_dup_linux_distribution_specific_folder)/$file_name";
