@@ -28,12 +28,22 @@ class DupConfig
     end
 
     def main
-        case @format
-            when :json
-                puts fetch().to_json
+        value = fetch()
 
-            when :yaml
-                puts fetch().to_yaml
+        # Directly print scalar types
+        if value.kind_of? String
+            puts value
+        elsif value.is_a? Numeric
+            puts value
+        else
+            # Format any other output
+            case @format
+                when :json
+                    puts fetch().to_json
+
+                when :yaml
+                    puts fetch().to_yaml
+            end
         end
     end
 end
