@@ -2,35 +2,55 @@
 set -o nounset
 set -o errexit
 
-TYPO3_INSTALL="${TYPO3_INSTALL:-false}";
+: ${TYPO3_INSTALL="false"};
+: ${TYPO3_VERSION="current"};
 
-TYPO3_CLIENT_INSTALL="${TYPO3_CLIENT_INSTALL:-false}";
-TYPO3_CLIENT_BRANCH="${TYPO3_CLIENT_BRANCH:-master}";
+: ${TYPO3_CLIENT_INSTALL="false"};
+: ${TYPO3_CLIENT_BRANCH="master"};
 
-TYPO3_DOWNLOAD_FORCE="${TYPO3_DOWNLOAD_FORCE:-false}";
-TYPO3_SYMLINK_FOR_TEMP="${TYPO3_SYMLINK_FOR_TEMP:-true}";
+: ${TYPO3_DOWNLOAD_FORCE="false"};
+: ${TYPO3_SYMLINK_FOR_TEMP="true"};
 
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib/duplib.sh}";
 source "$DUP_LIB_PATH";
 
 function detect_typo3_source_directory() {
-    find . -maxdepth 1 -iname 'typo3_src-*' -print|head -n1
+    local version_match=$(find . -maxdepth 1 -iname "typo3_src-$TYPO3_VERSION*" -print|head -n1);
+
+    if [[ "$version_match" != "" ]]; then
+        echo "$version_match";
+    else
+        find . -maxdepth 1 -iname 'typo3_src-*' -print|head -n1
+    fi
+}
+
+function retrieve_typo3() {
+    local typo3_src_archive="typo3_src.tgz";
+    local url="get.typo3.org/$TYPO3_VERSION";
+
+    echo "Download TYPO3 from $url into "`pwd`;
+
+    curl -s -L -o $typo3_src_archive $url;
+    tar xzf $typo3_src_archive && rm $typo3_src_archive;
+}
+
+function create_typo3_symlinks() {
+    if [[ -h "typo3_src" ]]; then rm "typo3_src"; fi
+    if [[ -h "typo3" ]]; then rm "typo3"; fi
+    if [[ -h "t3lib" ]]; then rm "t3lib"; fi
+    if [[ -h "index.php" ]]; then rm "index.php"; fi
+
+    ln -s "`detect_typo3_source_directory`" "typo3_src";
+    ln -s "typo3_src/typo3" .;
+    ln -s "typo3_src/index.php" .;
+
+    if [[ -e "typo3_src/t3lib" ]]; then ln -s "typo3_src/t3lib" .; fi
 }
 
 function install_typo3() {
-    local typo3_src_archive="typo3_src.tgz";
-
     if [[ ! -e `detect_typo3_source_directory` ]] || [[ "$TYPO3_DOWNLOAD_FORCE" == "true" ]]; then
-        echo "Download TYPO3 into "`pwd`;
-        curl -s -L -o $typo3_src_archive get.typo3.org/current;
-        tar xzf $typo3_src_archive && rm $typo3_src_archive;
-
-        if [[ -h "typo3" ]]; then rm "typo3"; fi
-        if [[ -e "index.php" ]]; then rm "index.php"; fi
-
-        ln -s "`detect_typo3_source_directory`" "typo3_src";
-        ln -s "typo3_src/typo3" .;
-        ln -s "typo3_src/index.php" .;
+        retrieve_typo3;
+        create_typo3_symlinks;
     fi
 
     if [[ ! -e "typo3conf" ]]; then

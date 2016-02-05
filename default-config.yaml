@@ -31,6 +31,7 @@ scripts:
         MAGENTO_SETUP: true
 
         TYPO3_INSTALL: false
+        TYPO3_VERSION: current
         TYPO3_SITE_ENV: DEV
 
         TYPO3_CLIENT_INSTALL: false
