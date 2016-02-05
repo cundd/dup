@@ -52,27 +52,27 @@ php-iconv"
 # mysql-client
 
     for package in $required_packages; do
-        duptest::test "$DUP_BASE/dup/cli" "app::install" "$package" "-y";
+        duptest::test "$DUP_BASE/cli" "app::install" "$package" "-y";
     done
 }
 
 function dupcli_provision::run() {
-    for provisioner in $(find $DUP_CLI_PATH/vagrant/scripts/privileged_once -iname "*.sh"); do
+    for provisioner in $(find $DUP_BASE/vagrant/scripts/privileged_once -iname "*.sh"); do
         duptest::test "bash" "$provisioner";
     done
-    for provisioner in $(find $DUP_CLI_PATH/vagrant/scripts/privileged_always -iname "*.sh"); do
+    for provisioner in $(find $DUP_BASE/vagrant/scripts/privileged_always -iname "*.sh"); do
         duptest::test "bash" "$provisioner";
     done
-    for provisioner in $(find $DUP_CLI_PATH/vagrant/scripts/unprivileged_once -iname "*.sh"); do
+    for provisioner in $(find $DUP_BASE/vagrant/scripts/unprivileged_once -iname "*.sh"); do
         duptest::test "bash" "$provisioner";
     done
-    for provisioner in $(find $DUP_CLI_PATH/vagrant/scripts/unprivileged_always -iname "*.sh"); do
+    for provisioner in $(find $DUP_BASE/vagrant/scripts/unprivileged_always -iname "*.sh"); do
         duptest::test "bash" "$provisioner";
     done
 }
 
 function dupcli_test() {
-    "$DUP_BASE/dup/cli" "help";
+    "$DUP_BASE/cli" "help";
 }
 
 # --------------------------------------------------------
@@ -116,8 +116,8 @@ function main() {
     cd "$(dirname "$0")";
     TEST_BASE=`pwd`;
 
-    export DUP_CLI_PATH="$(dirname "$TEST_BASE")";
-    export DUP_BASE="$DUP_CLI_PATH/..";
+    export DUP_BASE="$(dirname "$TEST_BASE")";
+    export DUP_PROJECT_BASE="$DUP_BASE/..";
     export DUP_CACHE_PATH="/tmp/.dup_cache";
 
     cd $TEST_BASE;
@@ -137,7 +137,7 @@ function main() {
         duptest::_tput setaf 3;
         echo "Test(s) passed";
         duptest::_tput sgr0;
-        
+
         return 0;
     fi
 }

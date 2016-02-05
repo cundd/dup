@@ -62,8 +62,8 @@ function duplib::is_host() {
 # --------------------------------------------------------
 #
 function duplib::dup_checksum() {
-    if [ -z ${DUP_CLI_PATH+x} ]; then
-        duplib::fatal_error "Variable DUP_CLI_PATH not set";
+    if [ -z ${DUP_BASE+x} ]; then
+        duplib::fatal_error "Variable DUP_BASE not set";
     fi
     local md5_command;
     if hash "md5sum" 2>/dev/null; then
@@ -74,7 +74,7 @@ function duplib::dup_checksum() {
         duplib::fatal_error "No md5 tool found";
     fi
 
-    find "$DUP_CLI_PATH" -type f -exec $md5_command {} + | awk '{print $1}' | sort | $md5_command;
+    find "$DUP_BASE" -type f -exec $md5_command {} + | awk '{print $1}' | sort | $md5_command;
 }
 
 # Returns if the given command is available

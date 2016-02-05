@@ -56,14 +56,14 @@ function dupcli::is_host() {
 # Print the version as git commit hash
 function dupcli::version() {
     duplib::check_required_command "git";
-    cd $DUP_CLI_PATH;
+    cd $DUP_BASE;
     git rev-parse HEAD;
 }
 
 # Update dup CLI and library
 function dupcli::selfupdate() {
     duplib::check_required_command "git";
-    cd $DUP_CLI_PATH;
+    cd $DUP_BASE;
     git pull;
 }
 
@@ -80,7 +80,7 @@ function dupcli::help() {
 # Helper methods
 # --------------------------------------------------------
 function dupcli::_duplib::load() {
-    DUP_LIB_PATH="${DUP_LIB_PATH:-$DUP_CLI_PATH/shell/lib/duplib.sh}";
+    DUP_LIB_PATH="${DUP_LIB_PATH:-$DUP_BASE/shell/lib/duplib.sh}";
     if [[ ! -e "$DUP_LIB_PATH" ]] && [[ -e "/vagrant/dup/shell/lib/duplib.sh" ]]; then
         DUP_LIB_PATH="/vagrant/dup/shell/lib/duplib.sh";
     elif [[ ! -e "$DUP_LIB_PATH" ]]; then
@@ -90,19 +90,31 @@ function dupcli::_duplib::load() {
     source "$DUP_LIB_PATH";
 }
 
+
+function dupcli::_detect_dup_base() {
+    if [[ -z ${DUP_BASE+x} ]]; then
+        local current_directory="`pwd`";
+
+        cd "$(dirname "$0")";
+        DUP_BASE="`pwd`";
+
+        cd $current_directory;
+    fi
+}
+
 function dupcli::_init_globals() {
-    : ${DUP_CLI_PATH="$(dirname "$0")"};
-    : ${DUP_BASE="$DUP_CLI_PATH/.."};
-    : ${DUP_CACHE_PATH="$DUP_CLI_PATH/.dup_cache"};
-    
+    dupcli::_detect_dup_base;
+    : ${DUP_PROJECT_BASE="$DUP_BASE/.."};
+    : ${DUP_CACHE_PATH="$DUP_BASE/.dup_cache"};
+
     if [ ! -e "$DUP_CACHE_PATH" ]; then
         mkdir "$DUP_CACHE_PATH";
     fi
 }
 
 function dupcli::_get_cli_directory() {
-    if [[ -e "$DUP_CLI_PATH/shell/cli" ]]; then
-        echo "$DUP_CLI_PATH/shell/cli";
+    if [[ -e "$DUP_BASE/shell/cli" ]]; then
+        echo "$DUP_BASE/shell/cli";
     elif [[ -e "/vagrant/dup/shell/cli" ]]; then
         echo "/vagrant/dup/shell/cli";
     else
