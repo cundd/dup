@@ -7,22 +7,85 @@ set -o nounset
 set -o errexit
 set -e
 
-function dupcli::_search_directory_tree_down() {
+# --------------------------------------------------------
+# Builtin commands
+# --------------------------------------------------------
+function dupmaster::create() {
+    local project_directory=".";
+    if [ $# -gt 0 ]; then
+        if [[ $1 == -* ]]; then
+            dupmaster::_error "Invalid argument '$1'";
+            exit 1;
+        fi
+
+        project_directory="$1";
+    fi
+
+    if ! hash git 2>/dev/null; then
+        dupmaster::_error "Please install git";
+        exit 1;
+    fi
+
+    # Create base and step into it
+    echo "Create project in $project_directory";
+    mkdir -p "$project_directory";
+    cd "$project_directory";
+
+    # Get dup
+    git clone "https://github.com/cundd/dup.git" "dup";
+
+    # Bootstrap the project
+    mkdir "httpdocs";
+    cp "dup/default-Vagrantfile.rb" "Vagrantfile";
+    cp "dup/default-config.yaml" "config.yaml";
+}
+
+function dupmaster::call_dup_cli() {
+    local dup_cli_path;
+    local result;
+    local status;
+
+    set +e;
+    result=$(dupmaster::_search_directory_tree "dup");
+    status=$?;
+    set -e;
+
+    if [ $status -eq 0 ] && [ -e "$result/cli" ]; then
+        dup_cli_path="$result/cli";
+    elif [ -e "/vagrant/dup/cli" ]; then
+        dup_cli_path="/vagrant/dup/cli";
+    else
+        dupmaster::_error "Could not find dup/cli";
+        dupmaster::_error 'Run `dup create [project_directory]` to create a new project';
+        exit 1;
+    fi
+
+    /usr/bin/env bash $dup_cli_path "$@";
+}
+
+# --------------------------------------------------------
+# Helper methods
+# --------------------------------------------------------
+function dupmaster::_error() {
+    >&2 echo "$@";
+}
+
+function dupmaster::_search_directory_tree_down() {
     if [ $# -eq 0 ]; then
-        >&2 echo "Missing parameter 1";
+        dupmaster::_error "Missing parameter 1";
         return 1;
     fi
     local base=`pwd`;
-    local foundPath=$(find -L "$base" -maxdepth 3 -mindepth 1 -name "$1" -type d | head -n 1)
+    local foundPath=$(find -L "$base" -maxdepth 2 -mindepth 1 -name "$1" -type d 2>/dev/null| head -n 1)
     if [[ "$foundPath" == "" ]] || [[ ! -e "$foundPath" ]]; then
         return 1;
     fi
     echo $foundPath;
 }
 
-function dupcli::_search_directory_tree_up() {
+function dupmaster::_search_directory_tree_up() {
     if [ $# -eq 0 ]; then
-        >&2 echo "Missing parameter 1";
+        dupmaster::_error "Missing parameter 1";
         return 1;
     fi
 
@@ -43,15 +106,15 @@ function dupcli::_search_directory_tree_up() {
     return 0
 }
 
-function dupcli::_search_directory_tree() {
+function dupmaster::_search_directory_tree() {
     if [ $# -eq 0 ]; then
-        >&2 echo "Missing parameter 1";
+        dupmaster::_error "Missing parameter 1";
         return 1;
     fi
 
-    dupcli::_search_directory_tree_down $@;
+    dupmaster::_search_directory_tree_down $@;
     if [ $? -ne 0 ]; then
-        dupcli::_search_directory_tree_up $@
+        dupmaster::_search_directory_tree_up $@
 
         if [ $? -ne 0 ]; then
             return 1;
@@ -60,25 +123,12 @@ function dupcli::_search_directory_tree() {
 }
 
 function main() {
-    local dup_cli_path;
-    local result;
-    local status;
-
-    set +e;
-    result=$(dupcli::_search_directory_tree "dup");
-    status=$?;
-    set -e;
-
-    if [ $status -eq 0 ] && [ -e "$result/cli" ]; then
-        dup_cli_path="$result/cli";
-    elif [ -e "/vagrant/dup/cli" ]; then
-        dup_cli_path="/vagrant/dup/cli";
+    if [ $# -gt 0 ] && [ "$1" == "create" ]; then
+        shift;
+        dupmaster::create "$@";
     else
-        >&2 echo "Could not find dup/cli";
-        exit 1;
+        dupmaster::call_dup_cli "$@";
     fi
-
-    /usr/bin/env bash $dup_cli_path "$@";
 }
 
 main $@
