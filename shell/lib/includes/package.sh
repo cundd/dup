@@ -162,10 +162,10 @@ function duplib::_package_install_with_yum() {
 
 function duplib::_package_install_with_apt-get() {
     if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
-        apt-get update;
+        duplib::_package_apt-get_update;
         DEBIAN_FRONTEND=noninteractive apt-get -y install "$@";
     else
-        apt-get update;
+        duplib::_package_apt-get_update;
         apt-get install "$@";
     fi
 }
@@ -227,10 +227,20 @@ function duplib::_system_upgrade_with_yum() {
 
 function duplib::_system_upgrade_with_apt-get() {
     if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
-        apt-get update;
+        duplib::_package_apt-get_update;
         DEBIAN_FRONTEND=noninteractive apt-get -y upgrade;
     else
-        apt-get update;
+        duplib::_package_apt-get_update;
         apt-get upgrade;
+    fi
+}
+
+# --------------------------------------------------------
+# Helpers
+function duplib::_package_apt-get_update() {
+    : ${APT_PACKAGE_LIST_UPDATED="false"};
+    if [[ "$APT_PACKAGE_LIST_UPDATED" != "true" ]]; then
+        apt-get update;
+        APT_PACKAGE_LIST_UPDATED="true";
     fi
 }
