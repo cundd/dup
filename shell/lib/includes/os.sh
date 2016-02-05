@@ -104,9 +104,11 @@ function duplib::_copy_linux_distribution_specific_file_dup() {
     if [ $# -lt 2 ]; then duplib::fatal_error "Missing argument 2 (file_name)"; fi
     if [ $# -lt 3 ]; then duplib::fatal_error "Missing argument 3 (destination)"; fi
 
-    local absolute_file_path="/vagrant/$DUP_BASE/$1";
+    local absolute_file_path="$DUP_BASE/$1";
     local file_name="$2";
     local destination="$3";
+
+    >&2 echo "look in absolute_file_path=$absolute_file_path"
 
     ## Check if there is a special file for the linux distribution
     local file_path_linux_distribution_specific_path="$absolute_file_path/$(duplib::get_dup_linux_distribution_specific_folder)/$file_name";

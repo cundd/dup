@@ -2,11 +2,11 @@
 set -o nounset
 set -o errexit
 
-PHP_FPM_CONF_FILE_NAME=${PHP_FPM_CONF_FILE_NAME:-"z-php-fpm.conf"};
-PHP_INI_FILE_NAME=${PHP_INI_FILE_NAME:-"z-dup.ini"};
-PHP_FEATURE_OPCACHE="${PHP_FEATURE_OPCACHE:-true}";
-PHP_CUSTOM_INI=${PHP_CUSTOM_INI:-""};
-DUP_BASE="${DUP_BASE:-dup}";
+: ${PHP_FPM_CONF_FILE_NAME="z-php-fpm.conf"}
+: ${PHP_INI_FILE_NAME="z-dup.ini"}
+: ${PHP_FEATURE_OPCACHE="true"}
+: ${PHP_CUSTOM_INI=""}
+: ${DUP_BASE="dup"}
 
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib/duplib.sh}";
 source "$DUP_LIB_PATH";
@@ -62,7 +62,7 @@ function prepare_fpm_socket_folder() {
 function configure_fpm() {
     prepare_fpm_socket_folder;
     local php_fpm_conf_file_directory=`detect_php_fpm_conf_directory_path`;
-    local dupFilesPath="/vagrant/$DUP_BASE/files/php";
+    local dupFilesPath="$DUP_BASE/files/php";
 
     if [[ ! -e "$php_fpm_conf_file_directory" ]]; then
         mkdir -p "$php_fpm_conf_file_directory";
@@ -84,7 +84,7 @@ function configure_fpm() {
 
 function configure_php_ini() {
     local additionalPHPIniPath=`detect_additional_php_ini_path`;
-    local dupFilesPath="/vagrant/$DUP_BASE/files/php";
+    local dupFilesPath="$DUP_BASE/files/php";
 
     ## Copy PHP.ini file
     duplib::copy_linux_distribution_specific_file "php" "$PHP_INI_FILE_NAME" "$additionalPHPIniPath";

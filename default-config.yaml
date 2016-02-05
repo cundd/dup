@@ -37,7 +37,7 @@ scripts:
         TYPO3_CLIENT_BRANCH: master
         TYPO3_DOWNLOAD_FORCE: false
 
-        DUP_BASE: "dup"
+        DUP_BASE: "/vagrant/dup"
         BASH_SETUP: true
         SASS_SETUP: false
 
