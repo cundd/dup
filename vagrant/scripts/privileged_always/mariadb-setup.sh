@@ -5,6 +5,11 @@ set -o errexit
 
 : ${MYSQL_DATADIR="/var/lib/mysql"}
 : ${DUP_CUSTOM_PROVISION_FOLDER="provision"}
+: ${DB_NAME="vagrant"}
+: ${DB_USERNAME="vagrant"}
+: ${DB_PASSWORD="vagrant"}
+: ${DB_HOST="localhost"}
+: ${DB_ROOT_PASSWORD="vagrant"}
 
 DUP_BASE="${DUP_BASE:-dup}";
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib/duplib.sh}";

@@ -15,10 +15,59 @@ FAILED="false";
 # Test cases
 # --------------------------------------------------------
 function dupcli_provision() {
-    for provisioner in $DUP_CLI_PATH/vagrant/scripts/**/*.sh; do
+    dupcli_provision::install_packages;
+    dupcli_provision::run;
+}
+
+function dupcli_provision::install_packages() {
+    local required_packages="git
+htop
+apache
+apache-proxy
+graphicsmagick
+ghostscript
+openssl
+php-fpm
+php-gd
+php-mcrypt
+php-intl
+php-mysqli
+php-pdo_mysql
+php-soap
+php-opcache
+php-json
+php-curl
+php-xml
+php-zip
+php-zlib
+php-openssl
+php-xmlreader
+php-ctype
+php-calendar
+php-phar
+php-iconv"
+
+# mysql-server
+# mysql-client
+
+    for package in $required_packages; do
+        duptest::test "$DUP_BASE/dup/cli" "app::install" "$package" "-y";
+    done
+}
+
+function dupcli_provision::run() {
+    for provisioner in $DUP_CLI_PATH/vagrant/scripts/privileged_once/*.sh; do
         duptest::test "bash" "$provisioner";
     done
-    return 1
+    for provisioner in $DUP_CLI_PATH/vagrant/scripts/privileged_always/*.sh; do
+        duptest::test "bash" "$provisioner";
+    done
+    for provisioner in $DUP_CLI_PATH/vagrant/scripts/unprivileged_once/*.sh; do
+        duptest::test "bash" "$provisioner";
+    done
+    for provisioner in $DUP_CLI_PATH/vagrant/scripts/unprivileged_always/*.sh; do
+        duptest::test "bash" "$provisioner";
+    done
 }
 
 function dupcli_test() {
