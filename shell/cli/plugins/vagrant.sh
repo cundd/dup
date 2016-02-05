@@ -61,7 +61,7 @@ function dupcli::vagrant::hosts_add() {
 
     set -e;
     if [ ! -w "/etc/hosts" ]; then
-        duplib::error "Hosts file is not writable";
+        duplib::error "Hosts file is not writable (use sudo?)";
         exit 1;
     fi
 
