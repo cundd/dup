@@ -11,6 +11,23 @@ set -o errexit
 
 FAILED="false";
 
+# --------------------------------------------------------
+# Test cases
+# --------------------------------------------------------
+function dupcli_provision() {
+    for provisioner in $DUP_CLI_PATH/vagrant/scripts/**/*.sh; do
+        duptest::test "bash" "$provisioner";
+    done
+    return 1
+}
+
+function dupcli_test() {
+    "$DUP_BASE/dup/cli" "help";
+}
+
+# --------------------------------------------------------
+# Helpers
+# --------------------------------------------------------
 function duptest::fail() {
     >&2 echo "[FAILED] $@";
     FAILED="true";
@@ -29,19 +46,6 @@ function duptest::test() {
     fi
     set +e;
 }
-
-
-function dupcli_provision() {
-    for provisioner in $DUP_CLI_PATH/vagrant/scripts/**/*.sh; do
-        duptest::test "bash" "$provisioner";
-    done
-    return 1
-}
-
-function dupcli_test() {
-    "$DUP_BASE/dup/cli" "help";
-}
-
 
 function main() {
     # Prepare the environment
