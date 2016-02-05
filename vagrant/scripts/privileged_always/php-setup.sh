@@ -120,15 +120,19 @@ function set_typo3_context_env() {
 }
 
 function add_environment_settings() {
-    echo "env[DB_USERNAME] = '$DB_USERNAME'"        >> $(detect_php_fpm_conf_file_path);
-    echo "env[DB_NAME] = '$DB_NAME'"                >> $(detect_php_fpm_conf_file_path);
-    echo "env[DB_PASSWORD] = '$DB_PASSWORD'"        >> $(detect_php_fpm_conf_file_path);
-    echo "env[DB_HOST] = '$DB_HOST'"                >> $(detect_php_fpm_conf_file_path);
+    local php_fpm_conf_file_path=$(detect_php_fpm_conf_file_path);
+    
+    if [[ ! -z ${DB_USERNAME+x} ]] && [[ ! -z ${DB_NAME+x} ]] && [[ ! -z ${DB_PASSWORD+x} ]] && [[ ! -z ${DB_HOST+x} ]]; then
+        echo "env[DB_USERNAME] = '$DB_USERNAME'"        >> $php_fpm_conf_file_path;
+        echo "env[DB_NAME] = '$DB_NAME'"                >> $php_fpm_conf_file_path;
+        echo "env[DB_PASSWORD] = '$DB_PASSWORD'"        >> $php_fpm_conf_file_path;
+        echo "env[DB_HOST] = '$DB_HOST'"                >> $php_fpm_conf_file_path;
+    fi
 
     # TODO: Move TYPO3 related setup
     if [[ ! -z ${TYPO3_SITE_ENV+x} ]]; then
         set_typo3_context_env;
-        echo "env[SITE_ENV] = '$TYPO3_SITE_ENV'"        >> $(detect_php_fpm_conf_file_path);
+        echo "env[SITE_ENV] = '$TYPO3_SITE_ENV'"        >> $php_fpm_conf_file_path;
     fi
 }
 
