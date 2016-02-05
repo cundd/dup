@@ -12,7 +12,7 @@ set -o errexit
 function dupcli::package::pack() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
         dupcli::_package::guest::package "$@";
-    elif [[ -e "$DUP_BASE/.vagrant/machines/default/virtualbox/id" ]]; then
+    elif [[ -e "$DUP_PROJECT_BASE/.vagrant/machines/default/virtualbox/id" ]]; then
         dupcli::_package::vagrant::package "$@";
     else
         duplib::fatal_error "No supported way to package found";
@@ -74,7 +74,7 @@ function dupcli::_package::vagrant::package() {
     duplib::check_required_command "gzip";
 
     local package_name="package-$(date +%F-%H-%M-%S)";
-    local dup_local_path="$DUP_BASE/.package/$package_name";
+    local dup_local_path="$DUP_PROJECT_BASE/.package/$package_name";
     local dup_package_local_path="$dup_local_path.tar.gz";
     local current_directory="`pwd`";
 
