@@ -3,4 +3,4 @@ language: bash
 sudo: required
 
 script:
-    - bash tests/run.sh
+    - sudo bash tests/run.sh
