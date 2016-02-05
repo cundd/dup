@@ -60,16 +60,22 @@ function duplib::copy_linux_distribution_specific_file() {
     local sub_directory="$1";
     local file_name="$2";
     local destination="$3";
+    local copied_file="false";
 
     local relative_path="vagrant/files/$sub_directory";
 
-    if test $(duplib::_copy_linux_distribution_specific_file_custom "$relative_path" "$file_name" "$destination"); then
+    # Look for a custom file
+    copied_file=$(duplib::_copy_linux_distribution_specific_file_custom "$relative_path" "$file_name" "$destination");
+    if [[ "$copied_file" == "true" ]]; then
         return 0;
-    elif test $(duplib::_copy_linux_distribution_specific_file_dup "$relative_path" "$file_name" "$destination"); then
-        return 0;
-    else
-        duplib::fatal_error "No distribution specific or general file $file_name found $(duplib::get_dup_linux_distribution_specific_folder)";
     fi
+
+    # Look for a default file
+    copied_file=$(duplib::_copy_linux_distribution_specific_file_dup "$relative_path" "$file_name" "$destination");
+    if [[ "$copied_file" == "true" ]]; then
+        return 0;
+    fi
+    duplib::fatal_error "No distribution specific or general file $file_name found $(duplib::get_dup_linux_distribution_specific_folder)";
 }
 
 function duplib::_copy_linux_distribution_specific_file_custom() {
@@ -88,9 +94,9 @@ function duplib::_copy_linux_distribution_specific_file_custom() {
     elif [[ -e "$absolute_file_path/general/$file_name" ]]; then # Copy the default file
         cp "$absolute_file_path/general/$file_name" "$destination";
     else
-        return 1;
+        echo "false";
     fi
-    return 0;
+    echo "true";
 }
 
 function duplib::_copy_linux_distribution_specific_file_dup() {
@@ -109,7 +115,7 @@ function duplib::_copy_linux_distribution_specific_file_dup() {
     elif [[ -e "$absolute_file_path/general/$file_name" ]]; then # Copy the default file
         cp "$absolute_file_path/general/$file_name" "$destination";
     else
-        return 1;
+        echo "false";
     fi
-    return 0;
+    echo "true";
 }
