@@ -20,6 +20,7 @@ function dupcli::ssh::connect() {
 }
 
 # Execute a command on the Vagrant machine through SSH
+# $subcommand: The command to execute
 function dupcli::ssh::execute() {
     if [ $# -eq 0 ]; then
         duplib::fatal_error "Missing argument 1 (command)";
