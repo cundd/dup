@@ -8,7 +8,7 @@ function dupcli::_cache::cache_age_test() {
     if [ "$#" -ne 1 ]; then
         duplib::fatal_error "Missing argument 1 (cache_file)";
     fi
-    local cache_file="$1";
+    readonly cache_file="$1";
 
     local cache_file_time=0;
     if stat -c "%Y" $cache_file &>/dev/null; then
@@ -30,8 +30,8 @@ function dupcli::_cache::_get_cache_file_path() {
     if [ "$#" -lt 1 ]; then
         duplib::fatal_error "Missing argument 1 (cache_key)";
     fi
-    local key="$1";
-    local key_clean=$(echo $key | sed 's/[^a-zA-Z_-]//g');
+    readonly key="$1";
+    readonly key_clean=$(echo $key | sed 's/[^a-zA-Z_-]//g');
     echo "$DUP_CACHE_PATH/$key_clean";
 }
 
