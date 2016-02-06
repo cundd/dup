@@ -76,6 +76,11 @@ function dupcli::help() {
     fi
 }
 
+# Create a new dup project
+function dupcli::create() {
+    "$DUP_BASE/shell/cli/dup" "create" "$@";
+}
+
 # --------------------------------------------------------
 # Helper methods
 # --------------------------------------------------------
