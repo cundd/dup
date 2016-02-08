@@ -12,7 +12,7 @@ source "$DUP_LIB_PATH";
 
 function install_build_tools() {
     set -e;
-    duplib::package_install perl make gcc g++;
+    DUP_LIB_PACKAGE_NONINTERACTIVE="true" duplib::package_install perl make gcc g++;
     set +e;
     # apk add perl alpine-sdk
 }
