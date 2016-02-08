@@ -47,7 +47,9 @@ function duplib::get_linux_distribution_release_file() {
 }
 
 function duplib::get_dup_linux_distribution_specific_folder() {
-    if [ -f "/etc/lsb-release" ]; then
+    if [[ "$(duplib::detect_linux_distribution)" != "Darwin" ]]; then
+        echo "macos";
+    elif [ -f "/etc/lsb-release" ]; then
         echo "ubuntu";
     else
         local release_file=$(duplib::get_linux_distribution_release_file true);
