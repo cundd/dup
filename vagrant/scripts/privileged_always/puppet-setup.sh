@@ -7,7 +7,7 @@ set -e
 
 #BINARY_TARGET_PATH="${BINARY_TARGET_PATH:-/usr/local/bin/sassc}";
 
-DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib.sh}";
+DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib/duplib.sh}";
 source "$DUP_LIB_PATH";
 
 function install() {
