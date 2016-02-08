@@ -39,7 +39,9 @@ function duplib::get_linux_distribution_release_file() {
     elif [ -f "/etc/arch-release" ];          then echo "/etc/arch-release";
     elif [ -f "/etc/os-release" ];            then echo "/etc/os-release";
     else
-        duplib::error "Could not determine the release file";
+        if [[ $# -eq 0 ]] || [[ "$1" == "false" ]]; then
+            duplib::error "Could not determine the release file";
+        fi
         return 1;
     fi
 }
@@ -48,7 +50,7 @@ function duplib::get_dup_linux_distribution_specific_folder() {
     if [ -f "/etc/lsb-release" ]; then
         echo "ubuntu";
     else
-        local release_file=$(duplib::get_linux_distribution_release_file);
+        local release_file=$(duplib::get_linux_distribution_release_file true);
         if [[ "$release_file" == "" ]]; then
             echo "none";
         else
