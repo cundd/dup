@@ -21,12 +21,19 @@ def configureVagrant(config)
 
     # Configure synced folders
     shareType = getConfig()['vagrant']['vm']['share_type']
+
+    # TEST
+    vagrantShareRoot = "."
+    if TEST
+        vagrantShareRoot = "../../.."
+    end
+
     if shareType && shareType != "default"
         config.vm.synced_folder "httpdocs", "/var/www/vhosts/dup.cundd.net/httpdocs", type: shareType
-        config.vm.synced_folder ".", "/vagrant", type: shareType
+        config.vm.synced_folder vagrantShareRoot, "/vagrant", type: shareType
     else
         config.vm.synced_folder "httpdocs", "/var/www/vhosts/dup.cundd.net/httpdocs"
-        config.vm.synced_folder ".", "/vagrant"
+        config.vm.synced_folder vagrantShareRoot, "/vagrant"
     end
 
     # Set the hostname

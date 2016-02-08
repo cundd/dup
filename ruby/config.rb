@@ -15,6 +15,8 @@ def getConfig
         customConfig = YAML.load_file("#{dir}/../../custom-config.yaml")
     elsif File.exist?("#{dir}/../custom-config.yaml")
         customConfig = YAML.load_file("#{dir}/../custom-config.yaml")
+    elsif TEST && File.exist?("#{Dir.getwd}/test-config.yaml")
+        customConfig = YAML.load_file("#{Dir.getwd}/test-config.yaml")
     else
         customConfig = {}
     end

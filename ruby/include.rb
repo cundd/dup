@@ -1,5 +1,10 @@
 dir = File.dirname(File.expand_path(__FILE__))
 
+# Define the global variable TEST
+if !defined? TEST
+    TEST = false;
+end
+
 require "#{dir}/deep_merge.rb"
 require "#{dir}/config.rb"
 require "#{dir}/script_runner.rb"

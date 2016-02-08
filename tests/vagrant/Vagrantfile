@@ -1,0 +1,10 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.require_version ">= 1.8.0"
+
+# Set the global variable TEST
+TEST = true
+
+dir = File.dirname(File.expand_path(__FILE__))
+require "#{dir}/../../default-Vagrantfile.rb"

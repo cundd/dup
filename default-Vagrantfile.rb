@@ -6,10 +6,13 @@ Vagrant.require_version ">= 1.8.0"
 # Create the file ./dup/custom-config.yaml to overwrite the default configuration
 
 dir = File.dirname(File.expand_path(__FILE__))
-vagrantName = 'dup'
-vagrantBase = dir + '/' + vagrantName
-
-require "#{vagrantBase}/ruby/include.rb"
+dupDirectoryName = 'dup'
+vagrantBase = dir + '/' + dupDirectoryName
+if File.exists?(vagrantBase)
+    require "#{vagrantBase}/ruby/include.rb"
+else
+    require "#{dir}/ruby/include.rb"
+end
 
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure

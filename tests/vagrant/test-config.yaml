@@ -1,0 +1,9 @@
+vagrant:
+    vm:
+        # Change the VM's static IP address
+        ip: "192.168.12.215"
+scripts:
+    ENV:
+        BASH_SETUP: true
+        SASS_SETUP: true
+        PUPPET_SETUP: true
