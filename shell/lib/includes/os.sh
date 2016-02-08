@@ -80,7 +80,7 @@ function duplib::copy_linux_distribution_specific_file() {
     if [[ "$copied_file" == "true" ]]; then
         return 0;
     fi
-    duplib::fatal_error "No distribution specific or general file $file_name found $(duplib::get_dup_linux_distribution_specific_folder)";
+    duplib::fatal_error "No distribution specific or general file $file_name found in $DUP_BASE/$relative_path for '$(duplib::get_dup_linux_distribution_specific_folder)'";
 }
 
 function duplib::_copy_linux_distribution_specific_file_custom() {
