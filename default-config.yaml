@@ -41,7 +41,7 @@ scripts:
         DUP_BASE: "/vagrant/dup"
         BASH_SETUP: true
         SASS_SETUP: false
-
+        PUPPET_SETUP: false
 packages:
     # Utilizties
     - git
