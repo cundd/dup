@@ -8,8 +8,10 @@ DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib/duplib.sh}";
 source "$DUP_LIB_PATH";
 
 function configure-completion() {
-    touch $HOME/.inputrc;
+    touch "$HOME/.inputrc";
     duplib::add_string_to_file_if_not_found "set completion-ignore-case on" "$HOME/.inputrc";
+
+    duplib::copy_linux_distribution_specific_file "bash" "bash_profile" "$HOME/.bash_profile";
 }
 
 function configure-environment() {

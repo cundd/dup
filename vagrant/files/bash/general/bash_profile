@@ -1,0 +1,42 @@
+# .bash_profile
+
+# WARNING: THIS FILE WILL BE OVERWRITTEN BY THE PROVISIONER
+
+# --------------------------------------------------------
+# Load .bashrc and .profile
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+if [ -f ~/.profile ]; then
+	. ~/.profile
+fi
+
+
+# --------------------------------------------------------
+# Major aliases
+alias ls="ls --color"
+alias ll="ls -l"
+
+
+# --------------------------------------------------------
+# User specific environment and startup programs
+PATH=$PATH:$HOME/bin
+
+export PATH
+
+# --------------------------------------------------------
+# Autocomplete for the dup command
+_dup_complete()
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="$(dup list_commands)"
+
+    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+}
+complete -F _dup_complete dup
+
+# WARNING: THIS FILE WILL BE OVERWRITTEN BY THE PROVISIONER
