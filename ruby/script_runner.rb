@@ -1,6 +1,8 @@
 def configureRunScript(config, path, privileged=false, always=false)
     env = getScriptEnvironment()
-    name = File.basename(path ,File.extname(path))
+    name = File.basename(File.dirname(path)) + '-' + File.basename(path, File.extname(path))
+    name.sub!('_', '-')
+
     if always
         config.vm.provision(name, type: "shell", privileged: privileged, path: path, env: env, run: "always")
     else
