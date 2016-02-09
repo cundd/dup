@@ -24,10 +24,26 @@ function post_install() {
     getent passwd puppet &>/dev/null || adduser -s /usr/bin/nologin -u 52 -D -S -h /var/lib/puppet puppet puppet;
 
     # Create base directory structure
-    mkdir -p /etc/puppetlabs/puppet/;
-    echo "" >> /etc/puppetlabs/puppet/puppet.conf;
-    mkdir -p /etc/puppetlabs/code/environments/production/modules;
-    mkdir -p /etc/puppetlabs/code/environments/production/manifests;
+    if [[ ! -e "/etc/puppetlabs/puppet/" ]]; then
+        mkdir -p "/etc/puppetlabs/puppet/";
+        echo "[puppetd]
+  server = puppetmaster.local
+  runinterval = 3000
+  listen = true
+  splay = false
+  summarize = true" >> "/etc/puppetlabs/puppet/puppet.conf";
+        mkdir -p "/etc/puppetlabs/code/environments/production/modules";
+        mkdir -p "/etc/puppetlabs/code/environments/production/manifests";
+
+        echo "127.0.0.1 puppetmaster.local" >> /etc/hosts;
+    fi
+
+    # Install useradd and such
+    if [[ "$(duplib::detect_linux_distribution)" == "Alpine" ]]; then
+        duplib::add_string_to_file_if_not_found 'http://nl.alpinelinux.org/alpine/edge/testing' "/etc/apk/repositories";
+        apk update;
+        apk add shadow;
+    fi
 }
 
 # function pre_install() {
