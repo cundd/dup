@@ -113,6 +113,14 @@ function duplib::_copy_linux_distribution_specific_file_dup() {
     if [ $# -lt 2 ]; then duplib::fatal_error "Missing argument 2 (file_name)"; fi
     if [ $# -lt 3 ]; then duplib::fatal_error "Missing argument 3 (destination)"; fi
 
+    # Check if $DUP_BASE is set and exists
+    if [[ -z ${DUP_BASE+x} ]]; then
+        duplib::fatal_error '$DUP_BASE is not set';
+    fi
+    if [[ ! -e "$DUP_BASE" ]]; then
+        duplib::fatal_error "\$DUP_BASE '$DUP_BASE' does not exist";
+    fi
+
     local absolute_file_path="$DUP_BASE/$1";
     local file_name="$2";
     local destination="$3";
