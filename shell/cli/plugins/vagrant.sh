@@ -57,7 +57,14 @@ function dupcli::vagrant::status() {
 
 # Add the VM IP and given domain to /etc/hosts
 function dupcli::vagrant::hosts_add() {
-    if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (domain.local)"; return 1; fi;
+    local domain="$(dupcli::config "project.dev.url")";
+    if [[ "$domain" == "" ]]; then
+        if [[ -z ${1+x} ]]; then
+            duplib::fatal_error "Either define 'project.dev.url' in the configuration or pass the domain as argument";
+        fi
+
+        domain="$1";
+    fi
 
     set -e;
     if [ ! -w "/etc/hosts" ]; then
@@ -65,6 +72,6 @@ function dupcli::vagrant::hosts_add() {
         exit 1;
     fi
 
-    echo "Adding $(dupcli::config "vagrant.vm.ip") as $1 to /etc/hosts";
-    echo "$(dupcli::config "vagrant.vm.ip")  $1" >> /etc/hosts;
+    echo "Adding $(dupcli::config "vagrant.vm.ip") as $domain to /etc/hosts";
+    echo "$(dupcli::config "vagrant.vm.ip")  $domain" >> /etc/hosts;
 }

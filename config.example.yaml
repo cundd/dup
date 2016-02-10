@@ -1,3 +1,8 @@
+project:
+    dev:
+        # URL for development
+        url:
+
 vagrant:
     vm:
         # Change the VM's static IP address
@@ -14,7 +19,7 @@ vagrant:
 #         # "terrywang/archlinux" = Arch Linux (PHP 7)
 #         # "ubuntu/trusty64"     = Ubuntu
 #         box: "dupal"
-# 
+#
 #         forwarded_ports:
 #             # Guest => Host
 #             # 80: 8080
