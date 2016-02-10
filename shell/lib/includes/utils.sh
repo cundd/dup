@@ -173,7 +173,13 @@ function duplib::_tput() {
 function duplib::error() {
     duplib::_tput setaf 1;
     >&2 echo "$@";
-    #duplib::_tput sgr0;
+    duplib::_tput sgr0;
+}
+
+function duplib::warn() {
+    duplib::_tput setaf 5;
+    >&2 echo "$@";
+    duplib::_tput sgr0;
 }
 
 function error() {
