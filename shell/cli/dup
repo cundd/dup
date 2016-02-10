@@ -37,7 +37,7 @@ function dupmaster::create() {
     # Bootstrap the project
     mkdir "httpdocs";
     cp "dup/default-Vagrantfile.rb" "Vagrantfile";
-    cp "dup/default-config.yaml" "config.yaml";
+    cp "dup/config.example.yaml" "config.yaml";
 }
 
 function dupmaster::call_dup_cli() {
