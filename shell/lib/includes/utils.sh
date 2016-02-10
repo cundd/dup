@@ -165,19 +165,19 @@ function duplib::rsync() {
 }
 
 function duplib::_tput() {
-    if hash tput 2>/dev/null; then
-        >&2 tput $@;
+    if hash tput &>/dev/null; then
+        >&2 tput $* || return 0;
     fi
 }
 
 function duplib::error() {
     duplib::_tput setaf 1;
     >&2 echo "$@";
-    duplib::_tput sgr0;
+    #duplib::_tput sgr0;
 }
 
 function error() {
-    duplib::error $@;
+    duplib::error "$@";
 }
 
 function duplib::fatal_error() {

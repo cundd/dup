@@ -12,7 +12,7 @@ function run() {
             if [[ -h "/usr/local/bin/dup" ]]; then
                 duplib::error "Path /usr/local/bin/dup exists but does not point to a valid file";
             else
-                ln -s "/vagrant/dup/shell/cli/dup" "/usr/local/bin/dup";
+                ln -s "/vagrant/dup/shell/cli/dup" "/usr/local/bin/dup" || duplib::error "Could not create /usr/local/bin/dup";
             fi
         fi
     fi
