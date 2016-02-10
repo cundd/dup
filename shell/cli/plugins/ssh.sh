@@ -14,8 +14,11 @@ function dupcli::ssh::connect() {
         duplib::fatal_error "This machine appears to be the guest machine";
     elif [[ -e "$DUP_PROJECT_BASE/.vagrant/machines/default/virtualbox/id" ]]; then
         dupcli::_ssh::vagrant::connect "$@";
+    elif [[ -e ".vagrant/machines/default/virtualbox/id" ]]; then
+        duplib::warn "Using .vagrant folder in current directory";
+        dupcli::_ssh::vagrant::connect "$@";
     else
-        duplib::fatal_error "No supported way to connect found";
+        duplib::fatal_error "No 22supported way to connect found";
     fi
 }
 
@@ -29,6 +32,9 @@ function dupcli::ssh::execute() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
         duplib::fatal_error "This machine appears to be the guest machine";
     elif [[ -e "$DUP_PROJECT_BASE/.vagrant/machines/default/virtualbox/id" ]]; then
+        dupcli::_ssh::vagrant::execute "$@";
+    elif [[ -e ".vagrant/machines/default/virtualbox/id" ]]; then
+        duplib::warn "Using .vagrant folder in current directory";
         dupcli::_ssh::vagrant::execute "$@";
     else
         duplib::fatal_error "No supported way to connect found";
@@ -52,16 +58,34 @@ function dupcli::_ssh::vagrant::connect_timeout() {
     echo "1";
 }
 
+function dupcli::_ssh::vagrant::directory_to_use() {
+    local vagrant_directory="$DUP_PROJECT_BASE/.vagrant";
+    if [[ -e "$vagrant_directory" ]]; then
+        echo "$vagrant_directory";
+        return 0;
+    fi
+
+    vagrant_directory="`pwd`/.vagrant";
+    if [[ -e "$vagrant_directory" ]]; then
+        echo "$vagrant_directory";
+        return 0;
+    fi
+
+    duplib::fatal_error "No .vagrant folder found";
+}
+
 function dupcli::_ssh::vagrant::options() {
+
+
     echo "" \
         "-o Compression=yes -o DSAAuthentication=yes -o LogLevel=FATAL " \
         "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null " \
-        "-o IdentitiesOnly=yes -i $DUP_PROJECT_BASE/.vagrant/machines/default/virtualbox/private_key" \
+        "-o IdentitiesOnly=yes -i `dupcli::_ssh::vagrant::directory_to_use`/machines/default/virtualbox/private_key" \
         "-o ConnectTimeout=$(dupcli::_ssh::vagrant::connect_timeout) -o ConnectionAttempts=1";
 }
 
 function dupcli::_ssh::vagrant::port() {
-    VBoxManage showvminfo "$(cat "$DUP_PROJECT_BASE/.vagrant/machines/default/virtualbox/id")" --machinereadable |\
+    VBoxManage showvminfo "$(cat "`dupcli::_ssh::vagrant::directory_to_use`/machines/default/virtualbox/id")" --machinereadable |\
         grep "Forwarding(\d)=\"ssh,tcp,127\.0\.0\.1"|\
         awk -F, '{print $4}';
 }
