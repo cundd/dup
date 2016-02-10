@@ -30,8 +30,10 @@ class DupConfig
     def main
         value = fetch()
 
-        # Directly print scalar types
-        if value.kind_of? String
+        if value.nil?
+            # Do nothing for nil
+
+        elsif value.kind_of? String # Directly print scalar types
             puts value
         elsif value.is_a? Numeric
             puts value
