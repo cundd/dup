@@ -23,7 +23,8 @@ function dupcli::typo3::download() {
 # Call the TYPO3 cli (on the VM)
 function dupcli::typo3::cli() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
-        php "$(dupcli::_webserver::get_host_vhost_document_root)/typo3/cli_dispatch.phpsh" $*;
+        set +e;
+        php "$(dupcli::_webserver::get_host_vhost_document_root)/typo3/cli_dispatch.phpsh" "$@";
     else
         dupcli::ssh::execute "php typo3/cli_dispatch.phpsh $*";
     fi
@@ -35,7 +36,8 @@ function dupcli::typo3::extbase() {
         dupcli::typo3::extbase "help";
     else
         if [[ $(dupcli::is_guest) == "yes" ]]; then
-            php "$(dupcli::_webserver::get_host_vhost_document_root)/typo3/cli_dispatch.phpsh" "extbase" $*;
+            set +e;
+            php "$(dupcli::_webserver::get_host_vhost_document_root)/typo3/cli_dispatch.phpsh" "extbase" "$@";
         else
             dupcli::ssh::execute "php typo3/cli_dispatch.phpsh extbase $*";
         fi
