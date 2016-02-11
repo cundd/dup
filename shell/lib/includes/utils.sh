@@ -188,6 +188,12 @@ function duplib::info() {
     fi
 }
 
+function duplib::debug() {
+    if [ ! -z ${DUP_LIB_VERBOSE+x} ] && [[ "$DUP_LIB_VERBOSE" == "true" ]]; then
+        echo "$@";
+    fi
+}
+
 function duplib::log() {
     echo "$@";
 }
