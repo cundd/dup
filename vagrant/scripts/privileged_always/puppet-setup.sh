@@ -12,7 +12,7 @@ source "$DUP_LIB_PATH";
 
 function install() {
     set -e;
-    DUP_LIB_PACKAGE_NONINTERACTIVE="true" duplib::package_install "ruby";
+    DUP_LIB_APP_NONINTERACTIVE="true" duplib::app_install "ruby";
 
     gem install puppet --no-ri;
     set +e;
@@ -24,7 +24,7 @@ function post_install() {
         apk add py-pip;
         ln -s "/usr/bin/pip" "/usr/local/bin/pip3";
     fi
-    
+
     # Create user and group
     getent group puppet &>/dev/null || addgroup -g 52 -S puppet;
     getent passwd puppet &>/dev/null || adduser -s /usr/bin/nologin -u 52 -D -S -h /var/lib/puppet puppet puppet;
