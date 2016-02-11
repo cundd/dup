@@ -141,33 +141,45 @@ function duplib::transform_package_names() {
 # --------------------------------------------------------
 # Installation
 function duplib::_package_install_with_pacman() {
-    if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
-        pacman -S --noconfirm --needed "$@";
-    else
-        pacman -S --needed "$@";
-    fi
+    for application in "$@"; do
+        duplib::info "Install application: '$application'";
+        if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
+            pacman -S --noconfirm --needed "$application";
+        else
+            pacman -S --needed "$application";
+        fi
+    done
 }
 
 function duplib::_package_install_with_apk() {
-    apk add "$@";
+    for application in "$@"; do
+        duplib::info "Install application: '$application'";
+        apk add $application;
+    done
 }
 
 function duplib::_package_install_with_yum() {
-    if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
-        yum -y install "$@";
-    else
-        yum install "$@";
-    fi
+    for application in "$@"; do
+        duplib::info "Install application: '$application'";
+        if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
+            yum -y install "$application";
+        else
+            yum install "$application";
+        fi
+    done
 }
 
 function duplib::_package_install_with_apt-get() {
-    if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
-        duplib::_package_apt-get_update;
-        DEBIAN_FRONTEND=noninteractive apt-get -y install "$@";
-    else
-        duplib::_package_apt-get_update;
-        apt-get install "$@";
-    fi
+    duplib::_package_apt-get_update;
+
+    for application in "$@"; do
+        duplib::info "Install application: '$application'";
+        if [[ "$DUP_LIB_PACKAGE_NONINTERACTIVE" == "true" ]]; then
+            DEBIAN_FRONTEND=noninteractive apt-get -y install "$application";
+        else
+            apt-get install "$application";
+        fi
+    done
 }
 
 # --------------------------------------------------------
