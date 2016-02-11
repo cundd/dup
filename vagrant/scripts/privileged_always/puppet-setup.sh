@@ -19,6 +19,12 @@ function install() {
 }
 
 function post_install() {
+    if [[ "$(duplib::detect_linux_distribution)" == "Alpine" ]]; then
+        apk update;
+        apk add py-pip;
+        ln -s "/usr/bin/pip" "/usr/local/bin/pip3";
+    fi
+    
     # Create user and group
     getent group puppet &>/dev/null || addgroup -g 52 -S puppet;
     getent passwd puppet &>/dev/null || adduser -s /usr/bin/nologin -u 52 -D -S -h /var/lib/puppet puppet puppet;
