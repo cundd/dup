@@ -13,8 +13,7 @@ source "$DUP_LIB_PATH";
 
 function check_php() {
     if ! hash php 2>/dev/null; then
-        duplib::error "Could not find PHP binary";
-        return 1;
+        duplib::fatal_error "Could not find PHP binary";
     fi
 }
 
@@ -54,7 +53,7 @@ function prepare_fpm_socket_folder() {
     local fpm_socket_folder="/run/php-fpm";
 
     if [[ ! -e $fpm_socket_folder ]]; then
-        echo "create $fpm_socket_folder"
+        duplib::debug "Create FPM socket directory '$fpm_socket_folder'";
         mkdir -p "$fpm_socket_folder";
     fi
 }
@@ -121,7 +120,7 @@ function set_typo3_context_env() {
 
 function add_environment_settings() {
     local php_fpm_conf_file_path=$(detect_php_fpm_conf_file_path);
-    
+
     if [[ ! -z ${DB_USERNAME+x} ]] && [[ ! -z ${DB_NAME+x} ]] && [[ ! -z ${DB_PASSWORD+x} ]] && [[ ! -z ${DB_HOST+x} ]]; then
         echo "env[DB_USERNAME] = '$DB_USERNAME'"        >> $php_fpm_conf_file_path;
         echo "env[DB_NAME] = '$DB_NAME'"                >> $php_fpm_conf_file_path;
