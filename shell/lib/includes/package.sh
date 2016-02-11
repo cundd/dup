@@ -102,6 +102,11 @@ php5-iconv";
         allPackages="$allPackages php5-cli";
     fi
 
+    # Install libapache2-mod-fastcgi if Apache is installed
+    if [[ $allPackages == *apache2* ]]; then
+        allPackages="$allPackages libapache2-mod-fastcgi";
+    fi
+
     echo $allPackages;
 }
 
