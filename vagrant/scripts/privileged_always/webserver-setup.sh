@@ -22,7 +22,7 @@ function prepare_file_system() {
 
 function prepare_apache_proxy() {
     if hash a2enmod 2>/dev/null; then
-        a2enmod proxy;
+        a2enmod proxy proxy_http proxy_fcgi;
     else
         duplib::add_string_to_file_if_not_found '^LoadModule slotmem_shm_module modules\/mod_slotmem_shm\.so' $(duplib::detect_apache_configuration_file) 'LoadModule slotmem_shm_module modules/mod_slotmem_shm.so';
     fi
