@@ -12,9 +12,8 @@ source "$DUP_LIB_PATH";
 
 function install_build_tools() {
     set -e;
-    DUP_LIB_APP_NONINTERACTIVE="true" duplib::app_install perl make gcc g++;
+    DUP_LIB_APP_NONINTERACTIVE="true" duplib::app_install perl build-essential;
     set +e;
-    # apk add perl alpine-sdk
 }
 
 function download_sources_sassc() {

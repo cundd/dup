@@ -117,6 +117,7 @@ function duplib::_transform_app_names_alpine() {
     allPackages=$(echo $allPackages | sed 's/\bapache\b/apache2/g')             # apache => apache2
     allPackages=$(echo $allPackages | sed 's/\bmysql-server\b/mysql/g')         # mysql-server => mysql
     allPackages=$(echo $allPackages | sed 's/\bgraphicsmagick\b/imagemagick/g') # graphicsmagick => imagemagick
+    allPackages=$(echo $allPackages | sed 's/\bbuild-essential\b/alpine-sdk/g') # build-essential => alpine-sdk
 
     echo $allPackages;
 }
@@ -126,6 +127,7 @@ function duplib::_transform_app_names_arch() {
 
     # Replace app names
     allPackages=$(echo $allPackages | sed 's/\bmysql-server\b/mysql/g')         # mysql-server => mysql
+    allPackages=$(echo $allPackages | sed 's/\bbuild-essential\b/base-devel/g') # build-essential => base-devel
 
     echo $allPackages;
 }
