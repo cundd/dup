@@ -1,7 +1,7 @@
 project:
     dev:
         # URL for development
-        url: 
+        url:
 
 vagrant:
     vm:
@@ -44,6 +44,7 @@ scripts:
         TYPO3_DOWNLOAD_FORCE: false
 
         DUP_BASE: "/vagrant/dup"
+        DUP_LIB_VERBOSE: false
         BASH_SETUP: true
         SASS_SETUP: false
         PUPPET_SETUP: false

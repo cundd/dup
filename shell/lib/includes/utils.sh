@@ -182,6 +182,16 @@ function duplib::warn() {
     duplib::_tput sgr0;
 }
 
+function duplib::info() {
+    if [ ! -z ${DUP_LIB_VERBOSE+x} ] && [[ "$DUP_LIB_VERBOSE" == "true" ]]; then
+        echo "$@";
+    fi
+}
+
+function duplib::log() {
+    echo "$@";
+}
+
 function error() {
     duplib::error "$@";
 }
