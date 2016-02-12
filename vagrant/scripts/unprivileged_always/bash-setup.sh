@@ -11,7 +11,7 @@ function configure-completion() {
     touch "$HOME/.inputrc";
     duplib::add_string_to_file_if_not_found "set completion-ignore-case on" "$HOME/.inputrc";
 
-    duplib::copy_linux_distribution_specific_file "bash" "bash_profile" "$HOME/.bash_profile";
+    duplib::copy_os_specific_file "bash" "bash_profile" "$HOME/.bash_profile";
 }
 
 function configure-environment() {

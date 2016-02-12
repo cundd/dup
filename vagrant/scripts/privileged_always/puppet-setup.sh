@@ -19,7 +19,7 @@ function install() {
 }
 
 function post_install() {
-    if [[ "$(duplib::detect_linux_distribution)" == "Alpine" ]]; then
+    if [[ "$(duplib::detect_os)" == "Alpine" ]]; then
         apk update;
         apk add py-pip;
         ln -s "/usr/bin/pip" "/usr/local/bin/pip3";
@@ -45,7 +45,7 @@ function post_install() {
     fi
 
     # Install useradd and such
-    if [[ "$(duplib::detect_linux_distribution)" == "Alpine" ]]; then
+    if [[ "$(duplib::detect_os)" == "Alpine" ]]; then
         duplib::add_string_to_file_if_not_found 'http://nl.alpinelinux.org/alpine/edge/testing' "/etc/apk/repositories";
         apk update;
         apk add shadow;

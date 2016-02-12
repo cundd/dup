@@ -71,7 +71,7 @@ function configure_fpm() {
     fi
 
     ## Copy fpm file
-    duplib::copy_linux_distribution_specific_file "php" "$PHP_FPM_CONF_FILE_NAME" "$php_fpm_conf_file_directory/$PHP_FPM_CONF_FILE_NAME";
+    duplib::copy_os_specific_file "php" "$PHP_FPM_CONF_FILE_NAME" "$php_fpm_conf_file_directory/$PHP_FPM_CONF_FILE_NAME";
     chmod o+r "$php_fpm_conf_file_directory/$PHP_FPM_CONF_FILE_NAME";
 
     if [[ "$(detect_installation_uses_external_pool_files)" != "true" ]]; then
@@ -86,7 +86,7 @@ function configure_php_ini() {
     local dupFilesPath="$DUP_BASE/files/php";
 
     ## Copy PHP.ini file
-    duplib::copy_linux_distribution_specific_file "php" "$PHP_INI_FILE_NAME" "$additional_php_ini_path";
+    duplib::copy_os_specific_file "php" "$PHP_INI_FILE_NAME" "$additional_php_ini_path";
     chmod o+r "$additional_php_ini_path/$PHP_INI_FILE_NAME";
 
     if [[ "$PHP_FEATURE_OPCACHE" == "true" ]]; then

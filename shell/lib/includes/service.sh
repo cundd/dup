@@ -240,7 +240,7 @@ function duplib::_transform_service_names() {
         return 1;
     fi
 
-    local os_identifier=$(duplib::get_dup_linux_distribution_specific_folder);
+    local os_identifier=$(duplib::get_os_specific_folder);
     if type "duplib::_transform_service_names_$os_identifier" &> /dev/null; then
         "duplib::_transform_service_names_$os_identifier" $@;
     else

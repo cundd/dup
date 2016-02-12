@@ -18,7 +18,7 @@ function duplib::app_install() {
     elif hash apt-get 2>/dev/null; then
         duplib::_app_install_with_apt-get $(duplib::transform_app_names $@);
     else
-        error "No matching installer for platform $(duplib::detect_linux_distribution) found";
+        error "No matching installer for platform $(duplib::detect_os) found";
         return 103;
     fi
 }
@@ -33,7 +33,7 @@ function duplib::app_search() {
     elif hash apt-get 2>/dev/null; then
         duplib::_app_search_with_apt-get $(duplib::transform_app_names $@);
     else
-        error "No matching installer for platform $(duplib::detect_linux_distribution) found";
+        error "No matching installer for platform $(duplib::detect_os) found";
         return 103;
     fi
 }
@@ -55,7 +55,7 @@ function duplib::system_upgrade() {
     elif hash apt-get 2>/dev/null; then
         duplib::_system_upgrade_with_apt-get "$@";
     else
-        error "No matching updater for platform $(duplib::detect_linux_distribution) found";
+        error "No matching updater for platform $(duplib::detect_os) found";
         return 103;
     fi
 }
@@ -138,8 +138,8 @@ function duplib::transform_app_names() {
         return 1;
     fi
 
-    if type "duplib::_transform_app_names_$(duplib::get_dup_linux_distribution_specific_folder)" &> /dev/null; then
-        "duplib::_transform_app_names_$(duplib::get_dup_linux_distribution_specific_folder)" $@;
+    if type "duplib::_transform_app_names_$(duplib::get_os_specific_folder)" &> /dev/null; then
+        "duplib::_transform_app_names_$(duplib::get_os_specific_folder)" $@;
     else
         duplib::_transform_app_names_general $@;
     fi

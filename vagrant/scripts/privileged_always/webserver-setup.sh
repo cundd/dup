@@ -96,7 +96,7 @@ function configure_vhost() {
     fi
 
     ## Copy vhost file
-    duplib::copy_linux_distribution_specific_file "apache" "$fileToCopy" "$apacheExtraConfigurationPath";
+    duplib::copy_os_specific_file "apache" "$fileToCopy" "$apacheExtraConfigurationPath";
     chmod o+r "$apacheExtraConfigurationPath/$fileToCopy";
 
     # Check if the vhost file will be loaded
