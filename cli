@@ -193,11 +193,11 @@ function main() {
     if [[ "$subcommand" == "-h" ]] || [[ "$subcommand" == "--help" ]]; then
         dupcli::help;
     elif type "dupcli::$subcommand" &> /dev/null; then
-        dupcli::$subcommand $@;
+        dupcli::$subcommand "$@";
     else
         dupcli::_help::print_suggestion "$subcommand" "$@";
         return 1;
     fi
 }
 
-main $@;
+main "$@";

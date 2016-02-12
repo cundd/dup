@@ -26,7 +26,7 @@ function dupcli::typo3::cli() {
         set +e;
         php "$(dupcli::_webserver::get_host_vhost_document_root)/typo3/cli_dispatch.phpsh" "$@";
     else
-        dupcli::ssh::execute "php typo3/cli_dispatch.phpsh $*";
+        dupcli::ssh::execute "php typo3/cli_dispatch.phpsh $@";
     fi
 }
 
@@ -39,7 +39,7 @@ function dupcli::typo3::extbase() {
             set +e;
             php "$(dupcli::_webserver::get_host_vhost_document_root)/typo3/cli_dispatch.phpsh" "extbase" "$@";
         else
-            dupcli::ssh::execute "php typo3/cli_dispatch.phpsh extbase $*";
+            dupcli::ssh::execute "php typo3/cli_dispatch.phpsh extbase $@";
         fi
     fi
 }

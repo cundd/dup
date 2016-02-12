@@ -49,18 +49,18 @@ function dupcli::magento::download() {
 # Call n98-magerun
 function dupcli::magento::n98-magerun() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
-        n98-magerun.phar $*;
+        n98-magerun.phar "$@";
     else
-        dupcli::ssh::execute "n98-magerun.phar $*";
+        dupcli::ssh::execute "n98-magerun.phar $@";
     fi
 }
 
 # Call modman
 function dupcli::magento::modman() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
-        modman $*;
+        modman "$@";
     else
-        dupcli::ssh::execute "modman $*";
+        dupcli::ssh::execute "modman $@";
     fi
 }
 
