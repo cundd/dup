@@ -18,7 +18,7 @@ function dupcli::ssh::connect() {
         duplib::warn "Using .vagrant folder in current directory";
         dupcli::_ssh::vagrant::connect "$@";
     else
-        duplib::fatal_error "No 22supported way to connect found";
+        duplib::fatal_error "No supported way to connect found";
     fi
 }
 
