@@ -11,6 +11,10 @@ function setup_nameserver() {
     duplib::add_string_to_file_if_not_found "nameserver 8.8.4.4" /etc/resolv.conf;
 }
 
+function setup_hosts() {
+    duplib::add_string_to_file_if_not_found "127.0.0.1 $(hostname -f)" /etc/hosts;
+}
+
 function main() {
     setup_nameserver;
 }
