@@ -22,7 +22,9 @@ function post_install() {
     if [[ "$(duplib::detect_os)" == "Alpine" ]]; then
         apk update;
         apk add py-pip;
-        ln -s "/usr/bin/pip" "/usr/local/bin/pip3";
+        if [ ! -e "/usr/local/bin/pip3" ]; then
+            ln -s "/usr/bin/pip" "/usr/local/bin/pip3";
+        fi
     fi
 
     # Create user and group
@@ -40,15 +42,15 @@ function post_install() {
   summarize = true" >> "/etc/puppetlabs/puppet/puppet.conf";
         mkdir -p "/etc/puppetlabs/code/environments/production/modules";
         mkdir -p "/etc/puppetlabs/code/environments/production/manifests";
-
-        echo "127.0.0.1 puppetmaster.local" >> /etc/hosts;
     fi
+
+    duplib::add_string_to_file_if_not_found "127.0.0.1 puppet" /etc/hosts;
+    duplib::add_string_to_file_if_not_found "127.0.0.1 puppetmaster.local" /etc/hosts;
 
     # Install useradd and such
     if [[ "$(duplib::detect_os)" == "Alpine" ]]; then
-        duplib::add_string_to_file_if_not_found 'http://nl.alpinelinux.org/alpine/edge/testing' "/etc/apk/repositories";
         apk update;
-        apk add shadow;
+        apk add --no-cache --repository http://nl.alpinelinux.org/alpine/edge/testing/ shadow;
     fi
 }
 
