@@ -90,16 +90,20 @@ function configure_fpm() {
 }
 
 function configure_php_ini() {
-    configure_php_ini_file `detect_additional_php_ini_path`;
+    configure_php_ini_file 'default' `detect_additional_php_ini_path`;
 
     # If there is a separate folder for the FPM PHP INI file
-    if [[ "(detect_additional_php_fpm_ini_path)" != "" ]]; then
-        configure_php_ini_file `detect_additional_php_fpm_ini_path`;
+    if [[ "$(detect_additional_php_fpm_ini_path)" != "" ]]; then
+        configure_php_ini_file 'fpm' `detect_additional_php_fpm_ini_path`;
     fi
 }
 
 function configure_php_ini_file() {
-    local additional_php_ini_path="$1";
+    if [[ $# -lt 2 ]]; then
+        duplib::error "No INI directory path given for $1";
+        return;
+    fi
+    local additional_php_ini_path="$2";
     local dupFilesPath="$DUP_BASE/files/php";
 
     ## Copy PHP.ini file
