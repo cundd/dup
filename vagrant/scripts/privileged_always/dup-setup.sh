@@ -6,7 +6,7 @@ BASH_SETUP="${BASH_SETUP:-true}";
 DUP_LIB_PATH="${DUP_LIB_PATH:-$(dirname "$0")/../../../shell/lib/duplib.sh}";
 source "$DUP_LIB_PATH";
 
-function run() {
+function main() {
     if [[ "$BASH_SETUP" == "true" ]]; then
         if [[ ! -e "/usr/local/bin/dup" ]]; then
             if [[ -h "/usr/local/bin/dup" ]]; then
@@ -18,4 +18,4 @@ function run() {
     fi
 }
 
-run $@;
+main "$@";

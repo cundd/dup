@@ -4,7 +4,7 @@ set -o errexit
 
 BASH_SETUP="${BASH_SETUP:-true}";
 
-function run() {
+function main() {
     if [[ "$BASH_SETUP" == "true" ]]; then
 
         if [[ ! -e "/usr/local/bin/vi" ]]; then
@@ -13,4 +13,4 @@ function run() {
     fi
 }
 
-run $@;
+main "$@";

@@ -94,5 +94,5 @@ function main() {
 }
 
 set +e;
-main $@;
+main "$@";
 set -e;
