@@ -21,6 +21,14 @@ function detect_additional_php_ini_path() {
     php --ini|grep "Scan for additional .ini files in"|awk -F: '{ gsub(/ /, "", $2); print $2 }'
 }
 
+function detect_additional_php_fpm_ini_path() {
+    if [[ -e "/etc/php5/fpm/conf.d" ]]; then
+        echo "/etc/php5/fpm/conf.d";
+    else
+        echo "";
+    fi
+}
+
 function detect_installation_uses_external_pool_files() {
     if [[ -e "/etc/php/fpm/pool.d" ]]; then
         echo "true";
@@ -82,7 +90,16 @@ function configure_fpm() {
 }
 
 function configure_php_ini() {
-    local additional_php_ini_path=`detect_additional_php_ini_path`;
+    configure_php_ini_file `detect_additional_php_ini_path`;
+
+    # If there is a separate folder for the FPM PHP INI file
+    if [[ "(detect_additional_php_fpm_ini_path)" != "" ]]; then
+        configure_php_ini_file `detect_additional_php_fpm_ini_path`;
+    fi
+}
+
+function configure_php_ini_file() {
+    local additional_php_ini_path="$1";
     local dupFilesPath="$DUP_BASE/files/php";
 
     ## Copy PHP.ini file
