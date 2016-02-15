@@ -103,6 +103,11 @@ function configure_vhost() {
     if [[ $checkIncludeString == "yes" ]]; then
         duplib::add_string_to_file_if_not_found "Include conf/extra/$fileToCopy" $(duplib::detect_apache_configuration_file);
     fi
+
+    # Remove the default vhost file if it exists
+    if [[ -e "/etc/apache2/sites-enabled/000-default.conf" ]]; then
+        rm -f "/etc/apache2/sites-enabled/000-default.conf";
+    fi
 }
 
 function main() {
