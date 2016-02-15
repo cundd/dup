@@ -178,4 +178,4 @@ function main() {
     duplib::service_restart php-fpm;
 }
 
-main $@
+main "$@";

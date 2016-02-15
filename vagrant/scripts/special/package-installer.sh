@@ -9,7 +9,7 @@ function main() {
     local status;
     echo "Request install packages $@";
     set +e;
-    DUP_LIB_APP_NONINTERACTIVE="true" duplib::app_install $@;
+    DUP_LIB_APP_NONINTERACTIVE="true" duplib::app_install "$@";
     status=$?;
     set -e;
 
@@ -18,4 +18,4 @@ function main() {
     fi
 }
 
-main $@
+main "$@";

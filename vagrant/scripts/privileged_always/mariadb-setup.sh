@@ -144,4 +144,4 @@ function main() {
     provision_user;
 }
 
-main $@
+main "$@";

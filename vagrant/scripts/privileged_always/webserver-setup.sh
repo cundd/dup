@@ -116,4 +116,4 @@ function main() {
     duplib::service_restart httpd;
 }
 
-main $@
+main "$@";

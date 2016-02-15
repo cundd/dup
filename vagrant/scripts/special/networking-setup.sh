@@ -19,4 +19,4 @@ function main() {
     setup_nameserver;
 }
 
-main $@
+main "$@";
