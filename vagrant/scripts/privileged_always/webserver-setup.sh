@@ -83,13 +83,13 @@ function configure_vhost() {
     local apacheExtraConfigurationPath="";
     local checkIncludeString="no";
 
-    if [[ -e "/etc/apache2/conf.d/" ]]; then
+    if [[ -e "/etc/apache2/sites-enabled" ]]; then
+        apacheExtraConfigurationPath="/etc/apache2/sites-enabled";
+    elif [[ -e "/etc/apache2/conf.d" ]]; then
         apacheExtraConfigurationPath="/etc/apache2/conf.d";
-    elif [[ -e "/etc/httpd/conf/" ]]; then
+    elif [[ -e "/etc/httpd/conf" ]]; then
         apacheExtraConfigurationPath="/etc/httpd/conf/extra";
         checkIncludeString="yes";
-    elif [[ -e "/etc/apache2/sites-enabled" ]]; then
-        apacheExtraConfigurationPath="/etc/apache2/sites-enabled";
     else
         duplib::error "Apache configuration directory not found";
         return 1;
