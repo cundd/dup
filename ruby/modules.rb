@@ -9,7 +9,7 @@ module Dup
             registeredModules = getConfig()['modules']
             if registeredModules
                 registeredModules.each do |key, value|
-                    configureRegisteredModule(key, value)
+                    configureRegisteredModule(key, prepareModuleConfiguration(value))
                 end
             end
         end
@@ -27,7 +27,23 @@ module Dup
                 require initScriptPath
                 createInitInstanceAndInvokeInit(moduleName, moduleConfiguration)
             else
-                puts "no init script for #{moduleName}"
+                # puts "No init script for #{moduleName}"
+            end
+        end
+
+        def prepareModuleConfiguration(moduleConfiguration)
+            if moduleConfiguration.nil?
+                return {}
+            elsif moduleConfiguration.is_a? Array
+                abort "Can not transform array to module configuration. Please check your YAML files"
+            elsif moduleConfiguration.is_a? String
+                abort "Can not transform array to module configuration. Please check your YAML files"
+            elsif moduleConfiguration.is_a? Numeric
+                abort "Can not transform array to module configuration. Please check your YAML files"
+            elsif moduleConfiguration.is_a? Hash
+                return moduleConfiguration
+            else
+                return {}
             end
         end
 
