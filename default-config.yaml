@@ -9,10 +9,10 @@ vagrant:
         # ip: "192.168.12.10" # <- Define the IP address to use for the VM
 
         # Configure the hostname setup
-        # "automatic"       = set to the folder name the Vagrant file is located
+        # "automatic"       = use the configured project.dev.url or set to the folder name the Vagrant file is located
         # "" (Empty string) = do not set the hostname
         # "my-hostname"     = use the value as hostname
-        hostname:
+        hostname: "automatic"
 
         # Vagrant box to use
         # "dupal"               = small size Alpine Linux (PHP 5.6)
