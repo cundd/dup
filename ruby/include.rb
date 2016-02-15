@@ -13,4 +13,6 @@ require "#{dir}/service.rb"
 require "#{dir}/hostname.rb"
 require "#{dir}/forwarded_ports.rb"
 require "#{dir}/synced_folder.rb"
+require "#{dir}/modules.rb"
+
 require "#{dir}/dup_vagrant.rb"
