@@ -110,10 +110,37 @@ function configure_php_ini_file() {
         configure_opcode_cache;
     fi
 
+    # configure_sendmail
+
+    local ini_row;
+    local ifs_pre=$IFS;
+    IFS=$';';
     for ini_row in $PHP_CUSTOM_INI; do
         echo $ini_row >> "$additional_php_ini_path/$PHP_INI_FILE_NAME";
     done
+    IFS=$ifs_pre;
 }
+
+function configure_opcode_cache() {
+    local additional_php_ini_path=`detect_additional_php_ini_path`;
+    local found="no";
+    for file in $(detect_loaded_php_ini_files); do
+        local result=$(grep '^zend_extension=opcache\.so' "$file" >/dev/null);
+        if [[ $? -eq 0 ]]; then
+            found="yes";
+            break;
+        fi
+    done
+
+    if [[ $found == "no" ]]; then
+        echo "zend_extension=opcache.so" >> "$additional_php_ini_path/$PHP_INI_FILE_NAME";
+    fi
+}
+
+# function configure_sendmail() {
+#     #configure_sendmail
+#     echo sendmail_path: "mailhog sendmail cod@iresults.li"
+# }
 
 function set_typo3_context_env() {
     case "$TYPO3_SITE_ENV" in
@@ -149,23 +176,6 @@ function add_environment_settings() {
     if [[ ! -z ${TYPO3_SITE_ENV+x} ]]; then
         set_typo3_context_env;
         echo "env[SITE_ENV] = '$TYPO3_SITE_ENV'"        >> $php_fpm_conf_file_path;
-    fi
-}
-
-
-function configure_opcode_cache() {
-    local additional_php_ini_path=`detect_additional_php_ini_path`;
-    local found="no";
-    for file in $(detect_loaded_php_ini_files); do
-        local result=$(grep '^zend_extension=opcache\.so' "$file" >/dev/null);
-        if [[ $? -eq 0 ]]; then
-            found="yes";
-            break;
-        fi
-    done
-
-    if [[ $found == "no" ]]; then
-        echo "zend_extension=opcache.so" >> "$additional_php_ini_path/$PHP_INI_FILE_NAME";
     fi
 }
 
