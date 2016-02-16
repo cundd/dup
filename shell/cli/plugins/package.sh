@@ -74,7 +74,8 @@ function dupcli::_package::vagrant::package() {
     duplib::check_required_command "gzip";
 
     local package_name="package-$(date +%F-%H-%M-%S)";
-    local dup_local_path="$DUP_PROJECT_BASE/.package/$package_name";
+    local dup_package_base_path="$DUP_PROJECT_BASE/.package";
+    local dup_local_path="$dup_package_base_path/$package_name";
     local dup_package_local_path="$dup_local_path.tar.gz";
     local current_directory="`pwd`";
 
@@ -88,6 +89,14 @@ function dupcli::_package::vagrant::package() {
         if [ -e "$dup_package_local_path" ]; then
             duplib::fatal_error "Package $dup_package_local_path already exists. Will not proceed";
         fi
+    fi
+
+    if [ ! -e "$dup_package_base_path" ]; then
+        if [ ! -w "$(dirname $dup_package_base_path)" ]; then
+            duplib::fatal_error "Package directory could not be created at '$dup_package_base_path'";
+        fi
+
+        mkdir "$dup_package_base_path";
     fi
 
     if [ ! -w "$dup_package_local_path" ] && [ ! -w "$(dirname $dup_package_local_path)" ]; then
