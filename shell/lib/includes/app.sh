@@ -125,9 +125,32 @@ function duplib::_transform_app_names_alpine() {
 function duplib::_transform_app_names_arch() {
     local allPackages=$@;
 
-    # Replace app names
-    allPackages=$(echo $allPackages | sed 's/\bmysql-server\b/mysql/g')         # mysql-server => mysql
-    allPackages=$(echo $allPackages | sed 's/\bbuild-essential\b/base-devel/g') # build-essential => base-devel
+    # Replace package names
+    allPackages=$(echo $allPackages | sed 's/\bmysql-server\b/mariadb/g')           # mysql-server => mariadb
+    allPackages=$(echo $allPackages | sed 's/\bmysql-client\b/mariadb-clients/g')   # mysql-client => mariadb-clients
+    allPackages=$(echo $allPackages | sed 's/\bbuild-essential\b/base-devel/g')     # build-essential => base-devel
+
+    local arrayOfPackagesToRemoveFromList="apache-proxy
+php-mysqli
+php-pdo_mysql
+php-soap
+php-opcache
+php-json
+php-curl
+php-xml
+php-zip
+php-zlib
+php-openssl
+php-xmlreader
+php-ctype
+php-calendar
+php-phar
+php-iconv
+";
+
+    for packageToRemoveFromList in $arrayOfPackagesToRemoveFromList; do
+        allPackages=$(echo $allPackages | sed "s/\b$packageToRemoveFromList\b//g");
+    done
 
     echo $allPackages;
 }
