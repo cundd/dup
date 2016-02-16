@@ -2,6 +2,15 @@ vagrant:
     vm:
         # Change the VM's static IP address
         ip: "192.168.12.215"
+
+        # Vagrant box to use
+        # "dupal"               = small size Alpine Linux (PHP 5.6)
+        # "terrywang/archlinux" = Arch Linux (PHP 7)
+        # "ubuntu/trusty64"     = Ubuntu
+        box: "dupal"
+
+        share_type: "rsync"
+
 scripts:
     ENV:
         BASH_SETUP: true

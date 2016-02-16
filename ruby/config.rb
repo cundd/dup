@@ -9,14 +9,14 @@ def getConfig
         defaultConfig.deep_merge!(oldConfig)
     end
 
-    if File.exist?("#{dir}/../../config.yaml")
+    if TEST && File.exist?("#{Dir.getwd}/test-config.yaml")
+        customConfig = YAML.load_file("#{Dir.getwd}/test-config.yaml")
+    elsif File.exist?("#{dir}/../../config.yaml")
         customConfig = YAML.load_file("#{dir}/../../config.yaml")
     elsif File.exist?("#{dir}/../../custom-config.yaml")
         customConfig = YAML.load_file("#{dir}/../../custom-config.yaml")
     elsif File.exist?("#{dir}/../custom-config.yaml")
         customConfig = YAML.load_file("#{dir}/../custom-config.yaml")
-    elsif TEST && File.exist?("#{Dir.getwd}/test-config.yaml")
-        customConfig = YAML.load_file("#{Dir.getwd}/test-config.yaml")
     else
         customConfig = {}
     end

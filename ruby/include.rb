@@ -2,7 +2,7 @@ dir = File.dirname(File.expand_path(__FILE__))
 
 # Define the global variable TEST
 if !defined? TEST
-    TEST = false;
+    TEST = !!ENV['TEST']
 end
 
 require "#{dir}/deep_merge.rb"
