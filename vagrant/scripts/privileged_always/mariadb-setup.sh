@@ -24,6 +24,10 @@ function prepare_installation() {
     fi
 }
 
+function cleanup_logs() {
+    mysql -u root -p$DB_ROOT_PASSWORD -e "PURGE BINARY LOGS BEFORE CURDATE();";
+}
+
 function test_root_password() {
     duplib::service_start_if_down mysqld &> /dev/null;
     {
@@ -141,6 +145,7 @@ function provision_user() {
 
 function main() {
     provision_base;
+    cleanup_logs;
     provision_user;
 }
 
