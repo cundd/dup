@@ -16,6 +16,7 @@ module Dup
 
         private
         def configureRegisteredModule(moduleName, moduleConfiguration)
+            configureVagrantConfigScript(moduleName, moduleConfiguration)
             configureInitScript(moduleName, moduleConfiguration)
             configureShellScript(moduleName, moduleConfiguration)
         end
@@ -25,9 +26,20 @@ module Dup
 
             if initScriptPath
                 require initScriptPath
-                createInitInstanceAndInvokeInit(moduleName, moduleConfiguration)
+                createInitInstance(moduleName, moduleConfiguration)
             else
                 # puts "No init script for #{moduleName}"
+            end
+        end
+
+        def configureVagrantConfigScript(moduleName, moduleConfiguration)
+            vagrantConfigScriptPath = getModuleVagrantConfigScript(moduleName)
+
+            if vagrantConfigScriptPath
+                require vagrantConfigScriptPath
+                createInstanceInNamespace(moduleName, moduleConfiguration, '::Vagrant::Config')
+            else
+                # puts "No Vagrant config script for #{moduleName}"
             end
         end
 
@@ -66,6 +78,16 @@ module Dup
             return nil
         end
 
+        def getModuleVagrantConfigScript(moduleName)
+            moduleDirectoryPath = getModuleDirectory(moduleName)
+
+            if File.exists?("#{moduleDirectoryPath}/vagrant/config.rb")
+                return "#{moduleDirectoryPath}/vagrant/config.rb"
+            end
+
+            return nil
+        end
+
         def getModuleShellScript(moduleName)
             moduleDirectoryPath = getModuleDirectory(moduleName)
 
@@ -91,12 +113,16 @@ module Dup
             abort("Module '#{moduleName}' not found")
         end
 
-        def createInitInstanceAndInvokeInit(moduleName, moduleConfiguration)
-            Object.const_get(moduleNameToClassName(moduleName))
+        def createInstanceInNamespace(moduleName, moduleConfiguration, namespace)
+            Object.const_get(ucFirst(moduleName) + namespace)
             .new(@vagrantConfig, moduleConfiguration)
         end
 
-        def moduleNameToClassName(moduleName)
+        def createInitInstance(moduleName, moduleConfiguration)
+            return createInitInstanceInNamespace(moduleName, moduleConfiguration, '')
+        end
+
+        def ucFirst(moduleName)
             moduleDup = moduleName.dup
             moduleDup[0] = moduleDup[0,1].upcase
             return moduleDup
