@@ -4,8 +4,8 @@ set -o errexit
 
 # Download Magento files from the given remote
 function dupcli::magento::download() {
-    if [[ -z ${1+x} ]]; then duplib::error "Missing argument 1 (user@server)"; return 1; fi;
-    if [[ -z ${2+x} ]]; then duplib::error "Missing argument 2 (remote_base_path)"; return 1; fi;
+    if [[ $# -lt 1 ]]; then dupcli::_core::usage_error "Missing argument 1 (user@server)" "user@server"; fi;
+    if [[ $# -lt 2 ]]; then dupcli::_core::usage_error "Missing argument 2 (remote_base_path)" "remote_base_path"; fi;
 
     local user_and_server="$1";
     local remote_base_path="$2";

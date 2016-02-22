@@ -21,9 +21,7 @@ function dupcli::package::pack() {
 
 # Unpack a package
 function dupcli::package::unpack() {
-    if [ "$#" -lt 1 ]; then
-        duplib::fatal_error "Missing argument 1 (package_file)";
-    fi
+    if [[ $# -eq 0 ]]; then dupcli::_core::usage_error "Missing argument 1 (package_file)" "package_file"; fi;
     duplib::check_required_command "tar";
     duplib::check_required_command "gzip";
 

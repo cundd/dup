@@ -31,13 +31,23 @@ function dupcli::_help::print_suggestion() {
 
 function dupcli::_help::print_usage() {
     local second_part='';
-    if [ $# -eq 0 ]; then
-        second_part='<command>';
-    else
-        second_part="$1 <subcommand>";
+
+    # Check if a command is given to dup
+    if [[ -z ${DUP_COMMAND+x} ]]; then # No command given
+        if [ $# -eq 0 ]; then
+            second_part='<command> [<args>]';
+        else
+            second_part="$1 <subcommand> [<args>]";
+        fi
+    else # Command given
+        if [ $# -eq 0 ]; then
+            second_part="$DUP_COMMAND ";
+        else
+            second_part="$DUP_COMMAND $1";
+        fi
     fi
 
-    echo "Usage $0 $second_part [<args>]
+    echo "Usage $DUP_COMMAND_SELF $second_part
 ";
 }
 

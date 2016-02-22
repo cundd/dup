@@ -6,14 +6,14 @@ set -o errexit
 
 # Install a application using the system's package manager
 function dupcli::app::install() {
-    if [[ -z ${1+x} ]]; then duplib::error "Please specify at least one package"; return 1; fi;
+    if [[ $# -eq 0 ]]; then dupcli::_core::usage_error "Please specify at least one package" "package(s)"; fi;
 
     duplib::app_install "$@";
 }
 
 # Search a application using the system's package manager
 function dupcli::app::search() {
-    if [[ -z ${1+x} ]]; then duplib::error "Please specify at least one package"; return 1; fi;
+    if [[ $# -eq 0 ]]; then dupcli::_core::usage_error "Please specify at least one package" "package(s)"; fi;
 
     duplib::app_search "$@";
 }

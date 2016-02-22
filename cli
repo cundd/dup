@@ -108,6 +108,8 @@ function dupcli::_detect_dup_base() {
 }
 
 function dupcli::_init_globals() {
+    DUP_COMMAND_SELF="$0";
+
     dupcli::_detect_dup_base;
     : ${DUP_PROJECT_BASE="$DUP_BASE/.."};
     : ${DUP_CACHE_PATH="$DUP_BASE/.dup_cache"};
@@ -155,6 +157,18 @@ function dupcli::_core::load() {
     done
 }
 
+function dupcli::_core::usage_error() {
+    duplib::error "$1";
+    echo '';
+
+    if [ $# -gt 1 ]; then
+        dupcli::_help::print_usage "$2";
+    else
+        dupcli::_help::print_usage;
+    fi
+    exit 1;
+}
+
 
 # --------------------------------------------------------
 # Plugin methods
@@ -187,15 +201,15 @@ function main() {
         return 1;
     fi;
 
-    local subcommand="$1";
+    DUP_COMMAND="$1";
     shift;
 
-    if [[ "$subcommand" == "-h" ]] || [[ "$subcommand" == "--help" ]]; then
+    if [[ "$DUP_COMMAND" == "-h" ]] || [[ "$DUP_COMMAND" == "--help" ]]; then
         dupcli::help;
-    elif type "dupcli::$subcommand" &> /dev/null; then
-        dupcli::$subcommand "$@";
+    elif type "dupcli::$DUP_COMMAND" &> /dev/null; then
+        dupcli::$DUP_COMMAND "$@";
     else
-        dupcli::_help::print_suggestion "$subcommand" "$@";
+        dupcli::_help::print_suggestion "$DUP_COMMAND" "$@";
         return 1;
     fi
 }
