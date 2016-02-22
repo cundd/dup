@@ -1,8 +1,10 @@
-module Dup
+require "log4r"
 
+module Dup
     class Modules
         def initialize(vagrantConfig)
             @vagrantConfig = vagrantConfig
+            @logger = Log4r::Logger.new("vagrant::ui::interface")
         end
 
         def configure
@@ -28,7 +30,7 @@ module Dup
                 require initScriptPath
                 createInitInstance(moduleName, moduleConfiguration)
             else
-                # puts "No init script for #{moduleName}"
+                @logger.debug "No init script for module #{moduleName}"
             end
         end
 
@@ -39,7 +41,7 @@ module Dup
                 require vagrantConfigScriptPath
                 createInstanceInNamespace(moduleName, moduleConfiguration, '::Vagrant::Config')
             else
-                # puts "No Vagrant config script for #{moduleName}"
+                @logger.debug "No Vagrant config script for module #{moduleName}"
             end
         end
 
