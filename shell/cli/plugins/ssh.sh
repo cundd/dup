@@ -75,8 +75,6 @@ function dupcli::_ssh::vagrant::directory_to_use() {
 }
 
 function dupcli::_ssh::vagrant::options() {
-
-
     echo "" \
         "-o Compression=yes -o DSAAuthentication=yes -o LogLevel=FATAL " \
         "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null " \
