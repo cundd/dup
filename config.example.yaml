@@ -3,19 +3,19 @@ project:
         # Development system URL
         url:
 
-    # prod:
-    #     # Production system URL
-    #     url:
-    #
-    #     # Production host
-    #     host:
-    #
-    #     # Production SSH user
-    #     user:
-    #
-    #     # Additional SSH options
-    #     ssh:
-    #         port: 22
+    prod:
+        # Production system URL
+        url:
+
+        # Production host
+        host:
+
+        # Production SSH user
+        user:
+
+        # Additional SSH options
+        ssh:
+            port: 22
 
 vagrant:
     vm:
