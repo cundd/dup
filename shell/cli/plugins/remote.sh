@@ -26,13 +26,8 @@ function dupcli::remote::execute() {
 
     if [[ $(dupcli::is_guest) == "yes" ]]; then
         duplib::fatal_error "This machine appears to be the guest machine";
-    elif [[ -e "$DUP_PROJECT_BASE/.vagrant/machines/default/virtualbox/id" ]]; then
-        dupcli::_remote::ssh::execute "$@";
-    elif [[ -e ".vagrant/machines/default/virtualbox/id" ]]; then
-        duplib::warn "Using .vagrant folder in current directory";
-        dupcli::_remote::ssh::execute "$@";
     else
-        duplib::fatal_error "No supported way to connect found";
+        dupcli::_remote::ssh::execute "$@";
     fi
 }
 
