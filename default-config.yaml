@@ -13,6 +13,9 @@ project:
         # Production SSH user
         user:
 
+        # Production folder base path
+        directory:
+
         # Additional SSH options
         ssh:
             port: 22

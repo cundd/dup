@@ -12,13 +12,8 @@ set -o errexit
 function dupcli::remote::connect() {
     if [[ $(dupcli::is_guest) == "yes" ]]; then
         duplib::fatal_error "This machine appears to be the guest machine";
-    elif [[ -e "$DUP_PROJECT_BASE/.vagrant/machines/default/virtualbox/id" ]]; then
-        dupcli::_remote::ssh::connect "$@";
-    elif [[ -e ".vagrant/machines/default/virtualbox/id" ]]; then
-        duplib::warn "Using .vagrant folder in current directory";
-        dupcli::_remote::ssh::connect "$@";
     else
-        duplib::fatal_error "No supported way to connect found";
+        dupcli::_remote::ssh::connect "$@";
     fi
 }
 
@@ -70,11 +65,13 @@ function dupcli::_remote::ssh::connect_timeout() {
 
 function dupcli::_remote::ssh::options() {
     # "-i $(dupcli::config "project.prod.ssh.identity")" \
-    echo "" \
-        "-o Compression=yes -o DSAAuthentication=yes -o LogLevel=FATAL " \
-        "-o StrictHostKeyChecking=yes " \
-        "-o IdentitiesOnly=yes" \
-        "-o ConnectTimeout=$(dupcli::_remote::ssh::connect_timeout) -o ConnectionAttempts=1";
+    echo -n "-F $DUP_BASE/resources/cli/plugins/remote/ssh-config ";
+    echo -n "-o ConnectTimeout=$(dupcli::_remote::ssh::connect_timeout) ";
+
+    # local directory="$(dupcli::config "project.prod.directory")";
+    # if [[ "$directory" != "" ]]; then
+    #     echo -n "-o LocalCommand=\"ls\" ";
+    # fi
 }
 
 function dupcli::_remote::ssh::port() {

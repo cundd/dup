@@ -1,0 +1,14 @@
+Host *
+    PermitLocalCommand yes
+    Compression yes
+    DSAAuthentication yes
+    LogLevel FATAL
+    StrictHostKeyChecking yes
+    IdentitiesOnly yes
+
+#    ForwardAgent no
+#    ForwardX11 no
+#    ForwardX11Trusted yes
+#    Protocol 2
+#    ServerAliveInterval 60
+#    ServerAliveCountMax 30

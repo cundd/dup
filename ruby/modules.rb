@@ -1,8 +1,8 @@
-require "log4r"
-
 module Dup
     class Modules
         def initialize(vagrantConfig)
+            require "log4r"
+            
             @vagrantConfig = vagrantConfig
             @logger = Log4r::Logger.new("vagrant::ui::interface")
         end
