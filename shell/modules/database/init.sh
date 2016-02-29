@@ -2,7 +2,6 @@
 set -o nounset
 set -o errexit
 
-
 : ${MYSQL_DATADIR="/var/lib/mysql"}
 : ${DUP_CUSTOM_PROVISION_FOLDER="provision"}
 : ${DB_NAME="vagrant"}

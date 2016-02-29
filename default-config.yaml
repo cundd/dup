@@ -67,6 +67,9 @@ scripts:
         PUPPET_SETUP: false
 
 modules:
+    database:
+        privileged: true
+
     mail:
         privileged: true
         mailhog_setup: true
@@ -78,8 +81,6 @@ modules:
 
     php:
         privileged: true
-
-
 
 packages:
     # Utilizties
