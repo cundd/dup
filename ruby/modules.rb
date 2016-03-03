@@ -2,7 +2,7 @@ module Dup
     class Modules
         def initialize(vagrantConfig)
             require "log4r"
-            
+
             @vagrantConfig = vagrantConfig
             @logger = Log4r::Logger.new("vagrant::ui::interface")
         end
@@ -11,6 +11,7 @@ module Dup
             registeredModules = getConfig()['modules']
             if registeredModules
                 registeredModules.each do |key, value|
+                    @vagrantConfigInstance = nil
                     configureRegisteredModule(key, prepareModuleConfiguration(value))
                 end
             end
@@ -39,7 +40,7 @@ module Dup
 
             if vagrantConfigScriptPath
                 require vagrantConfigScriptPath
-                createInstanceInNamespace(moduleName, moduleConfiguration, '::Vagrant::Config')
+                @vagrantConfigInstance = createInstanceInNamespace(moduleName, moduleConfiguration, '::Vagrant::Config')
             else
                 @logger.debug "No Vagrant config script for module #{moduleName}"
             end
@@ -66,6 +67,9 @@ module Dup
 
             env = getScriptEnvironment()
             env = env.deep_merge(moduleConfiguration)
+            if @vagrantConfigInstance && @vagrantConfigInstance.respond_to?('prepareEnvironmentVariables')
+                env.deep_merge!(@vagrantConfigInstance.prepareEnvironmentVariables(env))
+            end
 
             @vagrantConfig.vm.provision("module/#{moduleName}", type: "shell", privileged: privileged, path: getModuleShellScript(moduleName), env: env, run: "always")
         end

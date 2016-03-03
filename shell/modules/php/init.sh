@@ -114,7 +114,15 @@ function configure_php_ini_file() {
         configure_opcode_cache;
     fi
 
-    # configure_sendmail
+    ## Configure error logging
+    local error_log="$(duplib::get_vhost_base)/logs/php_error.log";
+    if [[ ! -e "$(dirname $error_log)" ]]; then
+        mkdir "$(dirname $error_log)";
+    fi
+    echo "error_log=$error_log" >> "$additional_php_ini_path/$PHP_INI_FILE_NAME";
+    echo "log_errors=On" >> "$additional_php_ini_path/$PHP_INI_FILE_NAME";
+
+    #TODO: configure_sendmail
 
     local ini_row;
     local ifs_pre=$IFS;

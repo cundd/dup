@@ -82,6 +82,17 @@ modules:
     php:
         privileged: true
 
+        features:
+            opcache: true
+        ini:
+            always_populate_raw_post_data: -1
+            max_execution_time: 240
+            max_input_vars: 1500
+            date.timezone: Europe/Vaduz
+            display_errors: on
+            display_startup_errors: on
+            error_reporting: 32767
+
 packages:
     # Utilizties
     - git
@@ -117,18 +128,6 @@ packages:
     - php-calendar
     - php-phar
     - php-iconv
-
-php:
-    features:
-        opcache: true
-    ini:
-        always_populate_raw_post_data: -1
-        max_execution_time: 240
-        max_input_vars: 1500
-        date.timezone: Europe/Vaduz
-        display_errors: on
-        display_startup_errors: on
-        error_reporting: 32767
 
 services:
     # Omit the ".service" suffix

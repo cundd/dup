@@ -2,9 +2,14 @@
 # HTTP/Apache methods
 # --------------------------------------------------------
 
+# Returns the vhost base directory
+function duplib::get_vhost_base() {
+    echo "/var/www/vhosts/dup.cundd.net";
+}
+
 # Returns the vhost document root
 function duplib::get_vhost_document_root() {
-    echo "/var/www/vhosts/dup.cundd.net/httpdocs";
+    echo "$(duplib::get_vhost_base)/httpdocs";
 }
 
 # Returns the Apache configuration file path
