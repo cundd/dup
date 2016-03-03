@@ -194,6 +194,13 @@ function duplib::debug() {
     fi
 }
 
+# Send debugging information to STDERR
+function duplib::debug_er() {
+    if [ ! -z ${DUP_LIB_VERBOSE+x} ] && [[ "$DUP_LIB_VERBOSE" == "true" ]]; then
+        >&2 echo "$@";
+    fi
+}
+
 function duplib::log() {
     echo "$@";
 }

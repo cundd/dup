@@ -123,8 +123,10 @@ function duplib::_copy_os_specific_file_custom() {
     ## Check if there is a special file for the linux distribution
     local os_specific_file_path="$absolute_file_path/$(duplib::get_os_specific_folder)/$file_name";
     if [[ -e "$os_specific_file_path" ]]; then
+        duplib::debug_er "Copy OS specific custom file '$os_specific_file_path' to '$destination'";
         cp "$os_specific_file_path" "$destination";
     elif [[ -e "$absolute_file_path/general/$file_name" ]]; then # Copy the default file
+        duplib::debug_er "Copy OS specific custom file '$absolute_file_path/general/$file_name' to '$destination'";
         cp "$absolute_file_path/general/$file_name" "$destination";
     else
         echo "false";
@@ -152,8 +154,10 @@ function duplib::_copy_os_specific_file_dup() {
     ## Check if there is a special file for the linux distribution
     local os_specific_file_path="$absolute_file_path/$(duplib::get_os_specific_folder)/$file_name";
     if [[ -e "$os_specific_file_path" ]]; then
+        duplib::debug_er "Copy OS specific core file '$os_specific_file_path' to '$destination'";
         cp "$os_specific_file_path" "$destination";
     elif [[ -e "$absolute_file_path/general/$file_name" ]]; then # Copy the default file
+        duplib::debug_er "Copy OS specific core file '$absolute_file_path/general/$file_name' to '$destination'";
         cp "$absolute_file_path/general/$file_name" "$destination";
     else
         echo "false";
