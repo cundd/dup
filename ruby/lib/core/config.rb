@@ -1,4 +1,5 @@
 require 'yaml'
+require 'singleton'
 
 module Dup
     module Core
@@ -6,9 +7,7 @@ module Dup
             include Singleton
 
             def initialize
-                require "log4r"
-                @logger = Log4r::Logger.new("vagrant::ui::interface")
-                #puts Dup::Modules.new().getRegisteredModules()
+                @logger = Dup::Log::Logger.new()
 
                 dir = File.dirname(File.expand_path(__FILE__))
                 @basePath = "#{dir}/../../.."

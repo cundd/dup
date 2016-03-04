@@ -23,7 +23,7 @@ class DupConfig
     end
 
     def fetch
-        configuration = getConfig()
+        configuration = Dup::Core::Config.instance.get()
         @keyPath.inject(configuration) {|acc, value| acc[value]}
     end
 

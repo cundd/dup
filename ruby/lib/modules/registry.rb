@@ -5,7 +5,7 @@ module Dup
                 if configurationInstance
                     @configurationInstance = configurationInstance
                 end
-                @logger = Log4r::Logger.new("vagrant::ui::interface")
+                @logger = Dup::Log::Logger.new()
             end
 
             def registeredModules

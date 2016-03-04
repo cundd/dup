@@ -2,8 +2,7 @@ module Dup
     module Modules
         class Loader
             def initialize()
-                require "log4r"
-                @logger = Log4r::Logger.new("vagrant::ui::interface")
+                @logger = Dup::Log::Logger.new()
                 @moduleRegistry = Dup::Modules::Registry.new()
             end
 
