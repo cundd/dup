@@ -35,10 +35,24 @@ function retrieve_typo3() {
 }
 
 function create_typo3_symlinks() {
-    if [[ -h "typo3_src" ]]; then rm "typo3_src"; fi
-    if [[ -h "typo3" ]]; then rm "typo3"; fi
-    if [[ -h "t3lib" ]]; then rm "t3lib"; fi
-    if [[ -h "index.php" ]]; then rm "index.php"; fi
+    if [[ -h "typo3_src" ]]; then
+        rm "typo3_src";
+    elif [[ -e "typo3_src" ]]; then
+        rm -fr "typo3_src";
+    fi
+    if [[ -h "typo3" ]]; then
+        rm "typo3";
+    elif [[ -e "typo3" ]]; then
+        rm -fr "typo3";
+    fi
+    if [[ -h "t3lib" ]]; then
+        rm "t3lib";
+    elif [[ -e "t3lib" ]]; then
+        rm -fr "t3lib";
+    fi
+    if [[ -h "index.php" ]] || [[ -e "index.php" ]]; then
+        rm "index.php";
+    fi
 
     ln -s "`detect_typo3_source_directory`" "typo3_src";
     ln -s "typo3_src/typo3" .;

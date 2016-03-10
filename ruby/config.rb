@@ -1,37 +1,13 @@
 require 'yaml'
 
 def getConfig
-    dir = File.dirname(File.expand_path(__FILE__))
-    defaultConfig = YAML.load_file("#{dir}/../default-config.yaml")
-
-    if File.exist?("#{dir}/../config.yaml")
-        oldConfig = YAML.load_file("#{dir}/../config.yaml")
-        defaultConfig.deep_merge!(oldConfig)
-    end
-
-    if TEST && File.exist?("#{Dir.getwd}/test-config.yaml")
-        customConfig = YAML.load_file("#{Dir.getwd}/test-config.yaml")
-    elsif File.exist?("#{dir}/../../config.yaml")
-        customConfig = YAML.load_file("#{dir}/../../config.yaml")
-    elsif File.exist?("#{dir}/../../custom-config.yaml")
-        customConfig = YAML.load_file("#{dir}/../../custom-config.yaml")
-    elsif File.exist?("#{dir}/../custom-config.yaml")
-        customConfig = YAML.load_file("#{dir}/../custom-config.yaml")
-    else
-        customConfig = {}
-    end
-
-    return defaultConfig.deep_merge(customConfig)
+    configurationInstance = Dup::Core::Config.instance
+    configurationInstance.get()
 end
 
 def getScriptEnvironment
-    env = getConfig()['scripts']['ENV']
-
-    addPhpConfigurationToEnvironment(env)
-
-    env['DUP_LIB_PATH'] = "/vagrant/dup/shell/lib/duplib.sh"
-
-    return env
+    configurationInstance = Dup::Core::Config.instance
+    configurationInstance.getScriptEnvironment()
 end
 
 # @deprecated create a module instead

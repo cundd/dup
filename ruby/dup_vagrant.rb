@@ -34,8 +34,8 @@ def configureVagrant(config)
     # Install packages
     configureInstallAllPackages(config)
 
-    modulesLoader = Dup::Modules.new(config)
-    modulesLoader.configure()
+    modulesLoader = Dup::Modules::Loader.new()
+    modulesLoader.configure(config)
 
     # Run scripts
     configureRunScriptsFromDirectory(config, dupScriptsBase + '/privileged_once/*.sh', privileged: true)

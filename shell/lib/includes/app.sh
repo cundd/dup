@@ -102,6 +102,13 @@ php5-iconv";
         allPackages="$allPackages php5-cli";
     fi
 
+    # Install MySQL Server in a Non-Interactive mode. Default root password will be "root"
+    if [[ $allPackages == *mariadb-* ]]; then
+
+        echo "mysql-server-5.6 mysql-server/root_password password root" | debconf-set-selections
+        echo "mysql-server-5.6 mysql-server/root_password_again password root" | debconf-set-selections
+    fi
+
     # Install libapache2-mod-fastcgi if Apache is installed
     if [[ $allPackages == *apache2* ]]; then
         allPackages="$allPackages libapache2-mod-fastcgi";

@@ -1,0 +1,10 @@
+mail:
+    privileged: true
+    mailhog_setup: true
+
+    mailhog_log: /var/log/mailhog.log
+
+    # MailHog environment
+    MH_SMTP_BIND_ADDR: "0.0.0.0:1025"
+
+    daniel: true
