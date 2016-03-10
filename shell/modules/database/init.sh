@@ -84,7 +84,7 @@ function provision_client_database() {
 
 function provision_client_databases() {
     # Import databases from dup/files/database/import/
-    local dupDatabaseFilesPath="$DUP_BASE/files/database/import";
+    local dupDatabaseFilesPath="$DUP_BASE/vagrant/files/database/import";
     for file in $(ls -1 $dupDatabaseFilesPath/*.sql 2> /dev/null); do
         provision_client_database $file "false";
     done
@@ -94,7 +94,7 @@ function provision_client_databases() {
     done
 
     # Import databases from provision/files/database/import/
-    local dupCustomDatabaseFilesPath="/vagrant/$DUP_CUSTOM_PROVISION_FOLDER/files/database/import";
+    local dupCustomDatabaseFilesPath="/vagrant/$DUP_CUSTOM_PROVISION_FOLDER/vagrant/files/database/import";
     for file in $(ls -1 $dupCustomDatabaseFilesPath/*.sql 2> /dev/null); do
         provision_client_database $file "false";
     done
