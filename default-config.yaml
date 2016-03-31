@@ -70,6 +70,7 @@ registeredModules:
     - database
     - mail
     - php
+    - networking
 
 modules:
     database:
