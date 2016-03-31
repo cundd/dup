@@ -40,6 +40,14 @@ module Dup
                 @projectBasePath
             end
 
+            def sharedTempPath
+                tempPath = basePath + "/.tmp"
+                unless Dir.exists?(tempPath)
+                    Dir.mkdir(tempPath, 0770)
+                end
+                tempPath
+            end
+
             def coreConfiguration
                 @coreConfiguration
             end

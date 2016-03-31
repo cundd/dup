@@ -22,4 +22,6 @@ require "#{dir}/synced_folder.rb"
 require "#{dir}/lib/modules/registry.rb"
 require "#{dir}/lib/modules/loader.rb"
 
+require "#{dir}/lib/templates/template.rb"
+
 require "#{dir}/dup_vagrant.rb"
