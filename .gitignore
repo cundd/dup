@@ -1,2 +1,3 @@
 .vagrant
 .dup_cache
+.tmp
