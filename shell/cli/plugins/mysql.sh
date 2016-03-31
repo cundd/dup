@@ -23,7 +23,7 @@ function dupcli::mysql::connect() {
     fi
 
     duplib::command_exists mysql && {
-        mysql -h$DB_HOST -u$DB_USERNAME -p$DB_PASSWORD -D$DB_NAME;
+        mysql -h$DB_HOST -u$DB_USERNAME -p$DB_PASSWORD -D$DB_NAME "$@";
     } || {
         duplib::error "Command mysql not found";
         exit 1;
