@@ -4,12 +4,18 @@ set -o errexit
 
 # Download typo3conf and fileadmin from the given remote
 function dupcli::typo3::download() {
-    if [[ $# -lt 1 ]]; then dupcli::_core::usage_error "Missing argument 1 (user@server)" "user@server remote_base_path"; fi;
-    if [[ $# -lt 2 ]]; then dupcli::_core::usage_error "Missing argument 2 (remote_base_path)" "user@server remote_base_path"; fi;
+    local user_and_server="$(dupcli::_typo3::ssh::user_and_host)";
+    local remote_base_path="$(dupcli::_typo3::ssh::directory)";
 
-    local user_and_server="$1";
-    local remote_base_path="$2";
-    shift 2;
+    if [[ "$user_and_server" == "@" ]]; then
+        if [[ $# -lt 1 ]]; then dupcli::_core::usage_error "Missing argument 1 (user@server)" "user@server remote_base_path"; fi;
+        if [[ $# -lt 2 ]]; then dupcli::_core::usage_error "Missing argument 2 (remote_base_path)" "user@server remote_base_path"; fi;
+
+        user_and_server="$1";
+        remote_base_path="$2";
+        shift 2;
+    fi
+
     local excludes='--exclude var --exclude downloader --exclude includes';
     local local_path=`dupcli::_webserver::get_host_vhost_document_root`;
 
@@ -42,4 +48,15 @@ function dupcli::typo3::extbase() {
             dupcli::ssh::execute "php typo3/cli_dispatch.phpsh extbase $@";
         fi
     fi
+}
+
+function dupcli::_typo3::ssh::user_and_host() {
+    local host="$(dupcli::config "project.prod.host")";
+    local user="$(dupcli::config "project.prod.user")";
+
+    echo "$user@$host";
+}
+
+function dupcli::_typo3::ssh::directory() {
+    dupcli::config "project.prod.directory";
 }

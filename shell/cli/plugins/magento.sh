@@ -4,12 +4,18 @@ set -o errexit
 
 # Download Magento files from the given remote
 function dupcli::magento::download() {
-    if [[ $# -lt 1 ]]; then dupcli::_core::usage_error "Missing argument 1 (user@server)" "user@server remote_base_path"; fi;
-    if [[ $# -lt 2 ]]; then dupcli::_core::usage_error "Missing argument 2 (remote_base_path)" "user@server remote_base_path"; fi;
+    local user_and_server="$(dupcli::_magento::ssh::user_and_host)";
+    local remote_base_path="$(dupcli::_magento::ssh::directory)";
 
-    local user_and_server="$1";
-    local remote_base_path="$2";
-    shift 2;
+    if [[ "$user_and_server" == "@" ]]; then
+        if [[ $# -lt 1 ]]; then dupcli::_core::usage_error "Missing argument 1 (user@server)" "user@server remote_base_path"; fi;
+        if [[ $# -lt 2 ]]; then dupcli::_core::usage_error "Missing argument 2 (remote_base_path)" "user@server remote_base_path"; fi;
+
+        user_and_server="$1";
+        remote_base_path="$2";
+        shift 2;
+    fi
+
     local excludes='--exclude var --exclude downloader --exclude includes';
     local local_path=`dupcli::_webserver::get_host_vhost_document_root`;
 
@@ -71,4 +77,15 @@ function dupcli::magento::system_log() {
     else
         dupcli::ssh::execute tail "$@" "$(dupcli::_webserver::get_guest_vhost_document_root)/var/log/system.log";
     fi
+}
+
+function dupcli::_magento::ssh::user_and_host() {
+    local host="$(dupcli::config "project.prod.host")";
+    local user="$(dupcli::config "project.prod.user")";
+
+    echo "$user@$host";
+}
+
+function dupcli::_magento::ssh::directory() {
+    dupcli::config "project.prod.directory";
 }
