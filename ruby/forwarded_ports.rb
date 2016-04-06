@@ -9,7 +9,7 @@ def configureForwardedPorts(config, forwardedPorts)
 end
 
 def configureAllForwardedPorts(config)
-    forwardedPorts = getConfig()['vagrant']['vm']['forwarded_ports']
+    forwardedPorts = getConfig('vagrant.vm.forwarded_ports')
     if forwardedPorts
         configureForwardedPorts(config, forwardedPorts)
     end

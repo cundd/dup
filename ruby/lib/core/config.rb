@@ -19,12 +19,17 @@ module Dup
                 loadCustomConfiguration()
             end
 
-            def get
-                @configuration
+            def get(keyPath = nil)
+                unless keyPath
+                    @configuration
+                else
+                    keyPathArray = keyPath.split('.')
+                    keyPathArray.inject(@configuration) {|acc, value| acc ? acc[value] : nil}
+                end
             end
 
             def getScriptEnvironment
-                env = get()['scripts']['ENV']
+                env = get('scripts.ENV')
 
                 addPhpConfigurationToEnvironment(env)
 

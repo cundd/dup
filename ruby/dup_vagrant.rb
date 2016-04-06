@@ -9,12 +9,12 @@ def configureVagrant(config)
     # Vagrant box to use
     # Default dup box is "dupal" from
     # https://github.com/cundd/vagrant-boxes/releases/download/0.1.0/alpine-3.3.0-x86_64.box
-    config.vm.box = getConfig()['vagrant']['vm']['box']
+    config.vm.box = getConfig('vagrant.vm.box')
 
     configureAllForwardedPorts(config)
 
-    if getConfig()['vagrant']['vm']['ip']
-        config.vm.network "private_network", ip: getConfig()['vagrant']['vm']['ip']
+    if getConfig('vagrant.vm.ip')
+        config.vm.network "private_network", ip: getConfig('vagrant.vm.ip')
     else
         abort("Please specify an IP for the VM in your config.yaml")
     end

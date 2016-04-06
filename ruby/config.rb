@@ -1,8 +1,8 @@
 require 'yaml'
 
-def getConfig
+def getConfig(keyPath = nil)
     configurationInstance = Dup::Core::Config.instance
-    configurationInstance.get()
+    configurationInstance.get(keyPath)
 end
 
 def getScriptEnvironment
