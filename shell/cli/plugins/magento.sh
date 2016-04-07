@@ -29,7 +29,7 @@ function dupcli::magento::download() {
     duplib::rsync $user_and_server "$remote_base_path/lib/" "$local_path/lib/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
 
     echo "Download Media";
-    duplib::rsync $user_and_server "$remote_base_path/media/" "$local_path/media/" "$excludes --exclude cache --exclude media/tmp/" $@;
+    duplib::rsync $user_and_server "$remote_base_path/media/" "$local_path/media/" "$excludes --exclude cache --exclude media/tmp/" "$(dupcli::_magento::ssh::port)" $@;
 
     echo "Download Skin";
     duplib::rsync $user_and_server "$remote_base_path/skin/" "$local_path/skin/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
