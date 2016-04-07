@@ -48,3 +48,22 @@ dup vagrant::up
 ```
 
 The synced folders are shared through NFS because the Virtual Box Guest Additions are not available on Alpine. The type can be changed in the configuration `vagrnat.vm.share_type`.
+
+
+Database provisioning
+---------------------
+
+Define the database configuration inside `config.yaml`.
+
+The most important values are:
+
+```yaml
+scripts:
+    ENV:
+        DB_ROOT_PASSWORD: # <- Change the database root password
+        DB_USERNAME: "client" # <- User name for the user database
+        DB_NAME: "client" # <- User database name
+        DB_PASSWORD: # <- Change the password for the user database
+```
+
+If a database dump should be imported when the database is created, place the `.sql` or `.sql.gz` file into `provision/vagrant/files/database/import/`
