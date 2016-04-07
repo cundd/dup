@@ -16,7 +16,7 @@ function dupcli::typo3::download() {
         shift 2;
     fi
 
-    local excludes='--exclude var --exclude downloader --exclude includes';
+    local excludes='';
     local local_path=`dupcli::_webserver::get_host_vhost_document_root`;
 
     echo "Download typo3conf";
