@@ -8,10 +8,10 @@ require "#{dir}/include.rb"
 class DupConfig
     def initialize(argv)
         @format = :json
-        @keyPath = []
+        @keyPath = ""
         if argv.length > 0
             if argv.last[0] != '-'
-                @keyPath = argv.last.split('.')
+                @keyPath = argv.last
             end
 
             if argv.include? '--json'
@@ -23,8 +23,7 @@ class DupConfig
     end
 
     def fetch
-        configuration = Dup::Core::Config.instance.get()
-        @keyPath.inject(configuration) {|acc, value| acc[value]}
+        Dup::Core::Config.instance.get(@keyPath)
     end
 
     def main

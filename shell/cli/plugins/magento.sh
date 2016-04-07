@@ -20,36 +20,36 @@ function dupcli::magento::download() {
     local local_path=`dupcli::_webserver::get_host_vhost_document_root`;
 
     echo "Download App";
-    duplib::rsync $user_and_server "$remote_base_path/app/" "$local_path/app/" "$excludes" $@;
+    duplib::rsync $user_and_server "$remote_base_path/app/" "$local_path/app/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
 
     echo "Download JavaScript";
-    duplib::rsync $user_and_server "$remote_base_path/js/" "$local_path/js/" "$excludes" $@;
+    duplib::rsync $user_and_server "$remote_base_path/js/" "$local_path/js/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
 
     echo "Download Lib";
-    duplib::rsync $user_and_server "$remote_base_path/lib/" "$local_path/lib/" "$excludes" $@;
+    duplib::rsync $user_and_server "$remote_base_path/lib/" "$local_path/lib/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
 
     echo "Download Media";
     duplib::rsync $user_and_server "$remote_base_path/media/" "$local_path/media/" "$excludes --exclude cache --exclude media/tmp/" $@;
 
     echo "Download Skin";
-    duplib::rsync $user_and_server "$remote_base_path/skin/" "$local_path/skin/" "$excludes" $@;
+    duplib::rsync $user_and_server "$remote_base_path/skin/" "$local_path/skin/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
 
     echo "Download Shell";
-    duplib::rsync $user_and_server "$remote_base_path/shell/" "$local_path/shell/" "$excludes" $@;
+    duplib::rsync $user_and_server "$remote_base_path/shell/" "$local_path/shell/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
 
     echo "Download error-console";
-    duplib::rsync $user_and_server "$remote_base_path/errors/" "$local_path/errors/" "$excludes" $@;
+    duplib::rsync $user_and_server "$remote_base_path/errors/" "$local_path/errors/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
 
     echo "Download index.php get.php cron.php";
-    duplib::rsync $user_and_server "$remote_base_path/index.php" "$local_path/" "$excludes" $@;
-    duplib::rsync $user_and_server "$remote_base_path/get.php" "$local_path/" "$excludes" $@;
-    duplib::rsync $user_and_server "$remote_base_path/cron.php" "$local_path/" "$excludes" $@;
+    duplib::rsync $user_and_server "$remote_base_path/index.php" "$local_path/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
+    duplib::rsync $user_and_server "$remote_base_path/get.php" "$local_path/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
+    duplib::rsync $user_and_server "$remote_base_path/cron.php" "$local_path/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
 
     echo "Download .htaccess";
-    duplib::rsync $user_and_server "$remote_base_path/.htaccess" "$local_path/" "$excludes" $@;
+    duplib::rsync $user_and_server "$remote_base_path/.htaccess" "$local_path/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
 
     echo "Download .modman";
-    duplib::rsync $user_and_server "$remote_base_path/.modman/" "$local_path/.modman/" "$excludes" $@;
+    duplib::rsync $user_and_server "$remote_base_path/.modman/" "$local_path/.modman/" "$excludes" "$(dupcli::_magento::ssh::port)" $@;
 }
 
 # Call n98-magerun
@@ -88,4 +88,8 @@ function dupcli::_magento::ssh::user_and_host() {
 
 function dupcli::_magento::ssh::directory() {
     dupcli::config "project.prod.directory";
+}
+
+function dupcli::_magento::ssh::port() {
+    dupcli::config "project.prod.ssh.port";
 }

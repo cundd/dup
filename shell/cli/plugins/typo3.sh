@@ -20,10 +20,10 @@ function dupcli::typo3::download() {
     local local_path=`dupcli::_webserver::get_host_vhost_document_root`;
 
     echo "Download typo3conf";
-    duplib::rsync $user_and_server "$remote_base_path/typo3conf/" "$local_path/typo3conf/" "$excludes" $@;
+    duplib::rsync $user_and_server "$remote_base_path/typo3conf/" "$local_path/typo3conf/" "$excludes" "$(dupcli::_typo3::ssh::port)" $@;
 
     echo "Download fileadmin";
-    duplib::rsync $user_and_server "$remote_base_path/fileadmin/" "$local_path/fileadmin/" "$excludes" $@;
+    duplib::rsync $user_and_server "$remote_base_path/fileadmin/" "$local_path/fileadmin/" "$excludes" "$(dupcli::_typo3::ssh::port)" $@;
 }
 
 # Call the TYPO3 cli (on the VM)
@@ -59,4 +59,8 @@ function dupcli::_typo3::ssh::user_and_host() {
 
 function dupcli::_typo3::ssh::directory() {
     dupcli::config "project.prod.directory";
+}
+
+function dupcli::_typo3::ssh::port() {
+    dupcli::config "project.prod.ssh.port";
 }
