@@ -42,6 +42,10 @@ function detect_installation_uses_external_pool_files() {
 function detect_php_fpm_conf_directory_path() {
     if [[ -e "/etc/php5/fpm/pool.d" ]]; then
         echo "/etc/php5/fpm/pool.d";
+    elif [[ -e "/etc/php7/fpm/pool.d" ]]; then
+        echo "/etc/php7/fpm/pool.d";
+    elif [[ -e "/etc/php7/php-fpm.d" ]]; then
+        echo "/etc/php7/php-fpm.d";
     else
         echo "/etc/php/php-fpm.d";
     fi
