@@ -6,8 +6,7 @@
 # Service available
 function duplib::_service_exists_systemd() {
     systemctl daemon-reload;
-    systemctl list-units        |grep -q "\s$1$" && echo "true" || echo "false";
-
+    systemctl list-unit-files   |grep -q "\b$1.service\b" && echo "true" || echo "false";
 }
 
 function duplib::_service_exists_rc-service() {
