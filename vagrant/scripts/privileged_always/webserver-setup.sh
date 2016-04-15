@@ -44,10 +44,10 @@ function prepare_document_root() {
     # Try
     set +e
     if [[ "$(getent group apache)" != "" ]]; then
-        #chown apache:apache $documentRoot;
+        #chown -R :apache "$(dirname $documentRoot)";
         chmod g+w $documentRoot;
     elif [[ "$(getent group http)" != "" ]]; then
-        #chown http:http $documentRoot;
+        #chown -R :http "$(dirname $documentRoot)";
         chmod g+w $documentRoot;
     else
         duplib::error "Could not detect apache/http group name";
