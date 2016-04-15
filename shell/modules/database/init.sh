@@ -112,12 +112,25 @@ function test_client_database_tables() {
     fi
 }
 
+function stop_database() {
+    set +e;
+    duplib::service_stop_if_running mysqld || killall mysqld;
+    set -e;
+
+}
+
+function start_database() {
+    set +e;
+    duplib::service_start mysqld;
+    set -e;
+}
+
 function provision_base() {
     if [[ `test_root_password` == "notset" ]]; then
         echo "Provision MySQL base";
-        duplib::service_stop_if_running mysqld;
+        stop_database;
         prepare_installation;
-        duplib::service_start mysqld;
+        start_database;
 
         provision_root;
         #mysql_secure_installation
