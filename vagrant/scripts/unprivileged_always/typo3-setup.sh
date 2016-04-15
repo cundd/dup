@@ -98,7 +98,7 @@ function prepare_typo3temp() {
 }
 
 function main() {
-    cd `duplib::get_vhost_document_root`;
+    cd `duplib::get_vhost_document_root` || exit 1;
     if [[ "$TYPO3_INSTALL" == "true" ]]; then
         install_typo3;
         prepare_typo3temp;
